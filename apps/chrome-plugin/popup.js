@@ -119,6 +119,22 @@ ${file.content}
 `).join('\n---\n\n');
 }
 
+async function saveRoast(prTitle, roastContent, prUrl) {
+  const roasts = await loadRoasts();
+  const newRoast = {
+    id: Date.now(),
+    title: prTitle || 'Untitled PR',
+    content: roastContent,
+    date: new Date().toISOString(),
+    url: prUrl
+  };
+
+  roasts.unshift(newRoast);
+  await chrome.storage.local.set({ [ROASTS_STORAGE_KEY]: roasts });
+  return newRoast;
+}
+
+// Update displayRoastsList function to show content and PR link
 async function displayRoastsList() {
   const roastsList = document.getElementById('roastsList');
   const roasts = await loadRoasts();
@@ -126,16 +142,59 @@ async function displayRoastsList() {
   roastsList.innerHTML = roasts.map(roast => `
     <div class="roast-item" data-id="${roast.id}">
       <div class="roast-header">
-        <div>
+        <div class="roast-title-section">
+          <span class="expand-indicator">▶</span>
           <div class="roast-title">${escapeHtml(roast.title)}</div>
           <div class="roast-meta">${new Date(roast.date).toLocaleDateString()}</div>
         </div>
-        <button class="delete-roast" data-id="${roast.id}">Delete</button>
+        <div class="roast-actions">
+          ${roast.url ? `
+            <a href="${escapeHtml(roast.url)}" target="_blank" class="pr-link">
+              <button class="action-button">Go to PR</button>
+            </a>
+          ` : ''}
+          <button class="action-button delete-roast" data-id="${roast.id}">Delete</button>
+        </div>
+      </div>
+      <div class="roast-content markdown-body">
+        ${marked.parse(roast.content)}
       </div>
     </div>
   `).join('');
-}
 
+  // Add click handlers for collapsible content
+  roastsList.querySelectorAll('.roast-header').forEach(header => {
+    header.addEventListener('click', (e) => {
+      // Don't toggle if clicking action buttons
+      if (e.target.closest('.roast-actions')) {
+        return;
+      }
+
+      const roastItem = header.closest('.roast-item');
+      const content = roastItem.querySelector('.roast-content');
+      const indicator = roastItem.querySelector('.expand-indicator');
+
+      content.classList.toggle('expanded');
+      indicator.classList.toggle('expanded');
+    });
+  });
+
+  // Prevent PR link clicks from toggling expansion
+  roastsList.querySelectorAll('.pr-link').forEach(link => {
+    link.addEventListener('click', (e) => {
+      e.stopPropagation();
+    });
+  });
+
+  // Prevent delete button clicks from toggling expansion
+  roastsList.querySelectorAll('.delete-roast').forEach(button => {
+    button.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const id = parseInt(button.dataset.id);
+      deleteRoast(id).then(() => displayRoastsList());
+    });
+  });
+}
 function escapeHtml(unsafe) {
   return unsafe
     .replace(/&/g, "&amp;")
@@ -295,31 +354,39 @@ ${file.content}
       loadingEl.style.display = 'none';
       roastButton.disabled = false;
     }
-  });
 
-  // Handle roast list clicks
-  document.getElementById('roastsList').addEventListener('click', async (e) => {
-    const deleteBtn = e.target.closest('.delete-roast');
-    if (deleteBtn) {
-      e.stopPropagation();
-      const id = parseInt(deleteBtn.dataset.id);
-      await deleteRoast(id);
-      await displayRoastsList();
-      return;
-    }
+    try {
+      const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
 
-    const roastItem = e.target.closest('.roast-item');
-    if (roastItem) {
-      const roasts = await loadRoasts();
-      const roast = roasts.find(r => r.id === parseInt(roastItem.dataset.id));
-      if (roast) {
-        const responseEl = document.getElementById('response');
-        responseEl.innerHTML = marked.parse(roast.content);
-        responseEl.style.display = 'block';
+      const results = await chrome.scripting.executeScript({
+        target: { tabId: tab.id },
+        function: async () => {
+          const prTitle = document.querySelector('.js-issue-title')?.textContent.trim() || 'Untitled PR';
+          const prUrl = window.location.href;
+          // ... rest of the scraping code ...
+          return { changes: formattedChanges, title: prTitle, url: prUrl };
+        }
+      });
 
-        // Switch to new roast tab to show content
-        switchTab('new');
+      if (results && results[0]?.result) {
+        const { changes, title, url } = results[0].result;
+        statusEl.textContent = 'Getting roast from Claude...';
+
+        const roastResponse = await getRoast(changes);
+
+        // Save the roast with URL
+        await saveRoast(title, roastResponse, url);
+
+        // Switch to history tab after generation
+        switchTab('history');
+        await displayRoastsList();
       }
+    } catch (error) {
+      statusEl.textContent = `Error: ${error.message}`;
+      console.error('Error:', error);
+    } finally {
+      loadingEl.style.display = 'none';
+      roastButton.disabled = false;
     }
   });
 });
