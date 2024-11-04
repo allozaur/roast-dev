@@ -1,3 +1,16 @@
 :root {
+	--bg-body: #fef9f8;
+
 	--c-accent: #db2f11;
+	--c-accent-95: #db2f1195;
+
+	--c-text: #000000;
+}
+
+@media (prefers-color-scheme: dark) {
+	:root {
+		--bg-body: #131111;
+
+		--c-text: #f0f0f0;
+	}
 }

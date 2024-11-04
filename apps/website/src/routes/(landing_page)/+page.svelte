@@ -1,22 +1,24 @@
 <script>
-	let { children } = $props();
 	import '$lib/styles/index.css';
+	import Hero from './Hero.svelte';
 </script>
 
 <svelte:head>
-	<title>roast.dev</title>
+	<title>roast.dev — Helps you Fix Bad Code 🧯🔥 Before It Hits Code Review 😮‍💨</title>
+	<meta
+		name="description"
+		content="Save your team's time and your ego. Our AI catches code issues before humans do, making PR reviews quick and actually productive. For GitHub & GitLab 🚀"
+	/>
 </svelte:head>
 
 <div class="landing-page">
-	{@render children()}
+	<Hero />
 </div>
 
 <style>
 	.landing-page {
 		display: flex;
 		flex-direction: column;
-		align-items: center;
-		justify-content: center;
 		min-height: 100vh;
 	}
 
