@@ -3,6 +3,10 @@
 	import '$lib/styles/index.css';
 </script>
 
+<svelte:head>
+	<title>roast.dev</title>
+</svelte:head>
+
 <div class="landing-page">
 	{@render children()}
 </div>
