@@ -40,8 +40,7 @@
 			background: var(--c-accent-95);
 
 			&::before {
-				/* opacity: 0.75; */
-				filter: brightness(0.75);
+				filter: brightness(1.25);
 			}
 		}
 
@@ -53,7 +52,8 @@
 			right: -0.125rem;
 			bottom: -0.125rem;
 			border-radius: 0.5rem;
-			background-image: linear-gradient(45deg, #a51900, #ff8b77);
+			background-image: linear-gradient(27.5deg, #a51900, #ff8b77);
+			transition: all 0.2s ease-out;
 			z-index: -1;
 		}
 	}

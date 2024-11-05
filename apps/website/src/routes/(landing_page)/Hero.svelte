@@ -2,25 +2,29 @@
 	import Button from '$lib/components/Button.svelte';
 </script>
 
-<div class="hero">
-	<h1>Get your code <strong>roasted</strong> 🔥 by AI <br /> before real human does it 😵</h1>
+<section class="hero">
+	<div class="inner">
+		<h1>Get your code <strong>roasted</strong> 🔥 by AI <br /> before real human does it 😵</h1>
 
-	<br />
+		<br />
 
-	<p>
-		Submit better Pull Requests with instant, actionable feedback that teaches you something – and
-		might actually make you chuckle 😁
-	</p>
+		<p>
+			Submit better Pull Requests with instant, actionable feedback that you can learn from 🧐 and
+			might actually make you chuckle 😁
+		</p>
 
-	<div class="cta">
-		<Button>Get it for $5</Button>
+		<div class="cta">
+			<Button>Get it it from Chrome Web Store</Button>
 
-		<span>Pay once. Use forever.</span>
+			<span>Pay once. Use forever.</span>
+		</div>
 	</div>
-</div>
+</section>
 
 <style>
-	.hero {
+	.hero .inner {
+		max-width: var(--ui-boxed-width);
+		margin: auto;
 		display: grid;
 		place-items: center;
 		padding-block: 4rem;
@@ -30,27 +34,20 @@
 		font-family:
 			'SF UI Display',
 			-apple-system,
-			BlinkMacSystemFont,
-			'Segoe UI',
-			Roboto,
-			'Helvetica Neue',
-			Arial,
 			sans-serif;
+		letter-spacing: 0;
 		font-size: 4rem;
+		line-height: 4.5rem;
 		text-align: center;
 		margin-block: 0 2rem;
 	}
 
 	p {
-		font-family:
+		/* font-family:
 			'SF UI Display',
 			-apple-system,
-			BlinkMacSystemFont,
-			'Segoe UI',
-			Roboto,
-			'Helvetica Neue',
-			Arial,
 			sans-serif;
+		letter-spacing: 0; */
 		font-size: 1.5rem;
 		line-height: 1.5;
 		max-width: 48rem;
@@ -67,7 +64,6 @@
 		span {
 			color: #888;
 			font-size: 0.875rem;
-			letter-spacing: -0.03em;
 		}
 	}
 </style>

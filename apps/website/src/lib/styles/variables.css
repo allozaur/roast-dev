@@ -1,10 +1,11 @@
 :root {
-	--bg-body: #fef9f8;
-
+	--bg-body: #fdf5f3;
 	--c-accent: #db2f11;
 	--c-accent-95: #db2f1195;
 
 	--c-text: #000000;
+
+	--ui-boxed-width: 79rem;
 }
 
 @media (prefers-color-scheme: dark) {

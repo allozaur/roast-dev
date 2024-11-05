@@ -1,6 +1,8 @@
 <script>
 	import '$lib/styles/index.css';
 	import Hero from './Hero.svelte';
+	import UspSection from './UspSection.svelte';
+	import VideoSection from './VideoSection.svelte';
 </script>
 
 <svelte:head>
@@ -11,19 +13,19 @@
 	/>
 </svelte:head>
 
-<div class="landing-page">
+<main class="landing-page">
 	<Hero />
-</div>
+
+	<VideoSection />
+
+	<UspSection />
+</main>
 
 <style>
 	.landing-page {
 		display: flex;
 		flex-direction: column;
 		min-height: 100vh;
-	}
-
-	.landing-page :global(h1) {
-		line-height: 1;
 	}
 
 	.landing-page :global(h1 strong) {
