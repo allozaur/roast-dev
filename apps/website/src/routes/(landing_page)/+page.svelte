@@ -4,8 +4,9 @@
 	import Hero from './Hero.svelte';
 	import PricingSection from './PricingSection.svelte';
 	import SupportedBrowsersSection from './SupportedBrowsersSection.svelte';
+	import TestimonialsSection from './TestimonialsSection.svelte';
 	import UspSection from './UspSection.svelte';
-	import VideoSection from './VideoSection.svelte';
+	import FeaturesSection from './FeaturesSection.svelte';
 </script>
 
 <svelte:head>
@@ -19,15 +20,17 @@
 <main>
 	<Hero />
 
-	<VideoSection />
+	<FeaturesSection />
 
 	<UspSection />
 
-	<FaqSection />
-
-	<SupportedBrowsersSection />
+	<!-- <SupportedBrowsersSection /> -->
 
 	<PricingSection />
+
+	<FaqSection />
+
+	<!-- <TestimonialsSection /> -->
 </main>
 
 <style>
@@ -35,15 +38,5 @@
 		display: flex;
 		flex-direction: column;
 		min-height: 100vh;
-	}
-
-	main :global(section) {
-		padding-inline: 2rem;
-	}
-
-	.landing-page :global(h1 strong) {
-		font-weight: inherit;
-		line-height: 1;
-		color: var(--c-accent);
 	}
 </style>

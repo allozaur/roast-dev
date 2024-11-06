@@ -42,15 +42,15 @@ Think of it like copying code into ChatGPT, but automated and optimized for code
 	},
 	{
 		question: 'Why is it so cheap?',
-		answer: `We believe good developer tools should be accessible. The early-bird price of $9 is our way of building a strong user base.`
+		answer: `We believe good developer tools should be accessible. The early-bird prices of $9 for 1-year access and $19 for lifetime access is our way of building a strong user base.`
 	},
 	{
 		question: 'What about API costs?',
-		answer: `You'll need your own LLM API key and will be responsible for any API usage costs. This typically costs a few cents per code review.`
+		answer: `You'll need your own LLM API key and will be responsible for any API usage costs. This typically costs a few cents per code review, but it always depends on the LLM model you choose and the amount of code you analyze.`
 	},
 	{
 		question: 'Which Git platforms work with Roast?',
-		answer: `We currently support GitHub and GitLab support is in development.`
+		answer: `We currently support GitHub. GitLab support is in development.`
 	},
 	{
 		question: 'How large of a PR can Roast handle?',

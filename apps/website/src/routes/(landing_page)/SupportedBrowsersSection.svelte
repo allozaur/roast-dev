@@ -21,8 +21,27 @@
 </section>
 
 <style>
+	section {
+		background: white;
+		padding: 4rem 0;
+		display: grid;
+		gap: 2rem;
+		text-align: center;
+		@media (prefers-color-scheme: dark) {
+			background: #0a0a0a;
+		}
+	}
+
 	.logos {
 		display: flex;
+		justify-content: center;
 		gap: 4rem;
+	}
+
+	p {
+		font:
+			400 1.125rem/1.5 'SF UI Display',
+			sans-serif;
+		color: #888;
 	}
 </style>

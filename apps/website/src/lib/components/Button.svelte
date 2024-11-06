@@ -32,6 +32,7 @@
 
 <style>
 	.button {
+		display: inline-flex;
 		cursor: pointer;
 		font-size: 1rem;
 		font-weight: 600;

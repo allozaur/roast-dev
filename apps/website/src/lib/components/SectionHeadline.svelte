@@ -7,13 +7,13 @@
 	let { heading, description }: SectionHeadlineProps = $props();
 </script>
 
-<div>
+<div class="section-headline">
 	<h2>
-		{heading}
+		{@html heading}
 	</h2>
 
 	<p>
-		{description}
+		{@html description}
 	</p>
 </div>
 
@@ -22,6 +22,7 @@
 		display: grid;
 		gap: 1rem;
 		place-items: center;
+		text-align: center;
 	}
 
 	h2,
@@ -31,9 +32,15 @@
 
 	h2 {
 		font:
-			600 3rem/1.5 'SF UI Display',
+			600 2.125rem/1.5 'SF UI Display',
 			-apple-system,
 			sans-serif;
+		@media (width > 1024px) {
+			font:
+				600 3rem/1.5 'SF UI Display',
+				-apple-system,
+				sans-serif;
+		}
 	}
 
 	p {

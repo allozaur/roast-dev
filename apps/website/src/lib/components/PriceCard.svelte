@@ -6,15 +6,23 @@
 		price: string;
 		discountPrice: string;
 		description: string;
+		isHighlighted?: boolean;
 		ctaLabel: string;
 		ctaSubtitle: string;
 	}
 
-	let { title, price, discountPrice, description, ctaLabel, ctaSubtitle }: PriceCardProps =
-		$props();
+	let {
+		isHighlighted,
+		title,
+		price,
+		discountPrice,
+		description,
+		ctaLabel,
+		ctaSubtitle
+	}: PriceCardProps = $props();
 </script>
 
-<div class="price-card">
+<div class="price-card" class:is-highlighted={isHighlighted}>
 	<h3>
 		{title}
 	</h3>
@@ -37,13 +45,33 @@
 </div>
 
 <style>
+	@keyframes gradient {
+		0% {
+			box-shadow: 0 0 1rem var(--c-accent-50);
+		}
+		50% {
+			box-shadow: 0 0 2rem var(--c-accent-95);
+		}
+		100% {
+			box-shadow: 0 0 1rem var(--c-accent-50);
+		}
+	}
 	.price-card {
+		background: white;
+		color: #0a0a0a;
 		display: grid;
 		place-items: center;
-		gap: 2rem;
-		padding: 4rem;
+		gap: 1.5rem;
+		padding: 3rem;
 		border-radius: 1rem;
 		border: 2px solid #888;
+		text-align: center;
+
+		&.is-highlighted {
+			animation: gradient 2.5s infinite;
+			border-color: var(--c-accent);
+			box-shadow: 0 0 1rem var(--c-accent-50);
+		}
 	}
 
 	h3 {
@@ -55,7 +83,7 @@
 
 	.price {
 		display: flex;
-		gap: 0.75rem;
+		gap: 0.375rem;
 		align-items: flex-end;
 	}
 
@@ -74,15 +102,15 @@
 			800 3rem/1 'SF UI Display',
 			-apple-system,
 			sans-serif;
-		color: var(--c-text);
 	}
 
 	p {
 		color: #238636;
 		font:
-			700 1.25rem/1.5 'SF UI Display',
+			600 1.25rem/1.5 'SF UI Display',
 			-apple-system,
 			sans-serif;
+		letter-spacing: 0;
 		margin: 0;
 	}
 </style>

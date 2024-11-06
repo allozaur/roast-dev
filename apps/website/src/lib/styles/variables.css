@@ -2,8 +2,10 @@
 	--bg-body: #fdf5f3;
 	--c-accent: #db2f11;
 	--c-accent-95: #db2f1195;
+	--c-accent-50: #db2f1150;
 
 	--c-text: #000000;
+	--c-text-light: #888888;
 
 	--ui-boxed-width: 79rem;
 }

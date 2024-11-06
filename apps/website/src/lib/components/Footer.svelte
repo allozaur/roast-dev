@@ -11,14 +11,51 @@
 		</menu>
 	</nav>
 
-	<span>Made with ❤️ by <a href="https://github.com/allozaur">@allozaur</a></span>
+	<span class="signature">Made with ❤️ by <a href="https://github.com/allozaur">@allozaur</a></span>
 
-	<span>© {new Date().getFullYear()} GrygierCo s. c.</span>
+	<span class="copyright">© {new Date().getFullYear()} GrygierCo s. c.</span>
 </footer>
 
 <style>
 	footer {
 		display: grid;
+		place-items: center;
 		padding: 4rem 2rem;
+		gap: 4rem;
+	}
+
+	menu {
+		display: flex;
+		gap: 3rem;
+		margin: auto;
+		padding: 0;
+
+		li {
+			list-style: none;
+
+			a {
+				font:
+					500 1.125rem/1.5 'SF UI Display',
+					sans-serif;
+				text-decoration: none;
+				color: var(--c-text);
+			}
+		}
+	}
+
+	.signature {
+		font-size: 1.125rem;
+		color: var(--c-text-light);
+
+		a {
+			font-weight: 500;
+			text-decoration: none;
+			color: var(--c-accent);
+		}
+	}
+
+	.copyright {
+		font-size: 0.75rem;
+		color: var(--c-text-light);
 	}
 </style>

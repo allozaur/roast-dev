@@ -14,7 +14,7 @@
 		</p>
 
 		<Cta
-			label="Get the earlybird lifetime access just for $19 🤯"
+			label="Get lifetime access for just $19 🤯"
 			subtitle="Pay once. Improve instantly. Use forever."
 		/>
 	</div>
@@ -27,42 +27,50 @@
 		display: grid;
 		place-items: center;
 		padding-block: 4rem 6rem;
+		padding-inline: 2rem;
+
+		@media (width <= 1024px) {
+			padding-block: 2rem 4rem;
+		}
 	}
 
 	h1 {
-		font-family:
-			'SF UI Display',
+		font:
+			700 4rem/1.125 'SF UI Display',
 			-apple-system,
 			sans-serif;
 		letter-spacing: 0;
-		font-size: 4rem;
-		line-height: 4.5rem;
 		text-align: center;
 		margin-block: 0 2rem;
+
+		strong {
+			color: var(--c-accent);
+			font-weight: inherit;
+		}
+		@media (width <= 1024px) {
+			font-size: min(3.5rem, 7.5vw);
+			line-height: 1.25;
+
+			br {
+				display: none;
+			}
+		}
 	}
 
 	p {
-		/* font-family:
-			'SF UI Display',
+		font:
+			400 1.25rem/1.5 'SF UI Display',
 			-apple-system,
 			sans-serif;
-		letter-spacing: 0; */
+		letter-spacing: 0;
 		font-size: 1.5rem;
 		line-height: 1.5;
 		max-width: 48rem;
 		text-align: center;
 		margin: 0 0 3rem 0;
-	}
 
-	.cta {
-		display: grid;
-		gap: 1rem;
-		place-items: center;
-		margin-top: 3rem;
-
-		span {
-			color: #888;
-			font-size: 0.875rem;
+		@media (width <= 1024px) {
+			font-size: 1.25rem;
 		}
 	}
 </style>

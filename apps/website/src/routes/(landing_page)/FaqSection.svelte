@@ -6,15 +6,35 @@
 </script>
 
 <section id="faq-section">
-	<SectionHeadline heading="Frequently Asked Questions" />
+	<div class="inner">
+		<SectionHeadline heading="Frequently Asked Questions" />
 
-	<Accordion>
-		{#each faqQuestions as { question, answer }}
-			<AccordionItem title={question}>
-				<p>
-					{@html answer}
-				</p>
-			</AccordionItem>
-		{/each}
-	</Accordion>
+		<Accordion>
+			{#each faqQuestions as { question, answer }}
+				<AccordionItem title={question}>
+					<p>
+						{@html answer}
+					</p>
+				</AccordionItem>
+			{/each}
+		</Accordion>
+	</div>
 </section>
+
+<style>
+	section {
+		background: white;
+		@media (prefers-color-scheme: dark) {
+			background: #0a0a0a;
+		}
+		padding: 4rem 2rem;
+
+		.inner {
+			display: grid;
+			gap: 3rem;
+			max-width: 48rem;
+			width: 100%;
+			margin: auto;
+		}
+	}
+</style>

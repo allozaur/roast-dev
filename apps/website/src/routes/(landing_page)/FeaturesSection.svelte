@@ -1,9 +1,9 @@
 <script>
 	import Icon from '$lib/components/Icon.svelte';
-	import FeatureCard from './FeatureCard.svelte';
+	import FeatureCard from '../../lib/components/FeatureCard.svelte';
 </script>
 
-<section class="video-section">
+<section class="features-section">
 	<div class="inner">
 		<h2>See <strong>Roast</strong> plugin in action</h2>
 
@@ -11,7 +11,7 @@
 
 		<div class="feature-cards">
 			{#snippet prIcon()}
-				<Icon name="pr" --stroke="#238636" --size="2.25rem" />
+				<Icon name="pr" --stroke="#238636" --stroke-width="3" --size="2.25rem" />
 			{/snippet}
 
 			<FeatureCard icon={prIcon}>
@@ -26,7 +26,7 @@
 			</FeatureCard>
 
 			{#snippet sparksIcon()}
-				<Icon name="sparks" --stroke="#C340FF" --size="2.25rem" />
+				<Icon name="sparks" --stroke="#C340FF" --stroke-width="3" --size="2.25rem" />
 			{/snippet}
 
 			<FeatureCard icon={sparksIcon}>
@@ -41,7 +41,7 @@
 			</FeatureCard>
 
 			{#snippet lockIcon()}
-				<Icon name="lock" --size="2.25rem" />
+				<Icon name="lock" --size="2.25rem" --stroke="black" --stroke-width="3" />
 			{/snippet}
 
 			<FeatureCard icon={lockIcon}>
@@ -55,9 +55,9 @@
 			</FeatureCard>
 
 			{#snippet trackIcon()}
-				<span style="font-size: 2.25rem">
+				<span style="display: flex; align-items: center; gap: 0.5rem;">
 					🔥
-					<Icon name="arrow-right" --size="1.625rem" --stroke-width="3" />
+					<Icon name="arrow-right" --size="1.5rem" --stroke="black" --stroke-width="3" />
 					🧯
 				</span>
 			{/snippet}
@@ -77,19 +77,39 @@
 </section>
 
 <style>
-	.video-section {
-		background: white;
-		@media (prefers-color-scheme: dark) {
-			background: #0a0a0a;
-		}
-		padding-block: 4rem;
+	.features-section {
+		padding: 4rem 2rem;
 		text-align: center;
+		position: relative;
+
+		&::before {
+			content: '';
+			position: absolute;
+			left: 0;
+			top: 0;
+			right: 0;
+			bottom: 0;
+			background: white;
+			z-index: -1;
+			@media (prefers-color-scheme: dark) {
+				background: #0a0a0a;
+			}
+		}
 
 		.inner {
 			display: grid;
 			gap: 4rem;
 			max-width: var(--ui-boxed-width);
 			margin: auto;
+		}
+	}
+
+	.feature-cards {
+		display: grid;
+		gap: 2rem;
+
+		@media (width > 1024px) {
+			grid-template-columns: repeat(auto-fit, minmax(28rem, 1fr));
 		}
 	}
 
