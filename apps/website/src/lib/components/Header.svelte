@@ -6,13 +6,21 @@
 	<div class="inner">
 		<a class="logo" href="/"> 🧯 roast<span>.dev</span> </a>
 
-		<Button>Get it for $5</Button>
+		{#snippet badgeChromeWebStore()}
+			<img
+				src="/png/chrome-web-store-badge.png"
+				height="56"
+				alt="Available in the Chrome Web Store"
+			/>
+		{/snippet}
+
+		<Button image={badgeChromeWebStore} />
 	</div>
 </header>
 
 <style>
 	header {
-		padding-block: 2rem;
+		padding: 2rem;
 	}
 
 	.inner {

@@ -1,6 +1,9 @@
 <script>
 	import '$lib/styles/index.css';
+	import FaqSection from './FaqSection.svelte';
 	import Hero from './Hero.svelte';
+	import PricingSection from './PricingSection.svelte';
+	import SupportedBrowsersSection from './SupportedBrowsersSection.svelte';
 	import UspSection from './UspSection.svelte';
 	import VideoSection from './VideoSection.svelte';
 </script>
@@ -13,19 +16,29 @@
 	/>
 </svelte:head>
 
-<main class="landing-page">
+<main>
 	<Hero />
 
 	<VideoSection />
 
 	<UspSection />
+
+	<FaqSection />
+
+	<SupportedBrowsersSection />
+
+	<PricingSection />
 </main>
 
 <style>
-	.landing-page {
+	main {
 		display: flex;
 		flex-direction: column;
 		min-height: 100vh;
+	}
+
+	main :global(section) {
+		padding-inline: 2rem;
 	}
 
 	.landing-page :global(h1 strong) {

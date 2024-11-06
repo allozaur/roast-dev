@@ -1,5 +1,5 @@
 <script>
-	import Button from '$lib/components/Button.svelte';
+	import Cta from '$lib/components/Cta.svelte';
 </script>
 
 <section class="hero">
@@ -13,11 +13,10 @@
 			might actually make you chuckle 😁
 		</p>
 
-		<div class="cta">
-			<Button>Get it it from Chrome Web Store</Button>
-
-			<span>Pay once. Use forever.</span>
-		</div>
+		<Cta
+			label="Get the earlybird lifetime access just for $19 🤯"
+			subtitle="Pay once. Improve instantly. Use forever."
+		/>
 	</div>
 </section>
 
@@ -27,7 +26,7 @@
 		margin: auto;
 		display: grid;
 		place-items: center;
-		padding-block: 4rem;
+		padding-block: 4rem 6rem;
 	}
 
 	h1 {
@@ -52,7 +51,7 @@
 		line-height: 1.5;
 		max-width: 48rem;
 		text-align: center;
-		margin: 0;
+		margin: 0 0 3rem 0;
 	}
 
 	.cta {

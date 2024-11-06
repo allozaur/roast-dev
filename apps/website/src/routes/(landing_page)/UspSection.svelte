@@ -1,13 +1,13 @@
 <script>
-	import Button from '$lib/components/Button.svelte';
+	import Cta from '$lib/components/Cta.svelte';
+	import SectionHeadline from '$lib/components/SectionHeadline.svelte';
 </script>
 
 <section id="usp">
-	<div class="headline">
-		<h2>Code Reviews That Don't Suck</h2>
-
-		<p>Four ways Roast helps you ship better code and make your team happier</p>
-	</div>
+	<SectionHeadline
+		heading="Code Reviews That Don't Suck"
+		description="Four ways Roast helps you ship better code and make your team happier"
+	/>
 
 	<div class="row">
 		<img src="/jpg/catch_issues_early.jpg" alt="" />
@@ -69,10 +69,6 @@
 			witty feedback <strong>that actually makes you a better software engineer</strong>.
 		</h3>
 
-		<div class="cta">
-			<Button>Get full access for $9</Button>
-
-			<span>Pay once. Use forever.</span>
-		</div>
+		<Cta label="Get full access for $9" subtitle="Pay once. Use forever." />
 	</div>
 </section>

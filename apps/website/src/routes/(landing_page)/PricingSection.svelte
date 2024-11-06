@@ -1,0 +1,47 @@
+<script>
+	import Cta from '$lib/components/Cta.svelte';
+	import PriceCard from '$lib/components/PriceCard.svelte';
+	import SectionHeadline from '$lib/components/SectionHeadline.svelte';
+</script>
+
+<section id="pricing">
+	<SectionHeadline heading="Buy it once and get roasted for good" />
+
+	<div class="prices">
+		<PriceCard
+			title="One-year access"
+			price="$19"
+			discountPrice="$9"
+			description="Early-bird special: 52% off 🤑"
+			ctaLabel="Get 1-year access now"
+			ctaSubtitle="Pay once. Have full access for a 365 days."
+		/>
+
+		<PriceCard
+			title="Lifetime access"
+			price="$39"
+			discountPrice="$19"
+			description="Early-bird special: 61% off 🤑"
+			ctaLabel="Get lifetime access now"
+			ctaSubtitle="Pay once. Use forever ∞."
+		/>
+	</div>
+
+	<p>
+		Want to see Roast in action? Add the plugin to your browser and generate <strong
+			>5 roasts monthly for free</strong
+		>. Try it on your next PRs, and when ready, unlock unlimited access to perfect every PR you
+		submit!
+	</p>
+
+	<Cta label="Try Roast for free" subtitle="Free 5 roasts monthly" />
+</section>
+
+<style>
+	.prices {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 3rem;
+		justify-content: center;
+	}
+</style>
