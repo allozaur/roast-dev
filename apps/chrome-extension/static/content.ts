@@ -50,6 +50,7 @@ function createObserver() {
 
 // Initialize the observer
 const observer = createObserver();
+
 observer.observe(document.body, { childList: true, subtree: true });
 
 // Initial check for the button
