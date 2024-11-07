@@ -81,6 +81,7 @@
 				href={envPublic.PUBLIC_STRIPE_CHECKOUT_LINK_LIFETIME}
 				label="Add extension to your browser"
 				subtitle="Improve your PR game with AI roasts."
+				target="_blank"
 			/>
 		</Jumbotron>
 	</div>
@@ -90,6 +91,9 @@
 	section {
 		padding-block: 5rem 3rem;
 		padding-inline: 2rem;
+		@media (width <= 1024px) {
+			padding-block: 3rem 2rem;
+		}
 
 		:global(.section-headline) {
 			gap: 1.5rem;

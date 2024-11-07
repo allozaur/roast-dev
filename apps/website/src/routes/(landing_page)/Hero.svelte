@@ -16,7 +16,8 @@
 
 		<Cta
 			href={envPublic.PUBLIC_STRIPE_CHECKOUT_LINK_LIFETIME}
-			label="Get lifetime access for just $29 🤯"
+			target="_blank"
+			label="Get infinite access for just $29 🤯"
 			subtitle="Pay once. Improve instantly. Use forever."
 		/>
 	</div>
@@ -50,10 +51,12 @@
 			font-weight: inherit;
 		}
 		@media (width <= 1024px) {
-			font-size: min(3.5rem, 7.5vw);
+			font-size: min(min(3.75rem, 9vw));
 			line-height: 1.25;
+		}
 
-			br {
+		br {
+			@media (width <= 1024px) {
 				display: none;
 			}
 		}

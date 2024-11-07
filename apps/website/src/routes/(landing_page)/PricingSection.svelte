@@ -14,7 +14,7 @@
 			title="One-year access"
 			price="$39"
 			discountPrice="$9"
-			description="Early-bird special offer: 77% off 🤑"
+			description="Early-bird special offer:<br /> 77% off 🤑"
 			ctaLabel="Get 1-year access now"
 			ctaSubtitle="Pay once for 365 days of full access."
 		/>
@@ -25,7 +25,7 @@
 			title="Lifetime access"
 			price="$99"
 			discountPrice="$29"
-			description="Early-bird special offer: 71% off 🤑"
+			description="Early-bird special offer:<br /> 71% off 🤑"
 			ctaLabel="Get lifetime access now"
 			ctaSubtitle="Pay once to use it forever ∞."
 		/>
@@ -47,6 +47,10 @@
 		padding-inline: 2rem;
 		display: grid;
 		gap: 3rem;
+		@media (width <= 1024px) {
+				padding-block: 2rem 4rem;
+				gap: 2rem;
+			}
 
 		p {
 			font:

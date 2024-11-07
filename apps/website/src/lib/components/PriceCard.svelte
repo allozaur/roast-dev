@@ -40,10 +40,10 @@
 	</div>
 
 	<p>
-		{description}
+		{@html description}
 	</p>
 
-	<Cta href={ctaHref} label={ctaLabel} subtitle={ctaSubtitle} />
+	<Cta href={ctaHref} label={ctaLabel} subtitle={ctaSubtitle} target="_blank" />
 </div>
 
 <style>
@@ -68,6 +68,18 @@
 		border-radius: 1rem;
 		border: 2px solid #888;
 		text-align: center;
+		width: min(100%, 18rem);
+		position: relative;
+		/* 
+		&::before {
+			content: '';
+			position: absolute;
+			top: 0;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			background: white;
+		} */
 
 		@media (width <= 1024px) {
 			gap: 1.5rem;
@@ -82,9 +94,10 @@
 	}
 
 	h3 {
-		font-size: 2rem;
-		font-weight: 700;
-		line-height: 1;
+		font:
+			700 1.875rem/1 'SF UI Display',
+			-apple-system,
+			sans-serif;
 		margin: 0;
 	}
 

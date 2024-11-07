@@ -81,6 +81,9 @@
 		padding: 4rem 2rem;
 		text-align: center;
 		position: relative;
+		@media (width <= 1024px) {
+			padding-block: 3rem;
+		}
 
 		&::before {
 			content: '';
@@ -91,7 +94,10 @@
 			bottom: 0;
 			background: white;
 			z-index: -1;
-			@media (prefers-color-scheme: dark) {
+		}
+
+		@media (prefers-color-scheme: dark) {
+			&::before {
 				background: #0a0a0a;
 			}
 		}
@@ -99,6 +105,10 @@
 		.inner {
 			display: grid;
 			gap: 4rem;
+
+			@media (width <= 1024px) {
+				gap: 3rem;
+			}
 			max-width: var(--ui-boxed-width);
 			margin: auto;
 		}

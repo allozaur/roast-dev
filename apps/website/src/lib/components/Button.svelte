@@ -6,22 +6,27 @@
 		href?: string;
 		image?: Snippet;
 		onClick?: () => void;
+		target?: string;
 		type?: 'button' | 'submit' | 'reset' | null | undefined;
 	}
 
-	let { children, href, image, onClick, type }: ButtonProps = $props();
+	let { children, href, image, onClick, target, type }: ButtonProps = $props();
 </script>
 
 {#snippet inner()}
 	{#if children}
-		{@render children()}
+		<div class="gradient"></div>
+
+		<span class="label">
+			{@render children()}
+		</span>
 	{:else if image}
 		{@render image()}
 	{/if}
 {/snippet}
 
 {#if href}
-	<a class="button" class:image {href} onclick={onClick}>
+	<a class="button" class:image {href} onclick={onClick} {target}>
 		{@render inner()}
 	</a>
 {:else}
@@ -32,41 +37,47 @@
 
 <style>
 	.button {
+		background: transparent;
+		border: none;
+		appearance: none;
 		display: inline-flex;
 		cursor: pointer;
-		font-size: 1rem;
-		font-weight: 600;
 		position: relative;
-		transition: all 0.2s ease-out;
 		text-decoration: none;
+		padding: 0.125rem;
 
-		&:not(.image) {
-			background: var(--c-accent);
+		.gradient {
+			content: '';
+			position: absolute;
+			left: 0;
+			top: 0;
+			right: 0;
+			bottom: 0;
+			border-radius: 0.625rem;
+			background-image: linear-gradient(45deg, #b02600, #ff7f5b);
+			transition: all 0.2s ease-out;
+		}
+
+		&:hover {
+			.label {
+				background: var(--c-accent-75);
+			}
+
+			.gradient {
+				filter: brightness(1.25);
+			}
+		}
+
+		.label {
 			border-radius: 0.5rem;
 			border: none;
 			color: white;
 			padding: 0.875rem 1.125rem;
-
-			&::before {
-				content: '';
-				position: absolute;
-				left: -0.125rem;
-				top: -0.125rem;
-				right: -0.125rem;
-				bottom: -0.125rem;
-				border-radius: 0.5rem;
-				background-image: linear-gradient(27.5deg, #a51900, #ff8b77);
-				transition: all 0.2s ease-out;
-				z-index: -1;
-			}
-
-			&:hover {
-				background: var(--c-accent-95);
-
-				&::before {
-					filter: brightness(1.25);
-				}
-			}
+			background: var(--c-accent);
+			z-index: 1;
+			font-size: 1rem;
+			font-weight: 600;
+			transition: all 0.2s ease-out;
 		}
 
 		&:is(.image) {

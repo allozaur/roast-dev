@@ -6,13 +6,14 @@
 		onClick?: () => void;
 		href?: string;
 		subtitle: string;
+		target?: string;
 	}
 
-	let { href, label, onClick, subtitle }: CtaWithSubtitleProps = $props();
+	let { href, label, onClick, subtitle, target }: CtaWithSubtitleProps = $props();
 </script>
 
 <div class="cta">
-	<Button {onClick} {href}>
+	<Button {onClick} {href} {target}>
 		{label}
 	</Button>
 
@@ -28,6 +29,7 @@
 		span {
 			color: #888;
 			font-size: 0.875rem;
+			font-weight: 600;
 		}
 	}
 </style>

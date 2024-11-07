@@ -33,6 +33,10 @@
 <style>
 	details {
 		margin-bottom: 2rem;
+		list-style: none;
+		::-webkit-details-marker {
+			display: none;
+		}
 
 		@media (width <= 768px) {
 			margin-bottom: 1.75rem;
@@ -43,7 +47,6 @@
 		color: var(--c-text-light);
 		display: inline-flex;
 		cursor: pointer;
-		list-style: none;
 		user-select: none;
 		transition: all 0.2s ease-out;
 

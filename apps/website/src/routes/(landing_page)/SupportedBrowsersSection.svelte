@@ -30,6 +30,9 @@
 		@media (prefers-color-scheme: dark) {
 			background: #0a0a0a;
 		}
+		@media (width <= 1024px) {
+			padding-block: 2rem;
+		}
 	}
 
 	.logos {

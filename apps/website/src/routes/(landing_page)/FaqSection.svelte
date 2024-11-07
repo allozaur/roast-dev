@@ -28,10 +28,16 @@
 			background: #0a0a0a;
 		}
 		padding: 4rem 2rem;
+		@media (width <= 1024px) {
+			padding-block: 3rem;
+		}
 
 		.inner {
 			display: grid;
 			gap: 3rem;
+			@media (width <= 1024px) {
+				gap: 2rem;
+			}
 			max-width: 48rem;
 			width: 100%;
 			margin: auto;

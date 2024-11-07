@@ -33,12 +33,14 @@
 		:global(h3) {
 			font:
 				500 1.375rem/1.5 'SF UI Display',
+				-apple-system,
 				sans-serif;
 			margin: 0;
 
 			@media (width > 1024px) {
 				font:
 					600 2rem/1.5 'SF UI Display',
+					-apple-system,
 					sans-serif;
 			}
 

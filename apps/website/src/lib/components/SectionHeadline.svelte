@@ -32,9 +32,9 @@
 
 	h2 {
 		font:
-			600 2.125rem/1.5 'SF UI Display',
+			600 1.625rem/1.5 'SF UI Display',
 			-apple-system,
-			sans-serif;
+			sans-serif !important;
 		@media (width > 1024px) {
 			font:
 				600 3rem/1.5 'SF UI Display',
