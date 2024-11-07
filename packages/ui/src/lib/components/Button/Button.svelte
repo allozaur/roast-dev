@@ -40,7 +40,7 @@
 		background: transparent;
 		border: none;
 		appearance: none;
-		display: inline-flex;
+		display: inline-grid;
 		cursor: pointer;
 		position: relative;
 		text-decoration: none;
@@ -75,8 +75,11 @@
 			padding: 0.875rem 1.125rem;
 			background: var(--c-accent);
 			z-index: 1;
-			font-size: 1rem;
-			font-weight: 600;
+			font:
+				500 1rem/1 'SF UI Display',
+				-apple-system,
+				sans-serif;
+			letter-spacing: 0;
 			transition: all 0.2s ease-out;
 		}
 

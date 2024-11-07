@@ -30,7 +30,8 @@
 		".": {
 			"types": "./dist/index.d.ts",
 			"svelte": "./dist/index.js"
-		}
+		},
+		"./styles/index.css": "./dist/styles/index.css"
 	},
 	"peerDependencies": {
 		"svelte": "^5.0.0"

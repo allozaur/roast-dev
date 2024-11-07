@@ -1,11 +1,11 @@
 <script>
-	import { FeatureCard } from '@roast-dev/ui';
-	import Icon from '$lib/components/Icon.svelte';
+	import SectionHeadline from '$lib/components/SectionHeadline.svelte';
+	import { FeatureCard, Icon } from '@roast-dev/ui';
 </script>
 
 <section class="features-section">
 	<div class="inner">
-		<h2>See <strong>Roast</strong> plugin in action</h2>
+		<SectionHeadline heading="See <strong>Roast</strong> plugin in action" />
 
 		<video src="" style="background: #000; width: 100%; aspect-ratio: 16/9;"></video>
 
@@ -123,16 +123,8 @@
 		}
 	}
 
-	h2 {
-		font:
-			600 2rem/1.5 'SF UI Display',
-			-apple-system,
-			sans-serif;
-		margin: 0;
-
-		strong {
-			font-weight: inherit;
-			color: var(--c-accent);
-		}
+	.features-section :global(h2 strong) {
+		font-weight: inherit;
+		color: var(--c-accent);
 	}
 </style>

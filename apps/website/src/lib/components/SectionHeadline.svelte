@@ -18,15 +18,14 @@
 </div>
 
 <style>
-	div {
+	.section-headline {
 		display: grid;
 		gap: 1rem;
 		place-items: center;
 		text-align: center;
 	}
 
-	h2,
-	p {
+	:is(h2, p) {
 		margin: 0;
 	}
 
@@ -34,7 +33,7 @@
 		font:
 			600 1.625rem/1.5 'SF UI Display',
 			-apple-system,
-			sans-serif !important;
+			sans-serif;
 		@media (width > 1024px) {
 			font:
 				600 3rem/1.5 'SF UI Display',

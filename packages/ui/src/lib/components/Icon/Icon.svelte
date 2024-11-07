@@ -5,9 +5,9 @@
 		name?: string;
 	}
 
-	const assetsPath = '../assets/svg/icons';
+	const assetsPath = '../../assets/svg/icons/';
 
-	const assets = import.meta.glob('../assets/svg/icons/*.svg', {
+	const assets = import.meta.glob('../../assets/svg/icons/*.svg', {
 		query: '?raw',
 		import: 'default',
 		eager: true

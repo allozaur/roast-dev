@@ -5,11 +5,11 @@
 		name?: string;
 	}
 
-	let { assets, assetsPath, name = 'moovboard' }: LogoProps = $props();
+	let { assets, assetsPath, name }: LogoProps = $props();
 </script>
 
 <div class="svg-item">
-	{@html assets[`${assetsPath}/${name}.svg`]}
+	{@html assets[`${assetsPath}${name}.svg`]}
 </div>
 
 <style lang="postcss">
