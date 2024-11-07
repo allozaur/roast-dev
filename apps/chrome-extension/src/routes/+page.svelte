@@ -1,59 +1,41 @@
 <script>
-	import '@roast-dev/ui/styles/index.css';
 	import { Button, Icon } from '@roast-dev/ui';
+	import preRoastPlaceholders from '$lib/pre-roast-placeholders';
+	import { onMount } from 'svelte';
+
+	let preRoastPlaceholderText = $state('');
+
+	onMount(() => {
+		preRoastPlaceholderText =
+			preRoastPlaceholders[Math.floor(Math.random() * preRoastPlaceholders.length)];
+	});
 </script>
-
-<svelte:head>
-	<style>
-		body {
-			min-width: 40rem;
-		}
-	</style>
-</svelte:head>
-
-<header>
-	<div class="logo">
-		🧯 roast<span>.dev</span>
-	</div>
-
-	<button>
-		<Icon name="settings" --stroke="var(--c-text-light)" />
-	</button>
-</header>
 
 <Button>Roast this Pull Request 🔥</Button>
 
+<div class="roast-content">
+	<span class="placeholder">
+		{preRoastPlaceholderText}
+	</span>
+</div>
+
 <style>
-	header {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-	}
-	.logo {
-		color: inherit;
-		text-decoration: none;
-		font-size: 1.75rem;
-		font-weight: 700;
-		line-height: 1;
-		font-family:
-			'SF UI Display',
-			-apple-system,
-			BlinkMacSystemFont,
-			'Segoe UI',
-			Roboto,
-			'Helvetica Neue',
-			Arial,
-			sans-serif;
+	.roast-content {
+		display: grid;
 
-		span {
-			color: var(--c-accent);
+		.placeholder {
+			display: grid;
+			place-items: center;
+			text-align: center;
+			background: #222;
+			font-size: 1.25rem;
+			color: var(--c-text-light);
+			font-weight: 500;
+			@media (prefers-color-scheme: light) {
+				background: #eaeaea;
+			}
+			border-radius: 1rem;
+			min-height: 20rem;
 		}
-	}
-
-	button {
-		appearance: none;
-		background: none;
-		border: none;
-		display: flex;
 	}
 </style>
