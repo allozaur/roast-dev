@@ -1,4 +1,5 @@
 <script>
+	import { env as envPublic } from '$env/dynamic/public';
 	import Cta from '$lib/components/Cta.svelte';
 	import PriceCard from '$lib/components/PriceCard.svelte';
 	import SectionHeadline from '$lib/components/SectionHeadline.svelte';
@@ -9,22 +10,24 @@
 
 	<div class="prices">
 		<PriceCard
+			ctaHref={envPublic.PUBLIC_STRIPE_CHECKOUT_LINK_LIFETIME}
 			title="One-year access"
 			price="$39"
 			discountPrice="$9"
-			description="Early-bird special: 52% off 🤑"
+			description="Early-bird special offer: 77% off 🤑"
 			ctaLabel="Get 1-year access now"
-			ctaSubtitle="Pay once. Have full access for a 365 days."
+			ctaSubtitle="Pay once for 365 days of full access."
 		/>
 
 		<PriceCard
+			ctaHref={envPublic.PUBLIC_STRIPE_CHECKOUT_LINK_1_YEAR}
 			isHighlighted
 			title="Lifetime access"
 			price="$99"
 			discountPrice="$29"
-			description="Early-bird special: 61% off 🤑"
+			description="Early-bird special offer: 71% off 🤑"
 			ctaLabel="Get lifetime access now"
-			ctaSubtitle="Pay once. Use forever ∞."
+			ctaSubtitle="Pay once to use it forever ∞."
 		/>
 	</div>
 

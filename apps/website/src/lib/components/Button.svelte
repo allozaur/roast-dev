@@ -38,6 +38,7 @@
 		font-weight: 600;
 		position: relative;
 		transition: all 0.2s ease-out;
+		text-decoration: none;
 
 		&:not(.image) {
 			background: var(--c-accent);

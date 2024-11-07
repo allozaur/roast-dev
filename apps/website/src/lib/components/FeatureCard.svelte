@@ -52,6 +52,7 @@
 	:global(.feature-card h3) {
 		font:
 			600 1.625rem/1.25 'SF UI Display',
+			-apple-system,
 			sans-serif;
 		font-weight: 600;
 		letter-spacing: 0;
@@ -60,6 +61,7 @@
 	:global(.feature-card p) {
 		font:
 			400 1.125rem/1.5 'SF UI Display',
+			-apple-system,
 			sans-serif;
 		letter-spacing: 0.01rem;
 

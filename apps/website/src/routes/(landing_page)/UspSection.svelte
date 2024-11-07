@@ -1,4 +1,5 @@
 <script>
+	import { env as envPublic } from '$env/dynamic/public';
 	import Cta from '$lib/components/Cta.svelte';
 	import Jumbotron from '$lib/components/Jumbotron.svelte';
 	import SectionHeadline from '$lib/components/SectionHeadline.svelte';
@@ -18,9 +19,8 @@
 
 			<p>
 				Save yourself from embarrassing code reviews. Spot security vulnerabilities, performance
-				issues, and questionable code choices before your reviewer has to point them out. <strong
-					>Ship better code from the start, not after three review rounds.</strong
-				>
+				issues, and questionable code choices before your reviewer has to point them out.
+				<strong>Ship better code from the start, not after three review rounds.</strong>
 			</p>
 		</div>
 	</div>
@@ -78,8 +78,9 @@
 			</h3>
 
 			<Cta
-				label="Get lifetime access for just $19 🤩"
-				subtitle="Pay once. Improve instantly. Use forever."
+				href={envPublic.PUBLIC_STRIPE_CHECKOUT_LINK_LIFETIME}
+				label="Add extension to your browser"
+				subtitle="Improve your PR game with AI roasts."
 			/>
 		</Jumbotron>
 	</div>
@@ -91,7 +92,7 @@
 		padding-inline: 2rem;
 
 		:global(.section-headline) {
-			gap: 0.5rem;
+			gap: 1.5rem;
 			padding-bottom: 4rem;
 			@media (width > 1024px) {
 				padding-bottom: 2rem;
@@ -102,17 +103,13 @@
 			color: var(--c-accent);
 			font:
 				700 1.875rem/1.25 'SF UI Display',
+				-apple-system,
 				sans-serif !important;
 
 			@media (width > 1024px) {
 				font:
-					700 2.25rem/1.25 'SF UI Display',
-					sans-serif !important;
-			}
-
-			@media (width > 1024px) {
-				font:
 					700 3rem/1.25 'SF UI Display',
+					-apple-system,
 					sans-serif !important;
 			}
 		}
@@ -120,10 +117,12 @@
 		:global(.section-headline p) {
 			font:
 				400 1.125rem/1.5 'SF UI Display',
+				-apple-system,
 				sans-serif;
 			@media (width > 1024px) {
 				font:
-					700 1.5rem/1.25 'SF UI Display',
+					500 1.5rem/1.25 'SF UI Display',
+					-apple-system,
 					sans-serif !important;
 			}
 		}
@@ -155,7 +154,6 @@
 		.text {
 			text-align: left;
 			padding-block: 2rem;
-			width: 100%;
 
 			@media (width > 1024px) {
 				padding: 5rem;
@@ -168,10 +166,12 @@
 			h3 {
 				font:
 					700 1.625rem/1.25 'SF UI Display',
+					-apple-system,
 					sans-serif;
 				@media (width > 1024px) {
 					font:
 						700 2.5rem/1.25 'SF UI Display',
+						-apple-system,
 						sans-serif;
 				}
 

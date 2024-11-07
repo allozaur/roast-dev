@@ -1,4 +1,5 @@
 <script>
+	import { env as envPublic } from '$env/dynamic/public';
 	import Cta from '$lib/components/Cta.svelte';
 </script>
 
@@ -14,7 +15,8 @@
 		</p>
 
 		<Cta
-			label="Get lifetime access for just $19 🤯"
+			href={envPublic.PUBLIC_STRIPE_CHECKOUT_LINK_LIFETIME}
+			label="Get lifetime access for just $29 🤯"
 			subtitle="Pay once. Improve instantly. Use forever."
 		/>
 	</div>

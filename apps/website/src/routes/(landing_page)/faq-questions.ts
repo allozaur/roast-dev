@@ -42,7 +42,7 @@ Think of it like copying code into ChatGPT, but automated and optimized for code
 	},
 	{
 		question: 'Why is it so cheap?',
-		answer: `We believe good developer tools should be accessible. The early-bird prices of $9 for 1-year access and $19 for lifetime access is our way of building a strong user base.`
+		answer: `We believe good developer tools should be accessible. The early-bird prices of $9 for 1-year access and $29 for lifetime access is our way of building a strong user base.`
 	},
 	{
 		question: 'What about API costs?',

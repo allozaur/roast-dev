@@ -20,18 +20,19 @@
 		border: 2px solid var(--c-accent);
 		display: grid;
 		place-items: center;
-		gap: 2rem;
+		gap: 1.25rem;
 		text-align: center;
 		max-width: var(--ui-boxed-width);
 
 		padding: 1.5rem;
 		@media (width > 1024px) {
 			padding: 4rem;
+			gap: 2rem;
 		}
 
 		:global(h3) {
 			font:
-				600 1.5rem/1.5 'SF UI Display',
+				500 1.375rem/1.5 'SF UI Display',
 				sans-serif;
 			margin: 0;
 

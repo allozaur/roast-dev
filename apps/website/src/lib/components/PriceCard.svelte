@@ -7,6 +7,7 @@
 		discountPrice: string;
 		description: string;
 		isHighlighted?: boolean;
+		ctaHref: string;
 		ctaLabel: string;
 		ctaSubtitle: string;
 	}
@@ -17,6 +18,7 @@
 		price,
 		discountPrice,
 		description,
+		ctaHref,
 		ctaLabel,
 		ctaSubtitle
 	}: PriceCardProps = $props();
@@ -41,7 +43,7 @@
 		{description}
 	</p>
 
-	<Cta label={ctaLabel} subtitle={ctaSubtitle} />
+	<Cta href={ctaHref} label={ctaLabel} subtitle={ctaSubtitle} />
 </div>
 
 <style>
@@ -61,11 +63,16 @@
 		color: #0a0a0a;
 		display: grid;
 		place-items: center;
-		gap: 1.5rem;
-		padding: 3rem;
+		gap: 2.5rem;
+		padding: 4rem 3rem;
 		border-radius: 1rem;
 		border: 2px solid #888;
 		text-align: center;
+
+		@media (width <= 1024px) {
+			gap: 1.5rem;
+			padding: 2.5rem 2rem;
+		}
 
 		&.is-highlighted {
 			animation: gradient 2.5s infinite;
@@ -107,7 +114,7 @@
 	p {
 		color: #238636;
 		font:
-			600 1.25rem/1.5 'SF UI Display',
+			600 1.125rem/1.5 'SF UI Display',
 			-apple-system,
 			sans-serif;
 		letter-spacing: 0;
