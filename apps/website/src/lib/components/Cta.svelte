@@ -29,7 +29,7 @@
 		span {
 			color: #888;
 			font-size: 0.875rem;
-			font-weight: 600;
+			font-weight: 500;
 		}
 	}
 </style>

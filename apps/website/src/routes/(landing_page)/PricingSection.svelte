@@ -10,7 +10,7 @@
 
 	<div class="prices">
 		<PriceCard
-			ctaHref={envPublic.PUBLIC_STRIPE_CHECKOUT_LINK_LIFETIME}
+			ctaHref={envPublic.PUBLIC_STRIPE_CHECKOUT_LINK_1_YEAR}
 			title="One-year access"
 			price="$39"
 			discountPrice="$9"
@@ -20,7 +20,7 @@
 		/>
 
 		<PriceCard
-			ctaHref={envPublic.PUBLIC_STRIPE_CHECKOUT_LINK_1_YEAR}
+			ctaHref={envPublic.PUBLIC_STRIPE_CHECKOUT_LINK_LIFETIME}
 			isHighlighted
 			title="Lifetime access"
 			price="$99"
