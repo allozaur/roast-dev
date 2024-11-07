@@ -1,5 +1,5 @@
 <script lang="ts">
-	import Cta from './Cta.svelte';
+	import Cta from '../Cta/Cta.svelte';
 
 	interface PriceCardProps {
 		title: string;

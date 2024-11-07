@@ -1,6 +1,5 @@
 <script>
-	import Accordion from '$lib/components/Accordion.svelte';
-	import AccordionItem from '$lib/components/AccordionItem.svelte';
+	import { Accordion, AccordionItem } from '@roast-dev/ui';
 	import SectionHeadline from '$lib/components/SectionHeadline.svelte';
 	import faqQuestions from './faq-questions';
 </script>

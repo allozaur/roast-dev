@@ -1,6 +1,6 @@
 <script>
+	import { FeatureCard } from '@roast-dev/ui';
 	import Icon from '$lib/components/Icon.svelte';
-	import FeatureCard from '../../lib/components/FeatureCard.svelte';
 </script>
 
 <section class="features-section">

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import clickOutside from '$lib/utils/click-outside';
+	import { clickOutside } from '@roast-dev/utils';
 	import type { Snippet } from 'svelte';
 
 	interface AccordionItemProps {

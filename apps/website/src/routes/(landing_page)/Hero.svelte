@@ -1,6 +1,6 @@
 <script>
 	import { env as envPublic } from '$env/dynamic/public';
-	import Cta from '$lib/components/Cta.svelte';
+	import { Cta } from '@roast-dev/ui';
 </script>
 
 <section class="hero">

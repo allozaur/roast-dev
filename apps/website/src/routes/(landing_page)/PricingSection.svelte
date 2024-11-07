@@ -1,7 +1,6 @@
 <script>
 	import { env as envPublic } from '$env/dynamic/public';
-	import Cta from '$lib/components/Cta.svelte';
-	import PriceCard from '$lib/components/PriceCard.svelte';
+	import { Cta, PriceCard } from '@roast-dev/ui';
 	import SectionHeadline from '$lib/components/SectionHeadline.svelte';
 </script>
 
@@ -48,18 +47,21 @@
 		display: grid;
 		gap: 3rem;
 		@media (width <= 1024px) {
-				padding-block: 2rem 4rem;
-				gap: 2rem;
-			}
+			padding-block: 2rem 4rem;
+			gap: 2rem;
+		}
 
 		p {
 			font:
 				1.125rem/1.5 'SF UI Display',
+				-apple-system,
 				sans-serif;
 			margin: auto;
 			@media (width > 1024px) {
-			font:
-				1.25rem/1.5 'SF UI Display',
+				font:
+					1.25rem/1.5 'SF UI Display',
+					-apple-system,
+					sans-serif;
 				text-align: center;
 			}
 

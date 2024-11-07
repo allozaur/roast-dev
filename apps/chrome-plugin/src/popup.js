@@ -13,20 +13,6 @@ Overall, try not to be too verbose, but take your time with the roasting.`;
 
 const ROASTS_STORAGE_KEY = 'savedRoasts';
 
-async function saveRoast(prTitle, roastContent) {
-  const roasts = await loadRoasts();
-  const newRoast = {
-    id: Date.now(),
-    title: prTitle || 'Untitled PR',
-    content: roastContent,
-    date: new Date().toISOString()
-  };
-
-  roasts.unshift(newRoast);
-  await chrome.storage.local.set({ [ROASTS_STORAGE_KEY]: roasts });
-  return newRoast;
-}
-
 async function loadRoasts() {
   const result = await chrome.storage.local.get([ROASTS_STORAGE_KEY]);
   return result[ROASTS_STORAGE_KEY] || [];

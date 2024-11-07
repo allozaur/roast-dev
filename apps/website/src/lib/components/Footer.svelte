@@ -11,11 +11,13 @@
 		</menu>
 	</nav>
 
-	<span class="signature"
-		>Made with ❤️ by <a href="https://bento.me/allozaur" target="_blank">@allozaur</a></span
-	>
+	<span class="signature">
+		Made with ❤️ by <a href="https://bento.me/allozaur" target="_blank">@allozaur</a>
+	</span>
 
-	<span class="copyright">© {new Date().getFullYear()} GrygierCo s. c.</span>
+	<span class="copyright">
+		© {new Date().getFullYear()} GrygierCo s. c.
+	</span>
 </footer>
 
 <style>

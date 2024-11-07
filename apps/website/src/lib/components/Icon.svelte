@@ -1,9 +1,13 @@
 <script lang="ts">
+	import { SvgItem } from '@roast-dev/ui';
+
 	interface IconProps {
-		name: string;
+		name?: string;
 	}
 
-	const icons = import.meta.glob('../assets/svg/icons/*.svg', {
+	const assetsPath = '../assets/svg/icons';
+
+	const assets = import.meta.glob('../assets/svg/icons/*.svg', {
 		query: '?raw',
 		import: 'default',
 		eager: true
@@ -12,20 +16,13 @@
 	let { name }: IconProps = $props();
 </script>
 
-<div class="icon" data-testid="icon" role="none">
-	{@html icons[`../assets/svg/icons/${name}.svg`]}
+<div class="icon">
+	<SvgItem {assets} {assetsPath} {name} />
 </div>
 
 <style lang="postcss">
 	.icon {
 		display: contents;
-		font-size: var(--size, 1rem);
-		color: inherit;
-	}
-
-	.icon :global(svg) {
-		height: 1em;
-		width: auto;
 	}
 
 	.icon :global(svg path) {

@@ -3,8 +3,8 @@
 	import FaqSection from './FaqSection.svelte';
 	import Hero from './Hero.svelte';
 	import PricingSection from './PricingSection.svelte';
-	import SupportedBrowsersSection from './SupportedBrowsersSection.svelte';
-	import TestimonialsSection from './TestimonialsSection.svelte';
+	// import SupportedBrowsersSection from './SupportedBrowsersSection.svelte';
+	// import TestimonialsSection from './TestimonialsSection.svelte';
 	import UspSection from './UspSection.svelte';
 	import FeaturesSection from './FeaturesSection.svelte';
 </script>
@@ -28,9 +28,9 @@
 
 	<PricingSection />
 
-	<FaqSection />
-
 	<!-- <TestimonialsSection /> -->
+
+	<FaqSection />
 </main>
 
 <style>

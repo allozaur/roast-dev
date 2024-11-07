@@ -1,29 +1,27 @@
 <script lang="ts">
+	import { SvgItem } from '@roast-dev/ui';
+
 	interface LogoProps {
 		name?: string;
 	}
 
-	const icons = import.meta.glob('../assets/svg/logos/*.svg', {
+	const assetsPath = '../assets/svg/logos';
+
+	const assets = import.meta.glob('../assets/svg/logos/*.svg', {
 		query: '?raw',
 		import: 'default',
 		eager: true
 	});
 
-	let { name = 'moovboard' }: LogoProps = $props();
+	let { name }: LogoProps = $props();
 </script>
 
-<div class="logo" data-testid="icon" role="none">
-	{@html icons[`../assets/svg/logos/${name}.svg`]}
+<div class="logo">
+	<SvgItem {assets} {assetsPath} {name} />
 </div>
 
 <style lang="postcss">
 	.logo {
 		display: contents;
-		font-size: var(--size, 2rem);
-	}
-
-	.logo :global(svg) {
-		height: 1em;
-		width: auto;
 	}
 </style>

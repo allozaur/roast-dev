@@ -1,7 +1,6 @@
 <script>
+	import { Cta, Jumbotron } from '@roast-dev/ui';
 	import { env as envPublic } from '$env/dynamic/public';
-	import Cta from '$lib/components/Cta.svelte';
-	import Jumbotron from '$lib/components/Jumbotron.svelte';
 	import SectionHeadline from '$lib/components/SectionHeadline.svelte';
 </script>
 
