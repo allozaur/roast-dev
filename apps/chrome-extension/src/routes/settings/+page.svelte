@@ -51,10 +51,6 @@
 
 <style>
 	form {
-		background: white;
-		padding: 1.25rem;
-		border-radius: 1rem;
-		border: 2px solid #ccc;
 		display: grid;
 		gap: 1.25rem;
 	}
