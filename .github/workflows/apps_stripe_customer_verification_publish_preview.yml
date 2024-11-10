@@ -47,9 +47,6 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
-      - name: Build apps & packages
-        run: pnpm build
-
       - name: Publish to Cloudflare Workers
         uses: cloudflare/wrangler-action@v3
         with:
