@@ -9,11 +9,9 @@ compatibility_flags = ["nodejs_compat"]
 
 [env.production.vars]
 name = "stripe-customer-verification-production"
-STRIPE_SECRET_KEY = ""
 
 [env.preview.vars]
 name = "stripe-customer-verification-preview"
-STRIPE_SECRET_KEY = ""
 
 [observability]
 enabled = true
