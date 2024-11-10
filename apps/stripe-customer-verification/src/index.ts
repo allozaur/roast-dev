@@ -20,7 +20,6 @@ async function handleOptions(request: Request): Promise<Response> {
 		request.headers.get('Access-Control-Request-Method') !== null &&
 		request.headers.get('Access-Control-Request-Headers') !== null
 	) {
-		// Handle CORS preflight requests.
 		return new Response(null, {
 			headers: {
 				...corsHeaders,
@@ -28,7 +27,6 @@ async function handleOptions(request: Request): Promise<Response> {
 			},
 		});
 	} else {
-		// Handle standard OPTIONS request.
 		return new Response(null, {
 			headers: {
 				Allow: 'GET, HEAD, POST, OPTIONS',
@@ -62,59 +60,30 @@ export default {
 
 			const stripe = new Stripe(env.STRIPE_SECRET_KEY);
 
-			// First, list all payments using payment_intents.list()
-			const paymentIntents = await stripe.paymentIntents.list({
+			const { data } = await stripe.charges.list({
 				limit: 100,
 			});
 
-			const purchases = [
-				...paymentIntents.data.map((payment) => ({
-					id: payment.id,
-					type: 'payment_intent',
-					amount: payment.amount / 100,
-					currency: payment.currency,
-					status: payment.status,
-					created: new Date(payment.created * 1000).toISOString(),
-					description: payment.description,
-					receipt_email: payment.receipt_email,
-					metadata: payment.metadata,
-				})),
-			];
+			const charge = data.find((charge) => charge.receipt_email === body.email && charge.paid);
 
-			// Sort purchases by date (newest first)
-			purchases.sort((a, b) => new Date(b.created).getTime() - new Date(a.created).getTime());
-
-			if (purchases.length === 0) {
-				return new Response(
-					JSON.stringify({
-						success: false,
-						message: 'No purchases found for this email',
-						purchases: [],
-					}),
-					{
-						status: 404,
-						headers: { 'Content-Type': 'application/json' },
-					},
-				);
-			}
-
-			return new Response(
-				JSON.stringify({
-					success: true,
-					email: body.email,
-					total_purchases: purchases.length,
-					total_amount: purchases.reduce((sum, p) => sum + p.amount, 0),
-					purchases,
-				}),
-				{
+			if (charge) {
+				return new Response(JSON.stringify({ success: true, chargeId: charge.id }), {
 					headers: {
 						'Content-Type': 'application/json',
 						...corsHeaders,
 					},
-				},
-			);
+				});
+			} else {
+				return new Response(JSON.stringify({ success: false, message: 'No charge found' }), {
+					headers: {
+						'Content-Type': 'application/json',
+						...corsHeaders,
+					},
+				});
+			}
 		} catch (error) {
 			console.error('Error:', error);
+
 			return new Response(
 				JSON.stringify({
 					success: false,
