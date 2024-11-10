@@ -11,7 +11,7 @@ jobs:
     name: Deploy Preview
     defaults:
       run:
-        working-directory: apps/stripe-verify-worker
+        working-directory: apps/stripe-customer-verification
 
     steps:
       - name: Checkout commit
