@@ -1,5 +1,6 @@
 #:schema node_modules/wrangler/config-schema.json
 
+account_id = "9aad5614f4d224f93ac5d7a862223494"
 name = "stripe-customer-verification"
 main = "src/index.ts"
 
