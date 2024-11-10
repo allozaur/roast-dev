@@ -11,6 +11,18 @@
         ".env*"
       ],
       "outputs": [
+        ".svelte-kit/**"
+      ]
+    },
+    "build-extension": {
+      "dependsOn": [
+        "^build"
+      ],
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        "build/**"
+      ],
+      "outputs": [
         ".next/**",
         "!.next/cache/**"
       ]

@@ -3,9 +3,10 @@
 	import { PUBLIC_STRIPE_CUSTOMER_VERIFICATION_WORKER_URL } from '$env/static/public';
 	import { onMount } from 'svelte';
 	import chargeId from '$lib/stores/charge-id';
+	import llmChoice from '$lib/stores/llm-choice';
+	import llmApiKey from '$lib/stores/llm-api-key';
 
 	let licenseEmail = $state('');
-	let llmChoice = $state('claude-3.5-sonnet');
 
 	async function activateLicense(e: SubmitEvent) {
 		e.preventDefault();
@@ -33,38 +34,52 @@
 		}
 	}
 
+	async function chooseLanguageModel(e: SubmitEvent) {
+		e.preventDefault();
+
+		if ($llmChoice) localStorage.setItem('roastLlmChoice', $llmChoice);
+		if ($llmApiKey) localStorage.setItem('roastLlmApiKey', $llmApiKey);
+	}
+
 	onMount(() => {
 		$chargeId = localStorage.getItem('roastChargeId');
+		$llmApiKey = localStorage.getItem('roastLlmApiKey');
+		$llmChoice = localStorage.getItem('roastLlmChoice') ?? 'claude-3.5-sonnet';
 	});
 </script>
 
-<form action="">
+<form onsubmit={chooseLanguageModel}>
 	<fieldset>
 		<legend>Language Model</legend>
 
 		<label>
 			Selected model
 
-			<select name="llm-choice" bind:value={llmChoice}>
+			<select name="llm-choice" bind:value={$llmChoice}>
 				<option value="claude-3.5-sonnet"> Claude 3.5 Sonnet </option>
 
 				<option value="gpt-4o"> GPT-4o </option>
 
-				<option value="gemini"> Gemini </option>
+				<option value="gemini-1.5"> Gemini 1.5 </option>
 			</select>
 		</label>
 
 		<label class="api-key-field">
 			<span>
-				{llmChoice === 'claude-3.5-sonnet'
+				{$llmChoice === 'claude-3.5-sonnet'
 					? 'Anthropic'
-					: llmChoice === 'gemini'
+					: $llmChoice === 'gemini-1.5'
 						? 'Google'
 						: 'OpenAI'}
 				API Key
 			</span>
 
-			<input type="text" name="api_key" placeholder="Enter your API key here" />
+			<input
+				type="text"
+				name="api_key"
+				placeholder="Enter your API key here"
+				bind:value={$llmApiKey}
+			/>
 
 			<Button --background="var(--c-success)" size="sm" type="submit">Save key</Button>
 
@@ -76,25 +91,24 @@
 	</fieldset>
 </form>
 
-{#if $chargeId}
-	<div class="active-license">
-		<p>Your license is active!. You have full access to Roast.</p>
+<form id="check-license-form" onsubmit={activateLicense}>
+	<fieldset>
+		<legend>Billing & License</legend>
+		{#if $chargeId}
+			<div class="active-license">
+				<p>Your license is active!. You have full access to Roast.</p>
 
-		<Button
-			size="sm"
-			onClick={() => {
-				$chargeId = null;
-				localStorage.removeItem('roastChargeId');
-			}}
-		>
-			Deactivate license
-		</Button>
-	</div>
-{:else}
-	<form id="check-license-form" onsubmit={activateLicense}>
-		<fieldset>
-			<legend>Unlock Full Access</legend>
-
+				<Button
+					size="sm"
+					onClick={() => {
+						$chargeId = null;
+						localStorage.removeItem('roastChargeId');
+					}}
+				>
+					Deactivate license
+				</Button>
+			</div>
+		{:else}
 			<label>
 				Your Email Address
 
@@ -105,11 +119,11 @@
 					bind:value={licenseEmail}
 				/>
 			</label>
-		</fieldset>
 
-		<Button type="submit">Save license</Button>
-	</form>
-{/if}
+			<Button type="submit">Save license</Button>
+		{/if}
+	</fieldset>
+</form>
 
 <style>
 	form {
@@ -164,8 +178,8 @@
 		align-items: center;
 		display: flex;
 		justify-content: space-between;
-		padding: 1.5rem;
-		border: 2px solid var(--c-success);
+		padding: 1rem;
+		border: 2px solid var(--c-text-light);
 		border-radius: 1rem;
 	}
 </style>
