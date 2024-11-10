@@ -10,7 +10,7 @@ interface RequestBody {
 
 export default {
 	async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
-		if (request.method !== 'POST') {
+		if (request.method !== 'POST' && request.method !== 'OPTIONS') {
 			return new Response('Method not allowed', { status: 405 });
 		}
 
