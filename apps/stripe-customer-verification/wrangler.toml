@@ -1,0 +1,18 @@
+#:schema node_modules/wrangler/config-schema.json
+
+name = "stripe-customer-verification"
+main = "src/index.ts"
+
+compatibility_date = "2024-10-22"
+compatibility_flags = ["nodejs_compat"]
+
+[env.production.vars]
+name = "stripe-customer-verification-production"
+STRIPE_SECRET_KEY = ""
+
+[env.preview.vars]
+name = "stripe-customer-verification-preview"
+STRIPE_SECRET_KEY = ""
+
+[observability]
+enabled = true
