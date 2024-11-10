@@ -8,10 +8,26 @@ interface RequestBody {
 	email: string;
 }
 
+const corsHeaders = {
+	'Access-Control-Allow-Origin': '*',
+	'Access-Control-Allow-Methods': 'GET,HEAD,POST,OPTIONS',
+	'Access-Control-Max-Age': '86400',
+};
+
 export default {
 	async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
-		if (request.method !== 'POST' && request.method !== 'OPTIONS') {
-			return new Response('Method not allowed', { status: 405 });
+		if (request.method === 'OPTIONS') {
+			return new Response(null, {
+				status: 204,
+				headers: corsHeaders,
+			});
+		}
+
+		if (request.method !== 'POST') {
+			return new Response('Method not allowed', {
+				status: 405,
+				headers: corsHeaders,
+			});
 		}
 
 		try {
@@ -73,7 +89,7 @@ export default {
 				{
 					headers: {
 						'Content-Type': 'application/json',
-						'Access-Control-Allow-Origin': '*', // Configure as needed
+						...corsHeaders,
 					},
 				},
 			);
@@ -87,7 +103,10 @@ export default {
 				}),
 				{
 					status: 500,
-					headers: { 'Content-Type': 'application/json' },
+					headers: {
+						'Content-Type': 'application/json',
+						...corsHeaders,
+					},
 				},
 			);
 		}
