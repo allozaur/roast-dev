@@ -15,6 +15,20 @@
 		name="description"
 		content="Save your team's time and your ego. Our AI catches code issues before humans do, making PR reviews quick and actually productive. For GitHub & GitLab 🚀"
 	/>
+
+	<style>
+		html {
+			scroll-padding-top: 5.75rem;
+		}
+	</style>
+
+	{#await Promise.resolve(setTimeout(() => {}, 1000)).then(() => true) then ready}
+		<style>
+			html {
+				scroll-behavior: smooth;
+			}
+		</style>
+	{/await}
 </svelte:head>
 
 <main>

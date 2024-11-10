@@ -5,8 +5,12 @@
 	--c-accent-75: #db2f1175;
 	--c-accent-50: #db2f1150;
 
+	--gradient-1: 45deg, #811e0b, #ff7f5b;
+
 	--c-text: #000000;
 	--c-text-light: #888888;
+
+	--c-success: #238636;
 
 	--ui-boxed-width: 79rem;
 }

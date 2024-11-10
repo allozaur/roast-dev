@@ -20,6 +20,9 @@ const config = {
 			manifest: 'manifest.json'
 		}),
 		appDir: 'app',
+		env: {
+			dir: '../../'
+		},
 	},
 
 	extensions: ['.svelte', '.svx']

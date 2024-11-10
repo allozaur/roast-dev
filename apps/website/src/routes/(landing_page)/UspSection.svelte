@@ -194,6 +194,12 @@
 
 		:global(.jumbotron) {
 			grid-column: 1 / -1;
+
+			:global(h3 br) {
+				@media (width <= 1274px) {
+					display: none;
+				}
+			}
 		}
 	}
 </style>

@@ -1,7 +1,8 @@
 <script>
-	import { Button, Icon } from '@roast-dev/ui';
+	import { Button } from '@roast-dev/ui';
 	import preRoastPlaceholders from '$lib/pre-roast-placeholders';
 	import { onMount } from 'svelte';
+	import chargeId from '$lib/stores/charge-id';
 
 	let preRoastPlaceholderText = $state('');
 
@@ -18,6 +19,8 @@
 		{preRoastPlaceholderText}
 	</span>
 </div>
+
+{$chargeId}
 
 <style>
 	.roast-content {

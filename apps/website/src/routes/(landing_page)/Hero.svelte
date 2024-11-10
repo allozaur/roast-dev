@@ -15,10 +15,9 @@
 		</p>
 
 		<Cta
-			href={envPublic.PUBLIC_STRIPE_CHECKOUT_LINK_LIFETIME}
-			target="_blank"
-			label="Get infinite access for just $29 🤯"
-			subtitle="Pay once. Improve instantly. Use forever."
+			href="#pricing"
+			label="Add extension to your browser 😎"
+			subtitle="Roast your code and improve code reviews"
 		/>
 	</div>
 </section>

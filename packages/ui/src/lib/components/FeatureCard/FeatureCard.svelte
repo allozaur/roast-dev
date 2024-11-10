@@ -39,7 +39,7 @@
 			right: -0.125rem;
 			bottom: -0.125rem;
 			border-radius: 1rem;
-			background-image: linear-gradient(27.5deg, #a51900, #ff8b77);
+			background: linear-gradient(45deg, #811e0b, #ff7f5b);
 			transition: all 0.2s ease-out;
 			z-index: -1;
 		}
