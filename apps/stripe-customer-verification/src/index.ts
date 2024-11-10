@@ -14,13 +14,33 @@ const corsHeaders = {
 	'Access-Control-Max-Age': '86400',
 };
 
+async function handleOptions(request: Request): Promise<Response> {
+	if (
+		request.headers.get('Origin') !== null &&
+		request.headers.get('Access-Control-Request-Method') !== null &&
+		request.headers.get('Access-Control-Request-Headers') !== null
+	) {
+		// Handle CORS preflight requests.
+		return new Response(null, {
+			headers: {
+				...corsHeaders,
+				'Access-Control-Allow-Headers': request.headers.get('Access-Control-Request-Headers')!,
+			},
+		});
+	} else {
+		// Handle standard OPTIONS request.
+		return new Response(null, {
+			headers: {
+				Allow: 'GET, HEAD, POST, OPTIONS',
+			},
+		});
+	}
+}
+
 export default {
 	async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
 		if (request.method === 'OPTIONS') {
-			return new Response(null, {
-				status: 204,
-				headers: corsHeaders,
-			});
+			return handleOptions(request);
 		}
 
 		if (request.method !== 'POST') {
@@ -36,7 +56,7 @@ export default {
 			if (!body.email) {
 				return new Response('Email is required', {
 					status: 400,
-					headers: { 'Content-Type': 'application/json' },
+					headers: { 'Content-Type': 'application/json', ...corsHeaders },
 				});
 			}
 
