@@ -78,7 +78,7 @@
 
 			<Cta
 				href={envPublic.PUBLIC_STRIPE_CHECKOUT_LINK_LIFETIME}
-				label="Add extension to your browser"
+				label="Add Roast to your workflow"
 				subtitle="Improve your PR game with AI roasts."
 				target="_blank"
 			/>

@@ -52,7 +52,7 @@
 			box-shadow: 0 0 1rem var(--c-accent-50);
 		}
 		50% {
-			box-shadow: 0 0 2rem var(--c-accent-95);
+			box-shadow: 0 0 2rem var(--c-accent);
 		}
 		100% {
 			box-shadow: 0 0 1rem var(--c-accent-50);

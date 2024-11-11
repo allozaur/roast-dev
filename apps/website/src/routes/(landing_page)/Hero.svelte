@@ -16,7 +16,7 @@
 
 		<Cta
 			href="#pricing"
-			label="Add extension to your browser 😎"
+			label="Add Roast extension to your browser 😎"
 			subtitle="Roast your code and improve code reviews"
 		/>
 	</div>
