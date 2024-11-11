@@ -5,6 +5,7 @@
 	import chargeId from '$lib/stores/charge-id';
 	import generateRoast from '$lib/functions/generate-roast';
 	import { marked } from 'marked';
+	import devPrCode from '$lib/fixtures/dev-pr-code';
 
 	let preRoastPlaceholderText = $state('');
 	let status = $state('');
@@ -26,69 +27,76 @@
 		loading = true;
 		roastResponse = '';
 
+		let formattedDiff = '';
+
 		try {
-			// @ts-expect-error - Chrome API
-			const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+			if (import.meta.env.PROD) {
+				// @ts-expect-error - Chrome API
+				const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
 
-			// @ts-expect-error - Chrome API
-			const results = await chrome.scripting.executeScript({
-				target: { tabId: tab.id! },
-				func: () => {
-					const prTitle =
-						document.querySelector('.js-issue-title')?.textContent?.trim() || 'Untitled PR';
-					const prUrl = window.location.href;
+				// @ts-expect-error - Chrome API
+				const results = await chrome.scripting.executeScript({
+					target: { tabId: tab.id! },
+					func: () => {
+						const prTitle =
+							document.querySelector('.js-issue-title')?.textContent?.trim() || 'Untitled PR';
+						const prUrl = window.location.href;
 
-					const files = document.querySelectorAll('copilot-diff-entry');
-					const changes: Array<{ fileName: string; content: string }> = [];
+						const files = document.querySelectorAll('copilot-diff-entry');
+						const changes: Array<{ fileName: string; content: string }> = [];
 
-					files.forEach((file) => {
-						const fileHeader = file.querySelector('.file-header');
-						const fileName = fileHeader?.getAttribute('data-path') || 'unknown file';
-						const lines = file.querySelectorAll('.blob-code');
-						let fileContent = '';
+						files.forEach((file) => {
+							const fileHeader = file.querySelector('.file-header');
+							const fileName = fileHeader?.getAttribute('data-path') || 'unknown file';
+							const lines = file.querySelectorAll('.blob-code');
+							let fileContent = '';
 
-						lines.forEach((line) => {
-							const codeContent = line.querySelector('.blob-code-inner')?.textContent || '';
-							if (line.classList.contains('blob-code-addition')) {
-								fileContent += `+ ${codeContent}\n`;
-							} else if (line.classList.contains('blob-code-deletion')) {
-								fileContent += `- ${codeContent}\n`;
-							} else {
-								fileContent += `  ${codeContent}\n`;
+							lines.forEach((line) => {
+								const codeContent = line.querySelector('.blob-code-inner')?.textContent || '';
+								if (line.classList.contains('blob-code-addition')) {
+									fileContent += `+ ${codeContent}\n`;
+								} else if (line.classList.contains('blob-code-deletion')) {
+									fileContent += `- ${codeContent}\n`;
+								} else {
+									fileContent += `  ${codeContent}\n`;
+								}
+							});
+
+							if (fileContent.trim()) {
+								changes.push({
+									fileName,
+									content: fileContent
+								});
 							}
 						});
 
-						if (fileContent.trim()) {
-							changes.push({
-								fileName,
-								content: fileContent
-							});
-						}
-					});
+						return {
+							changes,
+							title: prTitle,
+							url: prUrl
+						};
+					}
+				});
 
-					return {
-						changes,
-						title: prTitle,
-						url: prUrl
-					};
+				if (!results?.[0]?.result) {
+					throw new Error('No changes found. Are you on a PR "Files changed" page?');
 				}
-			});
 
-			if (!results?.[0]?.result) {
-				throw new Error('No changes found. Are you on a PR "Files changed" page?');
-			}
+				const { changes, title, url } = results[0].result;
 
-			const { changes, title, url } = results[0].result;
-			status = 'Roasting your code 🔥...';
-
-			const formattedDiff = changes
-				.map(
-					(file: { fileName: any; content: any }) => `
+				formattedDiff = changes
+					.map(
+						(file: { fileName: any; content: any }) => `
 File: ${file.fileName}
 ${file.content}
 `
-				)
-				.join('\n---\n\n');
+					)
+					.join('\n---\n\n');
+			} else {
+				formattedDiff = devPrCode;
+			}
+
+			status = 'Roasting your code 🔥...';
 
 			const response = await generateRoast(formattedDiff);
 
