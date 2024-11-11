@@ -1,6 +1,12 @@
 <script>
 	import '$lib/styles/index.css';
+	import FaqSection from './FaqSection.svelte';
 	import Hero from './Hero.svelte';
+	import PricingSection from './PricingSection.svelte';
+	// import SupportedBrowsersSection from './SupportedBrowsersSection.svelte';
+	// import TestimonialsSection from './TestimonialsSection.svelte';
+	import UspSection from './UspSection.svelte';
+	import FeaturesSection from './FeaturesSection.svelte';
 </script>
 
 <svelte:head>
@@ -9,26 +15,42 @@
 		name="description"
 		content="Save your team's time and your ego. Our AI catches code issues before humans do, making PR reviews quick and actually productive. For GitHub & GitLab 🚀"
 	/>
+
+	<style>
+		html {
+			scroll-padding-top: 5.75rem;
+		}
+	</style>
+
+	{#await Promise.resolve(setTimeout(() => {}, 1000)).then(() => true) then ready}
+		<style>
+			html {
+				scroll-behavior: smooth;
+			}
+		</style>
+	{/await}
 </svelte:head>
 
-<div class="landing-page">
+<main>
 	<Hero />
-</div>
+
+	<FeaturesSection />
+
+	<UspSection />
+
+	<!-- <SupportedBrowsersSection /> -->
+
+	<PricingSection />
+
+	<!-- <TestimonialsSection /> -->
+
+	<FaqSection />
+</main>
 
 <style>
-	.landing-page {
+	main {
 		display: flex;
 		flex-direction: column;
 		min-height: 100vh;
-	}
-
-	.landing-page :global(h1) {
-		line-height: 1;
-	}
-
-	.landing-page :global(h1 strong) {
-		font-weight: inherit;
-		line-height: 1;
-		color: var(--c-accent);
 	}
 </style>

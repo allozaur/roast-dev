@@ -1,0 +1,106 @@
+# Privacy Policy for roast.dev
+
+*Last Updated: November 6, 2024*
+
+## 1. Introduction
+
+roast.dev ("we," "us," or "our") is a browser extension that facilitates AI-powered code reviews. This Privacy Policy explains how we collect, use, and protect your information.
+
+## 2. Infrastructure and Service Providers
+
+### 2.1 Core Infrastructure
+- Website hosting: Cloudflare
+- Payment processing: Stripe
+- Browser extension distribution: Chrome Web Store and Firefox Add-ons platforms
+
+### 2.2 Third-Party Services
+- LLM Providers: OpenAI, Anthropic, Google (based on user choice)
+- Authentication: Supabase, Google OAuth
+- Analytics: Cloudflare Web Analytics
+
+## 3. Information Collection and Use
+
+### 3.1 Information We Collect
+- **Account Information**: Email address (managed through Stripe)
+- **Payment Information**: Processed and stored by Stripe
+- **Browser Information**: Extension version, browser type, operating system
+- **Usage Data**: Installation events, feature usage statistics, error logs
+
+### 3.2 Information We DO NOT Collect
+- Your source code or pull requests (they are processed locally in your browser)
+- Your LLM API keys (they are stored locally in your browser)
+- Your repository contents
+- Your Git platform credentials
+
+### 3.3 Code Processing
+- Code extraction and processing happens locally in your browser
+- Code is sent directly from your browser to your chosen LLM provider using your own API key
+- We act solely as an interface facilitator
+- No code is stored on our servers or infrastructure
+
+## 4. Data Storage and Security
+
+### 4.1 Local Storage
+- LLM API keys are stored in your browser's storage
+- Extension preferences are stored locally
+- Browser-session authentication tokens
+
+### 4.2 Cloud Storage
+- Customer account data (through Stripe)
+- Anonymous usage statistics
+- Error logs for service improvement
+
+## 5. Third-Party Data Processing
+
+### 5.1 Cloudflare
+- Hosts our website
+- Provides CDN services
+- DDoS protection
+
+### 5.2 Stripe
+- Processes payments
+- Manages customer accounts
+- Handles subscription data
+
+### 5.3 Browser Stores
+- Chrome Web Store and Firefox Add-ons store extension installation data
+- Manage extension updates
+- Collect extension metrics
+
+### 5.4 LLM Providers
+- Process code reviews using your own API key
+- Subject to their respective privacy policies
+- Direct relationship between you and the LLM provider
+
+## 6. GDPR and Data Rights
+
+### 6.1 Your Rights
+- Access your personal data
+- Correct inaccurate data
+- Request data deletion
+- Export your data
+- Withdraw consent
+- Lodge complaints with supervisory authorities
+
+### 6.2 Data Protection
+- EU-US Privacy Shield compliance
+- GDPR compliance for EU users
+- Privacy Shield compliance for US users
+
+## 7. Data Retention and Deletion
+
+### 7.1 Retention Period
+- Account information: Until account deletion
+- Payment records: As required by law
+
+### 7.2 Account Deletion
+- Contact us for account deletion
+- Immediate removal of personal data
+- Anonymization of usage statistics
+
+## 8. Updates to Privacy Policy
+We may update this Privacy Policy periodically. We will notify users of material changes via email or extension notification.
+
+## 9. Contact Information
+For privacy-related inquiries:
+- Email: alek@roast.dev

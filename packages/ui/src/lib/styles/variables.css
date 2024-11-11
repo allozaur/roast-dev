@@ -1,0 +1,24 @@
+:root {
+	--bg-body: #fdf5f3;
+	--c-accent: #db2f11;
+	--c-accent-95: #db2f1195;
+	--c-accent-75: #db2f1175;
+	--c-accent-50: #db2f1150;
+
+	--gradient-1: 45deg, #811e0b, #ff7f5b;
+
+	--c-text: #000000;
+	--c-text-light: #888888;
+
+	--c-success: #238636;
+
+	--ui-boxed-width: 79rem;
+}
+
+@media (prefers-color-scheme: dark) {
+	:root {
+		--bg-body: #131111;
+
+		--c-text: #f0f0f0;
+	}
+}

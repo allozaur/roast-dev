@@ -1,6 +1,6 @@
 {
-	"name": "website",
-	"version": "0.0.1",
+	"name": "@roast-dev/website",
+	"version": "0.1.0",
 	"type": "module",
 	"scripts": {
 		"dev": "vite dev --config=vite.dev.config.js --host=roast-dev.dev",
@@ -15,6 +15,8 @@
 		"format": "prettier --write ."
 	},
 	"devDependencies": {
+		"@roast-dev/ui": "workspace:*",
+		"@roast-dev/utils": "workspace:*",
 		"@playwright/test": "^1.45.3",
 		"@sveltejs/adapter-cloudflare": "^4.7.4",
 		"@sveltejs/kit": "^2.0.0",
