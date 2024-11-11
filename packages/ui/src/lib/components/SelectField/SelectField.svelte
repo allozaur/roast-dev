@@ -6,15 +6,16 @@
 		id?: string;
 		label: string;
 		name: string;
+		onChange?: (event: Event) => void;
 		value: string | null;
 	}
 
-	let { children, id, label, name, value = $bindable() }: SelectFieldProps = $props();
+	let { children, id, label, name, onChange, value = $bindable() }: SelectFieldProps = $props();
 </script>
 
 <label>
 	{label}
-	<select {name} {id} bind:value>
+	<select {name} onchange={onChange} {id} bind:value>
 		{@render children()}
 	</select>
 </label>

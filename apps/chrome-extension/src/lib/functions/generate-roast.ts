@@ -1,23 +1,15 @@
 import { get } from 'svelte/store';
 import llmApiKey from '$lib/stores/llm-api-key';
 import llmChoice from '$lib/stores/llm-choice';
-import initialPrompt from '$lib/config/initial-prompt';
+import initialPromptClaude from '$lib/config/initial-prompt-claude';
+import initialPromptGemini from '$lib/config/initial-prompt-gemini';
+import initialPromptGpt from '$lib/config/initial-prompt-gpt';
+import type { LLMConfig } from '$lib/types/llm-config';
 
-type LLMProvider = 'claude' | 'gpt-4' | 'gemini';
-
-interface LLMConfig {
-	endpoint: string;
-	headers: (apiKey: string) => Record<string, string>;
-	buildBody: (prompt: string, code: string) => unknown;
-	extractResponse: (data: {
-		content?: { text: string }[];
-		choices?: { message: { content: string | undefined } }[];
-		candidates?: { content: { parts: { text: string }[] } }[];
-	}) => string;
-}
+type LLMProvider = 'claude-3.5-sonnet' | 'gpt-4o' | 'gemini-1.5-pro';
 
 const llmConfigs: Record<LLMProvider, LLMConfig> = {
-	claude: {
+	'claude-3.5-sonnet': {
 		endpoint: 'https://api.anthropic.com/v1/messages',
 		headers: (apiKey) => ({
 			'Content-Type': 'application/json',
@@ -37,7 +29,7 @@ const llmConfigs: Record<LLMProvider, LLMConfig> = {
 		}),
 		extractResponse: (data) => data?.content?.[0].text ?? ''
 	},
-	'gpt-4': {
+	'gpt-4o': {
 		endpoint: 'https://api.openai.com/v1/chat/completions',
 		headers: (apiKey) => ({
 			'Content-Type': 'application/json',
@@ -51,14 +43,14 @@ const llmConfigs: Record<LLMProvider, LLMConfig> = {
 					content: `${prompt}\n\nHere's the code:\n\n${code}`
 				}
 			],
-			temperature: 0.7,
+			temperature: 1,
 			max_tokens: 4000
 		}),
 		extractResponse: (data) => data?.choices?.[0]?.message.content ?? ''
 	},
-	gemini: {
+	'gemini-1.5-pro': {
 		endpoint:
-			'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent',
+			'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent',
 		headers: () => ({
 			'Content-Type': 'application/json'
 		}),
@@ -73,7 +65,7 @@ const llmConfigs: Record<LLMProvider, LLMConfig> = {
 				}
 			],
 			generationConfig: {
-				temperature: 0.7,
+				temperature: 1,
 				topK: 40,
 				topP: 0.95,
 				maxOutputTokens: 4000
@@ -90,6 +82,7 @@ const llmConfigs: Record<LLMProvider, LLMConfig> = {
 export default async function generateRoast(diffText: string): Promise<string> {
 	const apiKey = get(llmApiKey);
 	const provider = get(llmChoice) as LLMProvider;
+	console.log('provider', provider);
 
 	if (!apiKey) {
 		throw new Error(`Please enter your ${provider} API key`);
@@ -102,9 +95,16 @@ export default async function generateRoast(diffText: string): Promise<string> {
 	const config = llmConfigs[provider];
 	let endpoint = config.endpoint;
 
-	if (provider === 'gemini') {
+	if (provider === 'gemini-1.5-pro') {
 		endpoint = `${endpoint}?key=${apiKey}`;
 	}
+
+	const initialPrompt =
+		provider === 'gpt-4o'
+			? initialPromptGpt
+			: provider === 'gemini-1.5-pro'
+				? initialPromptGemini
+				: initialPromptClaude;
 
 	try {
 		const response = await fetch(endpoint, {

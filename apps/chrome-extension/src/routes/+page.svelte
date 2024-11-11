@@ -79,7 +79,7 @@
 			}
 
 			const { changes, title, url } = results[0].result;
-			status = 'Getting roast from Claude...';
+			status = 'Roasting your code 🔥...';
 
 			const formattedDiff = changes
 				.map(
@@ -198,6 +198,7 @@ ${file.content}
 			padding: 1rem;
 			border-radius: 0.5rem;
 			overflow-x: auto;
+			max-width: 37.75rem;
 		}
 
 		:global(code) {

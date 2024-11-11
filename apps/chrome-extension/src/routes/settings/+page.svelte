@@ -37,7 +37,14 @@
 		e.preventDefault();
 
 		if ($llmChoice) localStorage.setItem('roastLlmChoice', $llmChoice);
-		if ($llmApiKey) localStorage.setItem('roastLlmApiKey', $llmApiKey);
+		if ($llmApiKey) localStorage.setItem(`roastLlmApiKey-${$llmChoice}`, $llmApiKey);
+	}
+
+	function handleLlmChoiceChange(e: Event) {
+		const target = e.target as HTMLSelectElement;
+
+		$llmChoice = target.value;
+		$llmApiKey = localStorage.getItem(`roastLlmApiKey-${$llmChoice}`) || '';
 	}
 </script>
 
@@ -45,18 +52,28 @@
 	<fieldset>
 		<legend>Language Model</legend>
 
-		<SelectField id="llm-choice" label="Selected model" name="llm-choice" bind:value={$llmChoice}>
+		<SelectField
+			id="llm-choice"
+			label="Selected model"
+			name="llm-choice"
+			bind:value={$llmChoice}
+			onChange={handleLlmChoiceChange}
+		>
 			<option value="claude-3.5-sonnet"> Claude 3.5 Sonnet </option>
 
 			<option value="gpt-4o"> GPT-4o </option>
 
-			<option value="gemini-1.5"> Gemini 1.5 </option>
+			<option value="gemini-1.5-pro"> Gemini 1.5 Flash </option>
 		</SelectField>
 
 		<div class="api-key-field">
 			<PasswordField
 				name="api_key"
-				label="Your API Key"
+				label="Your {$llmChoice === 'gpt-4o'
+					? 'OpenAI'
+					: $llmChoice === 'gemini-1.5-pro'
+						? 'Gemini'
+						: 'Claude'} API Key"
 				placeholder="Enter your API key here"
 				bind:value={$llmApiKey}
 			/>

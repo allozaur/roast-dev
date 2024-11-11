@@ -11,15 +11,22 @@
 
 	onMount(() => {
 		$chargeId = localStorage.getItem('roastChargeId');
-		$llmApiKey = localStorage.getItem('roastLlmApiKey');
 		$llmChoice = localStorage.getItem('roastLlmChoice') ?? 'claude-3.5-sonnet';
+
+		if ($llmChoice === 'gpt-4o') {
+			$llmApiKey = localStorage.getItem('roastLlmApiKey-gpt-4o') ?? '';
+		} else if ($llmChoice === 'gemini-1.5-pro') {
+			$llmApiKey = localStorage.getItem('roastLlmApiKey-gemini-1.5-pro') ?? '';
+		} else {
+			$llmApiKey = localStorage.getItem('roastLlmApiKey-claude-3.5-sonnet') ?? '';
+		}
 	});
 </script>
 
 <svelte:head>
 	<style>
 		body {
-			min-width: 40rem;
+			min-width: 48rem;
 			font-size: 16px;
 		}
 	</style>
