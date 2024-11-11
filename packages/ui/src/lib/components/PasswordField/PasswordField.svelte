@@ -1,16 +1,19 @@
 <script lang="ts">
 	interface TextFieldProps {
 		id?: string;
+		label?: string;
 		name: string;
 		placeholder: string;
 		value: string | null;
 	}
 
-	let { id, name, placeholder, value = $bindable() }: TextFieldProps = $props();
+	let { id, label, name, placeholder, value = $bindable() }: TextFieldProps = $props();
 </script>
 
 <label>
-	<input {id} {name} {placeholder} type="text" bind:value />
+	{label}
+
+	<input {id} {name} {placeholder} type="password" bind:value />
 </label>
 
 <style>

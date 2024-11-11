@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Button } from '@roast-dev/ui';
+	import { Button, Icon, PasswordField, SelectField } from '@roast-dev/ui';
 	import { PUBLIC_STRIPE_CUSTOMER_VERIFICATION_WORKER_URL } from '$env/static/public';
 	import { onMount } from 'svelte';
 	import chargeId from '$lib/stores/charge-id';
@@ -52,31 +52,23 @@
 	<fieldset>
 		<legend>Language Model</legend>
 
-		<label>
-			Selected model
+		<SelectField id="llm-choice" label="Selected model" name="llm-choice" bind:value={$llmChoice}>
+			<option value="claude-3.5-sonnet"> Claude 3.5 Sonnet </option>
 
-			<select name="llm-choice" bind:value={$llmChoice}>
-				<option value="claude-3.5-sonnet"> Claude 3.5 Sonnet </option>
+			<option value="gpt-4o"> GPT-4o </option>
 
-				<option value="gpt-4o"> GPT-4o </option>
+			<option value="gemini-1.5"> Gemini 1.5 </option>
+		</SelectField>
 
-				<option value="gemini-1.5"> Gemini 1.5 </option>
-			</select>
-		</label>
-
-		<label class="api-key-field">
-			<span>
-				{$llmChoice === 'claude-3.5-sonnet'
+		<div class="api-key-field">
+			<PasswordField
+				name="api_key"
+				label="{$llmChoice === 'claude-3.5-sonnet'
 					? 'Anthropic'
 					: $llmChoice === 'gemini-1.5'
 						? 'Google'
 						: 'OpenAI'}
-				API Key
-			</span>
-
-			<input
-				type="text"
-				name="api_key"
+				API Key"
 				placeholder="Enter your API key here"
 				bind:value={$llmApiKey}
 			/>
@@ -87,16 +79,21 @@
 				Your API key is stored locally and only used to communicate directly with the LLM’s API
 				endpoint
 			</span>
-		</label>
+		</div>
 	</fieldset>
 </form>
 
 <form id="check-license-form" onsubmit={activateLicense}>
 	<fieldset>
 		<legend>Billing & License</legend>
+
 		{#if $chargeId}
 			<div class="active-license">
-				<p>Your license is active!. You have full access to Roast.</p>
+				<span>
+					<Icon name="check-circle" --stroke="var(--c-success)" --size="1.5rem" />
+
+					Your license is active!. You have full access to Roast.
+				</span>
 
 				<Button
 					size="sm"
@@ -145,7 +142,7 @@
 	legend {
 		font-size: 1.25rem;
 		font-weight: 500;
-		margin-bottom: 0.5rem;
+		margin-bottom: 1rem;
 	}
 
 	label {
@@ -167,7 +164,7 @@
 		display: grid;
 		grid-template-columns: 1fr auto;
 		gap: 0.5rem;
-		align-items: center;
+		align-items: end;
 
 		span {
 			grid-column: 1 / -1;
@@ -181,5 +178,13 @@
 		padding: 1rem;
 		border: 2px solid var(--c-text-light);
 		border-radius: 1rem;
+
+		span {
+			font-size: 1.125rem;
+			font-weight: 500;
+			display: inline-flex;
+			align-items: center;
+			gap: 0.625rem;
+		}
 	}
 </style>
