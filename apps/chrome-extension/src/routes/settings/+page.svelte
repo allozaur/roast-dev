@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { Button, Icon, PasswordField, SelectField } from '@roast-dev/ui';
 	import { PUBLIC_STRIPE_CUSTOMER_VERIFICATION_WORKER_URL } from '$env/static/public';
-	import { onMount } from 'svelte';
 	import chargeId from '$lib/stores/charge-id';
 	import llmChoice from '$lib/stores/llm-choice';
 	import llmApiKey from '$lib/stores/llm-api-key';
@@ -34,21 +33,15 @@
 		}
 	}
 
-	async function chooseLanguageModel(e: SubmitEvent) {
+	async function chooseLlm(e: SubmitEvent) {
 		e.preventDefault();
 
 		if ($llmChoice) localStorage.setItem('roastLlmChoice', $llmChoice);
 		if ($llmApiKey) localStorage.setItem('roastLlmApiKey', $llmApiKey);
 	}
-
-	onMount(() => {
-		$chargeId = localStorage.getItem('roastChargeId');
-		$llmApiKey = localStorage.getItem('roastLlmApiKey');
-		$llmChoice = localStorage.getItem('roastLlmChoice') ?? 'claude-3.5-sonnet';
-	});
 </script>
 
-<form onsubmit={chooseLanguageModel}>
+<form onsubmit={chooseLlm}>
 	<fieldset>
 		<legend>Language Model</legend>
 
@@ -63,12 +56,7 @@
 		<div class="api-key-field">
 			<PasswordField
 				name="api_key"
-				label="{$llmChoice === 'claude-3.5-sonnet'
-					? 'Anthropic'
-					: $llmChoice === 'gemini-1.5'
-						? 'Google'
-						: 'OpenAI'}
-				API Key"
+				label="Your API Key"
 				placeholder="Enter your API key here"
 				bind:value={$llmApiKey}
 			/>
@@ -168,6 +156,8 @@
 
 		span {
 			grid-column: 1 / -1;
+			font-size: 0.75rem;
+			color: var(--c-text-light);
 		}
 	}
 

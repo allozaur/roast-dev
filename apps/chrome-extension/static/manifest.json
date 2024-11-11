@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "roast.dev",
+  "name": "Roast",
   "version": "0.0.1",
   "description": "Roast your own code on GitHub PRs and submit better PRs",
   "icons": {

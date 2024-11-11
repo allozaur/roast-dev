@@ -4,7 +4,7 @@
 	"type": "module",
 	"scripts": {
 		"dev": "vite dev --port 5174",
-		"build-extension": "vite build && tsc ./build/*.ts",
+		"build-extension": "vite build && tsc ./build/*.ts && zip -r ../roast-extension.zip ./build",
 		"preview": "vite preview",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
@@ -26,6 +26,7 @@
 		"eslint-config-prettier": "^9.1.0",
 		"eslint-plugin-svelte": "^2.36.0",
 		"globals": "^15.0.0",
+		"marked": "^15.0.0",
 		"mdsvex": "^0.11.2",
 		"prettier": "^3.3.2",
 		"prettier-plugin-svelte": "^3.2.6",
