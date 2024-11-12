@@ -2,8 +2,8 @@ name: Deploy Stripe Customer Verification Worker (Preview)
 
 on:
   push:
-    branches:
-      - develop
+    branches-ignore:
+      - main
 
 jobs:
   deploy:
