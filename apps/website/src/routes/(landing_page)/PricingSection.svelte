@@ -37,7 +37,12 @@
 		PR you submit!
 	</p>
 
-	<Cta label="Try Roast for free" subtitle="Try it out immediately by installing the plugin" />
+	<Cta
+		href={envPublic.PUBLIC_CHROME_WEB_STORE_EXTENSION_URL}
+		target="_blank"
+		label="Try Roast for free"
+		subtitle="Try it out immediately by installing the plugin"
+	/>
 </section>
 
 <style>

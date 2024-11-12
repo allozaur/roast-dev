@@ -1,4 +1,5 @@
 <script>
+	import { env as envPublic } from '$env/dynamic/public';
 	import { Button } from '@roast-dev/ui';
 </script>
 
@@ -15,7 +16,11 @@
 		{/snippet}
 
 		<div class="download-cta">
-			<Button image={badgeChromeWebStore} />
+			<Button
+				href={envPublic.PUBLIC_CHROME_WEB_STORE_EXTENSION_URL}
+				image={badgeChromeWebStore}
+				target="_blank"
+			/>
 		</div>
 	</div>
 </header>
