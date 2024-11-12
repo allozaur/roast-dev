@@ -13,7 +13,7 @@
 	<title>roast.dev — Helps you Fix Bad Code 🧯🔥 Before It Hits Code Review 😮‍💨</title>
 	<meta
 		name="description"
-		content="Save your team's time and your ego. Our AI catches code issues before humans do, making PR reviews quick and actually productive. Works with GitHub, GitLab support coming soon 🚀"
+		content="Save your team's time and your ego. Roast uses AI to catch code issues before humans do, making PR reviews quick and actually productive. Works with GitHub, GitLab support coming soon 🚀"
 	/>
 
 	<style>
