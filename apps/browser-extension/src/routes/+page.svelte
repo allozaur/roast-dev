@@ -6,6 +6,7 @@
 	import generateRoast from '$lib/functions/generate-roast';
 	import { marked } from 'marked';
 	import devPrCode from '$lib/fixtures/dev-pr-code';
+	import { PUBLIC_FREE_USAGE_COUNTER_WORKER_URL } from '$env/static/public';
 
 	let preRoastPlaceholderText = $state('');
 	let status = $state('');
@@ -19,8 +20,17 @@
 
 	async function triggerRoast() {
 		if (!$chargeId) {
-			status = 'Please activate your license first';
-			return;
+			const freeUsageReq = await fetch(PUBLIC_FREE_USAGE_COUNTER_WORKER_URL, {
+				method: 'GET'
+			});
+			const freeUsageRes = await freeUsageReq.json();
+			const { status: freeUsageResStatus } = freeUsageRes;
+
+			if (freeUsageResStatus !== 201) {
+				status = 'You have exhausted your free usage limit.';
+				loading = false;
+				return;
+			}
 		}
 
 		status = 'Extracting changes...';

@@ -100,10 +100,7 @@ export default {
 				});
 			}
 
-			// Set expiration to end of current UTC day
-			const midnight = new Date();
-			midnight.setUTCHours(24, 0, 0, 0);
-			const expirationTtl = Math.max(1, Math.floor((midnight.getTime() - Date.now()) / 1000));
+			const expirationTtl = 60 * 60 * 24;
 
 			await env.ROAST_FREE_USAGE_COUNTER.put(key, (currentCount + 1).toString(), {
 				expirationTtl,
