@@ -4,7 +4,6 @@ interface Env {
 
 interface ResponseBody {
 	message: string;
-	status: number;
 }
 
 const MAX_MONTHLY_ROASTS = 10;
@@ -86,7 +85,6 @@ export default {
 			if (currentCount >= MAX_MONTHLY_ROASTS) {
 				const response: ResponseBody = {
 					message: 'Limit reached',
-					status: 423,
 				};
 				return new Response(JSON.stringify(response), {
 					status: 423,
@@ -105,7 +103,6 @@ export default {
 
 			const response: ResponseBody = {
 				message: 'Entry added',
-				status: 201,
 			};
 
 			return new Response(JSON.stringify(response), {

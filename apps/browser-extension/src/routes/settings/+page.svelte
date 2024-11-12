@@ -80,7 +80,7 @@
 
 			<Button --background="var(--c-success)" size="sm" type="submit">Save key</Button>
 
-			<span>
+			<span class="disclaimer">
 				Your API key is stored locally and only used to communicate directly with the LLM’s API
 				endpoint
 			</span>
@@ -122,7 +122,11 @@
 				/>
 			</label>
 
-			<Button type="submit">Save license</Button>
+			<span class="disclaimer">
+				Enter the email address you used during checkout to activate your license.
+			</span>
+
+			<Button type="submit">Activate your license</Button>
 		{/if}
 	</fieldset>
 </form>
@@ -165,6 +169,11 @@
 		}
 	}
 
+	.disclaimer {
+		font-size: 0.75rem;
+		color: var(--c-text-light);
+	}
+
 	.api-key-field {
 		display: grid;
 		grid-template-columns: 1fr auto;
@@ -173,8 +182,6 @@
 
 		span {
 			grid-column: 1 / -1;
-			font-size: 0.75rem;
-			color: var(--c-text-light);
 		}
 	}
 

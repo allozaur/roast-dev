@@ -27,9 +27,10 @@
 				method: 'GET'
 			});
 			const freeUsageRes = await freeUsageReq.json();
-			const { status: freeUsageResStatus } = freeUsageRes;
 
-			freeLimitIsUsed = freeUsageResStatus !== 201;
+			freeLimitIsUsed = freeUsageReq.status === 423;
+
+			console.log(freeUsageRes.message);
 
 			if (freeLimitIsUsed) {
 				loading = false;
