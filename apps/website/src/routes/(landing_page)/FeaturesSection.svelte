@@ -14,8 +14,6 @@
 				title="Arcade Flow (Mon Nov 11 2024)"
 				frameborder="0"
 				loading="lazy"
-				webkitallowfullscreen
-				mozallowfullscreen
 				allowfullscreen
 				allow="clipboard-write"
 				style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; color-scheme: light;"

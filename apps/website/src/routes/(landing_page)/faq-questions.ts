@@ -8,8 +8,8 @@ const faqQuestions = [
 		answer: `Yes! Start with 5 free roasts monthly – no credit card required. Get a feel for the tool before deciding to upgrade.`
 	},
 	{
-		question: 'Do you offer refunds?',
-		answer: `Yes, we offer a no-questions-asked refund within 7 days of purchase.`
+		question: 'Does Roast need special repository access or organization integration?',
+		answer: `No! Roast works with any repository you can view in your browser. It reads code directly from the PR's rendered page, just like you do – no special permissions or organization integrations needed. If you can see the PR, Roast can help review it.`
 	},
 	{
 		question: 'Is the lifetime license really lifetime?',
@@ -59,6 +59,10 @@ Think of it like copying code into ChatGPT, but automated and optimized for code
 	{
 		question: 'What languages and frameworks do you support?',
 		answer: `Roast can review code in any programming language. The quality of feedback might vary depending on the LLM model you're using.`
+	},
+	{
+		question: 'Do you offer refunds?',
+		answer: `Yes, we offer a no-questions-asked refund within 7 days of purchase.`
 	}
 ];
 
