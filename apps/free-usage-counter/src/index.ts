@@ -7,7 +7,7 @@ interface ResponseBody {
 	status: number;
 }
 
-const MAX_DAILY_ROASTS = 5;
+const MAX_MONTHLY_ROASTS = 10;
 
 const corsHeaders = {
 	'Access-Control-Allow-Origin': '*',
@@ -37,9 +37,10 @@ async function handleOptions(request: Request): Promise<Response> {
 }
 
 async function generateClientId(ip: string): Promise<string> {
-	// Create a unique daily identifier by combining IP with current date
-	const today = new Date().toISOString().split('T')[0];
-	const data = `${ip}-${today}-roast-salt`;
+	// Create a unique monthly identifier by combining IP with current month
+	const now = new Date();
+	const month = `${now.getFullYear()}-${now.getMonth() + 1}`;
+	const data = `${ip}-${month}-roast-salt`;
 
 	// Convert the string to an ArrayBuffer
 	const encoder = new TextEncoder();
@@ -78,15 +79,11 @@ export default {
 		}
 
 		try {
-			// Get client IP from Cloudflare headers
 			const clientIp = request.headers.get('cf-connecting-ip') || request.headers.get('x-real-ip') || '0.0.0.0';
-
-			// Generate a unique client ID based on IP and current date
 			const key = await generateClientId(clientIp);
-
 			const currentCount = parseInt((await env.ROAST_FREE_USAGE_COUNTER.get(key)) || '0');
 
-			if (currentCount >= MAX_DAILY_ROASTS) {
+			if (currentCount >= MAX_MONTHLY_ROASTS) {
 				const response: ResponseBody = {
 					message: 'Limit reached',
 					status: 423,
@@ -100,7 +97,7 @@ export default {
 				});
 			}
 
-			const expirationTtl = 60 * 60 * 24;
+			const expirationTtl = 60 * 60 * 24 * 30;
 
 			await env.ROAST_FREE_USAGE_COUNTER.put(key, (currentCount + 1).toString(), {
 				expirationTtl,

@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { Button } from '@roast-dev/ui';
-	import preRoastPlaceholders from '$lib/pre-roast-placeholders';
+	import freeLimitUsedHeadlines from '$lib/config/free-limit-used-headlines';
+	import preRoastPlaceholders from '$lib/config/pre-roast-placeholders';
 	import { onMount } from 'svelte';
 	import chargeId from '$lib/stores/charge-id';
 	import generateRoast from '$lib/functions/generate-roast';
@@ -10,12 +11,14 @@
 
 	let preRoastPlaceholderText = $state('');
 	let status = $state('');
+	let freeLimitIsUsed = $state(false);
+	let freeLimitIsUsedHeadline = $state('');
 	let loading = $state(false);
 	let roastResponse = $state('');
 
 	onMount(() => {
 		preRoastPlaceholderText =
-			preRoastPlaceholders[Math.floor(Math.random() * preRoastPlaceholders.length)];
+			freeLimitUsedHeadlines[Math.floor(Math.random() * preRoastPlaceholders.length)];
 	});
 
 	async function triggerRoast() {
@@ -26,9 +29,14 @@
 			const freeUsageRes = await freeUsageReq.json();
 			const { status: freeUsageResStatus } = freeUsageRes;
 
-			if (freeUsageResStatus !== 201) {
-				status = 'You have exhausted your free usage limit.';
+			freeLimitIsUsed = freeUsageResStatus !== 201;
+
+			if (freeLimitIsUsed) {
 				loading = false;
+
+				freeLimitIsUsedHeadline =
+					freeLimitUsedHeadlines[Math.floor(Math.random() * freeLimitUsedHeadlines.length)];
+
 				return;
 			}
 		}
@@ -129,7 +137,19 @@ ${file.content}
 
 <Button onClick={triggerRoast}>Roast this Pull Request 🔥</Button>
 
-{#if status}
+{#if freeLimitIsUsed}
+	<div class="free-usage-limit">
+		<h3>
+			{freeLimitIsUsedHeadline}
+		</h3>
+
+		<p>Pay once, get unlimited roasts forever. No subscriptions, just pure value.</p>
+
+		<Button href="https://roast.dev/#pricing" target="_blank">Unlock Unlimited Roasts 🚀</Button>
+
+		<span> You can generate 10 roasts in 30 days for free. </span>
+	</div>
+{:else if status}
 	<div class="status">
 		{status}
 	</div>
@@ -222,6 +242,25 @@ ${file.content}
 		:global(code) {
 			font-family: ui-monospace, monospace;
 			font-size: 0.875em;
+		}
+	}
+
+	.free-usage-limit {
+		display: inline-grid;
+		gap: 1.5rem;
+		padding: 2rem;
+		border: 2px dashed var(--c-text-light);
+		border-radius: 1rem;
+		text-align: center;
+
+		h3,
+		p {
+			margin: 0;
+		}
+
+		span {
+			color: var(--c-text-light);
+			font-size: 0.75rem;
 		}
 	}
 </style>
