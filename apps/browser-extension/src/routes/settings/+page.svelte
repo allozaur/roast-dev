@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Button, Icon, PasswordField, SelectField } from '@roast-dev/ui';
-	import { PUBLIC_STRIPE_CUSTOMER_VERIFICATION_WORKER_URL } from '$env/static/public';
+	import { PUBLIC_CUSTOMER_VERIFICATION_WORKER_URL } from '$env/static/public';
 	import chargeId from '$lib/stores/charge-id';
 	import llmChoice from '$lib/stores/llm-choice';
 	import llmApiKey from '$lib/stores/llm-api-key';
@@ -11,7 +11,7 @@
 		e.preventDefault();
 
 		try {
-			const req = await fetch(PUBLIC_STRIPE_CUSTOMER_VERIFICATION_WORKER_URL, {
+			const req = await fetch(PUBLIC_CUSTOMER_VERIFICATION_WORKER_URL, {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json'
