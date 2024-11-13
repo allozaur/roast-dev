@@ -8,6 +8,7 @@
 	import { marked } from 'marked';
 	import devPrCode from '$lib/fixtures/dev-pr-code';
 	import { PUBLIC_FREE_USAGE_COUNTER_WORKER_URL } from '$env/static/public';
+	import getRandomItem from '$lib/utils/get-random-item';
 
 	let preRoastPlaceholderText = $state('');
 	let status = $state('');
@@ -17,8 +18,7 @@
 	let roastResponse = $state('');
 
 	onMount(() => {
-		preRoastPlaceholderText =
-			freeLimitUsedHeadlines[Math.floor(Math.random() * preRoastPlaceholders.length)];
+		preRoastPlaceholderText = getRandomItem(preRoastPlaceholders);
 	});
 
 	async function triggerRoast() {
@@ -35,8 +35,7 @@
 			if (freeLimitIsUsed) {
 				loading = false;
 
-				freeLimitIsUsedHeadline =
-					freeLimitUsedHeadlines[Math.floor(Math.random() * freeLimitUsedHeadlines.length)];
+				freeLimitIsUsedHeadline = getRandomItem(freeLimitUsedHeadlines);
 
 				return;
 			}
