@@ -2,7 +2,8 @@
   "name": "roast",
   "private": true,
   "scripts": {
-    "build": "turbo build",
+    "build:website": "turbo build:website",
+    "build:extension": "turbo build:extension",
     "dev": "turbo dev",
     "lint": "turbo lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\""
