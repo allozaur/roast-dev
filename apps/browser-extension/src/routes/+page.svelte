@@ -46,9 +46,7 @@
 			});
 			const freeUsageRes = await freeUsageReq.json();
 
-			hasReachedFreeLimit = freeUsageReq.status === 423;
-
-			console.log(freeUsageRes.message);
+			hasReachedFreeLimit = freeUsageReq.status !== 201;
 
 			if (hasReachedFreeLimit) {
 				loading = false;

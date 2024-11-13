@@ -78,7 +78,11 @@ export default {
 		}
 
 		try {
-			const clientIp = request.headers.get('cf-connecting-ip') || request.headers.get('x-real-ip');
+			let clientIp = request.headers.get('cf-connecting-ip') || request.headers.get('x-real-ip');
+
+			if (request.headers.get('host')?.includes('localhost')) {
+				clientIp = '0.0.0.0';
+			}
 
 			if (!clientIp) {
 				return createErrorResponse(400, 'Client IP not found');
