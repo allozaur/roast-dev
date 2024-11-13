@@ -77,10 +77,9 @@
 			</h3>
 
 			<Cta
-				href={envPublic.PUBLIC_STRIPE_CHECKOUT_LINK_LIFETIME}
+				href="#pricing"
 				label="Add Roast to your workflow"
 				subtitle="Improve your PR game with AI roasts."
-				target="_blank"
 			/>
 		</Jumbotron>
 	</div>

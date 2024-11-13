@@ -1,94 +1,120 @@
 <script lang="ts">
 	import { Button } from '@roast-dev/ui';
-	import preRoastPlaceholders from '$lib/pre-roast-placeholders';
+	import freeLimitUsedHeadlines from '$lib/config/free-limit-used-headlines';
+	import preRoastPlaceholders from '$lib/config/pre-roast-placeholders';
 	import { onMount } from 'svelte';
 	import chargeId from '$lib/stores/charge-id';
 	import generateRoast from '$lib/functions/generate-roast';
 	import { marked } from 'marked';
+	import devPrCode from '$lib/fixtures/dev-pr-code';
+	import { PUBLIC_FREE_USAGE_COUNTER_WORKER_URL } from '$env/static/public';
+	import getRandomItem from '$lib/utils/get-random-item';
 
 	let preRoastPlaceholderText = $state('');
 	let status = $state('');
+	let hasReachedFreeLimit = $state(false);
+	let freeLimitIsUsedHeadline = $state('');
 	let loading = $state(false);
 	let roastResponse = $state('');
 
 	onMount(() => {
-		preRoastPlaceholderText =
-			preRoastPlaceholders[Math.floor(Math.random() * preRoastPlaceholders.length)];
+		preRoastPlaceholderText = getRandomItem(preRoastPlaceholders);
 	});
 
 	async function triggerRoast() {
 		if (!$chargeId) {
-			status = 'Please activate your license first';
-			return;
+			const freeUsageReq = await fetch(PUBLIC_FREE_USAGE_COUNTER_WORKER_URL, {
+				method: 'GET'
+			});
+			const freeUsageRes = await freeUsageReq.json();
+
+			hasReachedFreeLimit = freeUsageReq.status === 423;
+
+			console.log(freeUsageRes.message);
+
+			if (hasReachedFreeLimit) {
+				loading = false;
+
+				freeLimitIsUsedHeadline = getRandomItem(freeLimitUsedHeadlines);
+
+				return;
+			}
 		}
 
 		status = 'Extracting changes...';
 		loading = true;
 		roastResponse = '';
 
+		let formattedDiff = '';
+
 		try {
-			// @ts-expect-error - Chrome API
-			const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+			if (import.meta.env.PROD) {
+				// @ts-expect-error - Chrome API
+				const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
 
-			// @ts-expect-error - Chrome API
-			const results = await chrome.scripting.executeScript({
-				target: { tabId: tab.id! },
-				func: () => {
-					const prTitle =
-						document.querySelector('.js-issue-title')?.textContent?.trim() || 'Untitled PR';
-					const prUrl = window.location.href;
+				// @ts-expect-error - Chrome API
+				const results = await chrome.scripting.executeScript({
+					target: { tabId: tab.id! },
+					func: () => {
+						const prTitle =
+							document.querySelector('.js-issue-title')?.textContent?.trim() || 'Untitled PR';
+						const prUrl = window.location.href;
 
-					const files = document.querySelectorAll('copilot-diff-entry');
-					const changes: Array<{ fileName: string; content: string }> = [];
+						const files = document.querySelectorAll('copilot-diff-entry');
+						const changes: Array<{ fileName: string; content: string }> = [];
 
-					files.forEach((file) => {
-						const fileHeader = file.querySelector('.file-header');
-						const fileName = fileHeader?.getAttribute('data-path') || 'unknown file';
-						const lines = file.querySelectorAll('.blob-code');
-						let fileContent = '';
+						files.forEach((file) => {
+							const fileHeader = file.querySelector('.file-header');
+							const fileName = fileHeader?.getAttribute('data-path') || 'unknown file';
+							const lines = file.querySelectorAll('.blob-code');
+							let fileContent = '';
 
-						lines.forEach((line) => {
-							const codeContent = line.querySelector('.blob-code-inner')?.textContent || '';
-							if (line.classList.contains('blob-code-addition')) {
-								fileContent += `+ ${codeContent}\n`;
-							} else if (line.classList.contains('blob-code-deletion')) {
-								fileContent += `- ${codeContent}\n`;
-							} else {
-								fileContent += `  ${codeContent}\n`;
+							lines.forEach((line) => {
+								const codeContent = line.querySelector('.blob-code-inner')?.textContent || '';
+								if (line.classList.contains('blob-code-addition')) {
+									fileContent += `+ ${codeContent}\n`;
+								} else if (line.classList.contains('blob-code-deletion')) {
+									fileContent += `- ${codeContent}\n`;
+								} else {
+									fileContent += `  ${codeContent}\n`;
+								}
+							});
+
+							if (fileContent.trim()) {
+								changes.push({
+									fileName,
+									content: fileContent
+								});
 							}
 						});
 
-						if (fileContent.trim()) {
-							changes.push({
-								fileName,
-								content: fileContent
-							});
-						}
-					});
+						return {
+							changes,
+							title: prTitle,
+							url: prUrl
+						};
+					}
+				});
 
-					return {
-						changes,
-						title: prTitle,
-						url: prUrl
-					};
+				if (!results?.[0]?.result) {
+					throw new Error('No changes found. Are you on a PR "Files changed" page?');
 				}
-			});
 
-			if (!results?.[0]?.result) {
-				throw new Error('No changes found. Are you on a PR "Files changed" page?');
-			}
+				const { changes, title, url } = results[0].result;
 
-			const { changes, title, url } = results[0].result;
-			status = 'Roasting your code 🔥...';
-
-			const formattedDiff = changes
-				.map(
-					(file: { fileName: any; content: any }) => `
+				formattedDiff = changes
+					.map(
+						(file: { fileName: any; content: any }) => `
 File: ${file.fileName}
 ${file.content}
 `
-				)
-				.join('\n---\n\n');
+					)
+					.join('\n---\n\n');
+			} else {
+				formattedDiff = devPrCode;
+			}
+
+			status = 'Roasting your code 🔥...';
 
 			const response = await generateRoast(formattedDiff);
 
@@ -111,7 +137,19 @@ ${file.content}
 
 <Button onClick={triggerRoast}>Roast this Pull Request 🔥</Button>
 
-{#if status}
+{#if hasReachedFreeLimit}
+	<div class="free-usage-limit">
+		<h3>
+			{freeLimitIsUsedHeadline}
+		</h3>
+
+		<p>Pay once, get unlimited roasts forever. No subscriptions, just pure value.</p>
+
+		<Button href="https://roast.dev/#pricing" target="_blank">Unlock Unlimited Roasts 🚀</Button>
+
+		<span> You can generate 10 roasts in 30 days for free. </span>
+	</div>
+{:else if status}
 	<div class="status">
 		{status}
 	</div>
@@ -204,6 +242,25 @@ ${file.content}
 		:global(code) {
 			font-family: ui-monospace, monospace;
 			font-size: 0.875em;
+		}
+	}
+
+	.free-usage-limit {
+		display: inline-grid;
+		gap: 1.5rem;
+		padding: 2rem;
+		border: 2px dashed var(--c-text-light);
+		border-radius: 1rem;
+		text-align: center;
+
+		h3,
+		p {
+			margin: 0;
+		}
+
+		span {
+			color: var(--c-text-light);
+			font-size: 0.75rem;
 		}
 	}
 </style>

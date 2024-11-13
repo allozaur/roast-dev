@@ -14,7 +14,19 @@
         ".svelte-kit/**"
       ]
     },
-    "build-extension": {
+    "build:website": {
+      "dependsOn": [
+        "^build"
+      ],
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        ".env*"
+      ],
+      "outputs": [
+        ".svelte-kit/**"
+      ]
+    },
+    "build:extension": {
       "dependsOn": [
         "^build"
       ],

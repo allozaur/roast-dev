@@ -3,7 +3,7 @@
 	import { FeatureCard, Icon } from '@roast-dev/ui';
 </script>
 
-<section class="features-section">
+<section id="features">
 	<div class="inner">
 		<SectionHeadline heading="See <strong>Roast</strong> plugin in action" />
 
@@ -89,7 +89,7 @@
 </section>
 
 <style>
-	.features-section {
+	#features {
 		padding: 4rem 2rem;
 		text-align: center;
 		position: relative;
@@ -135,7 +135,7 @@
 		}
 	}
 
-	.features-section :global(h2 strong) {
+	#features :global(h2 strong) {
 		font-weight: inherit;
 		color: var(--c-accent);
 	}

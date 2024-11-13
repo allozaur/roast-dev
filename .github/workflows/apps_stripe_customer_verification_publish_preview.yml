@@ -4,6 +4,8 @@ on:
   push:
     branches-ignore:
       - main
+    paths:
+      - 'apps/stripe-customer-verification/**'
 
 jobs:
   deploy:
