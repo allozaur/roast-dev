@@ -55,6 +55,18 @@ async function generateClientId(ip: string): Promise<string> {
 	return hashHex;
 }
 
+function createErrorResponse(statusCode: number, message: string, error?: unknown): Response {
+	const responseBody: ResponseBody = { message };
+
+	return new Response(JSON.stringify(responseBody), {
+		status: statusCode,
+		headers: {
+			'Content-Type': 'application/json',
+			...corsHeaders,
+		},
+	});
+}
+
 export default {
 	async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
 		if (request.method === 'OPTIONS') {
@@ -62,23 +74,16 @@ export default {
 		}
 
 		if (request.method !== 'GET') {
-			return new Response(
-				JSON.stringify({
-					message: 'Method not allowed',
-					status: 405,
-				}),
-				{
-					status: 405,
-					headers: {
-						'Content-Type': 'application/json',
-						...corsHeaders,
-					},
-				},
-			);
+			return createErrorResponse(405, 'Method not allowed');
 		}
 
 		try {
-			const clientIp = request.headers.get('cf-connecting-ip') || request.headers.get('x-real-ip') || '0.0.0.0';
+			const clientIp = request.headers.get('cf-connecting-ip') || request.headers.get('x-real-ip');
+
+			if (!clientIp) {
+				return createErrorResponse(400, 'Client IP not found');
+			}
+
 			const key = await generateClientId(clientIp);
 			const currentCount = parseInt((await env.ROAST_FREE_USAGE_COUNTER.get(key)) || '0');
 
@@ -114,20 +119,8 @@ export default {
 			});
 		} catch (error) {
 			console.error('Error processing request:', error);
-			return new Response(
-				JSON.stringify({
-					message: 'Internal server error',
-					status: 500,
-					error: error instanceof Error ? error.message : 'Unknown error',
-				}),
-				{
-					status: 500,
-					headers: {
-						'Content-Type': 'application/json',
-						...corsHeaders,
-					},
-				},
-			);
+
+			return createErrorResponse(500, 'Internal server error', error);
 		}
 	},
 };
