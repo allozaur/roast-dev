@@ -12,7 +12,7 @@
 
 	let preRoastPlaceholderText = $state('');
 	let status = $state('');
-	let freeLimitIsUsed = $state(false);
+	let hasReachedFreeLimit = $state(false);
 	let freeLimitIsUsedHeadline = $state('');
 	let loading = $state(false);
 	let roastResponse = $state('');
@@ -28,11 +28,11 @@
 			});
 			const freeUsageRes = await freeUsageReq.json();
 
-			freeLimitIsUsed = freeUsageReq.status === 423;
+			hasReachedFreeLimit = freeUsageReq.status === 423;
 
 			console.log(freeUsageRes.message);
 
-			if (freeLimitIsUsed) {
+			if (hasReachedFreeLimit) {
 				loading = false;
 
 				freeLimitIsUsedHeadline = getRandomItem(freeLimitUsedHeadlines);
@@ -137,7 +137,7 @@ ${file.content}
 
 <Button onClick={triggerRoast}>Roast this Pull Request 🔥</Button>
 
-{#if freeLimitIsUsed}
+{#if hasReachedFreeLimit}
 	<div class="free-usage-limit">
 		<h3>
 			{freeLimitIsUsedHeadline}
