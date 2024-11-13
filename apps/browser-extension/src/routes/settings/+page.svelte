@@ -4,6 +4,7 @@
 	import chargeId from '$lib/stores/charge-id';
 	import llmChoice from '$lib/stores/llm-choice';
 	import llmApiKey from '$lib/stores/llm-api-key';
+	import availableModels from '$lib/config/available-models';
 
 	let licenseEmail = $state('');
 
@@ -59,11 +60,11 @@
 			bind:value={$llmChoice}
 			onChange={handleLlmChoiceChange}
 		>
-			<option value="claude-3.5-sonnet"> Claude 3.5 Sonnet </option>
+			<option value={availableModels['claude-3-5-sonnet']}> Claude 3.5 Sonnet </option>
 
-			<option value="gpt-4o"> GPT-4o </option>
+			<option value={availableModels['gpt-4o']}> GPT-4o </option>
 
-			<option value="gemini-1.5-pro"> Gemini 1.5 Flash </option>
+			<option value={availableModels['gemini-1.5-pro']}> Gemini 1.5 Pro </option>
 		</SelectField>
 
 		<div class="api-key-field">

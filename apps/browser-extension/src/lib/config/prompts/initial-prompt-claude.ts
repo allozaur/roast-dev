@@ -10,4 +10,8 @@ Also, if you see that the code is well-written, point it out just at the end, bu
 
 And one last important thing is — if you have a hard time finding issues, don't make them up. Just say that the code is good and you're impressed. But if you do find issues, don't hold back.
 
-Overall, try not to be too verbose and take your time with the roasting.`;
+Overall, try not to be too verbose and take your time with the roasting.
+
+In our conversation, I'll be sending you newer versions of the code, so you can roast them as well.
+
+Here's the code:`;

@@ -1,25 +1,43 @@
 <script lang="ts">
-	import { Button } from '@roast-dev/ui';
-	import freeLimitUsedHeadlines from '$lib/config/free-limit-used-headlines';
-	import preRoastPlaceholders from '$lib/config/pre-roast-placeholders';
-	import { onMount } from 'svelte';
-	import chargeId from '$lib/stores/charge-id';
-	import generateRoast from '$lib/functions/generate-roast';
 	import { marked } from 'marked';
-	import devPrCode from '$lib/fixtures/dev-pr-code';
+	import { onMount } from 'svelte';
 	import { PUBLIC_FREE_USAGE_COUNTER_WORKER_URL } from '$env/static/public';
+
+	import { Button } from '@roast-dev/ui';
+
+	import freeLimitUsedHeadlines from '$lib/config/content/free-limit-used-headlines';
+	import preRoastPlaceholders from '$lib/config/content/pre-roast-placeholders';
+	import followUpPrompt from '$lib/config/prompts/follow-up-prompt';
+	import initialPromptClaude from '$lib/config/prompts/initial-prompt-claude';
+	import initialPromptGpt from '$lib/config/prompts/initial-prompt-gpt';
+	import initialPromptGemini from '$lib/config/prompts/initial-prompt-gemini';
+
+	import devPrCode from '$lib/fixtures/dev-pr-code';
+	import generateRoast from '$lib/functions/generate-roast';
+	import chargeId from '$lib/stores/charge-id';
+	import llmChoice from '$lib/stores/llm-choice';
 	import getRandomItem from '$lib/utils/get-random-item';
 
-	let preRoastPlaceholderText = $state('');
-	let status = $state('');
-	let hasReachedFreeLimit = $state(false);
 	let freeLimitIsUsedHeadline = $state('');
+	let hasReachedFreeLimit = $state(false);
 	let loading = $state(false);
-	let roastResponse = $state('');
-
-	onMount(() => {
-		preRoastPlaceholderText = getRandomItem(preRoastPlaceholders);
+	let preRoastPlaceholderText = $state('');
+	let roastConversation: {
+		model?: string | null;
+		messages: { role?: string; content?: string }[];
+		metaData: {
+			pullRequest: {
+				title: string | null;
+				url: string | null;
+				status: string | null;
+			};
+		};
+	} = $state({
+		model: '',
+		messages: [],
+		metaData: { pullRequest: { title: null, url: null, status: null } }
 	});
+	let statusText = $state('');
 
 	async function triggerRoast() {
 		if (!$chargeId) {
@@ -41,11 +59,10 @@
 			}
 		}
 
-		status = 'Extracting changes...';
-		loading = true;
-		roastResponse = '';
-
 		let formattedDiff = '';
+
+		loading = true;
+		statusText = 'Extracting changes...';
 
 		try {
 			if (import.meta.env.PROD) {
@@ -114,28 +131,69 @@ ${file.content}
 				formattedDiff = devPrCode;
 			}
 
-			status = 'Roasting your code 🔥...';
+			const initialPrompt =
+				$llmChoice === 'gemini-1.5-pro'
+					? initialPromptGemini
+					: $llmChoice === 'gpt-4o'
+						? initialPromptGpt
+						: initialPromptClaude;
 
-			const response = await generateRoast(formattedDiff);
+			if (roastConversation.messages?.length === 0) {
+				roastConversation.messages.push({
+					role: 'user',
+					content: `${initialPrompt}${formattedDiff}`
+				});
+			} else {
+				roastConversation.messages.push({
+					role: 'user',
+					content: `${followUpPrompt}${formattedDiff}`
+				});
+			}
 
-			marked.setOptions({
-				gfm: true,
-				breaks: true
-			});
+			statusText = 'Roasting your code 🔥...';
 
-			roastResponse = await marked.parse(response);
+			const { content, role } = await generateRoast(roastConversation.messages ?? []);
 
-			status = 'Roast delivered! 🔥';
+			roastConversation.messages.push({ role, content });
+
+			roastConversation.model = $llmChoice;
+
+			localStorage.setItem('roastConversation', JSON.stringify(roastConversation));
+
+			statusText = 'Roast delivered! 🔥';
 		} catch (error) {
 			console.error('Roast error:', error);
-			status = `Error: ${error instanceof Error ? error.message : 'Unknown error occurred'}`;
+			statusText = `Error: ${error instanceof Error ? error.message : 'Unknown error occurred'}`;
 		} finally {
 			loading = false;
 		}
 	}
+
+	onMount(() => {
+		marked.setOptions({
+			gfm: true,
+			breaks: true
+		});
+
+		preRoastPlaceholderText = getRandomItem(preRoastPlaceholders);
+
+		if (localStorage.getItem('roastConversation')) {
+			try {
+				roastConversation = JSON.parse(`${localStorage.getItem('roastConversation')}`);
+			} catch (error) {
+				console.error('Error:', error);
+			}
+		}
+	});
 </script>
 
-<Button onClick={triggerRoast}>Roast this Pull Request 🔥</Button>
+<Button disabled={loading} onClick={triggerRoast}>
+	{#if roastConversation.messages?.length > 0}
+		Roast updates for this PR 🔥
+	{:else}
+		Roast this Pull Request 🔥
+	{/if}
+</Button>
 
 {#if hasReachedFreeLimit}
 	<div class="free-usage-limit">
@@ -149,19 +207,27 @@ ${file.content}
 
 		<span> You can generate 10 roasts in 30 days for free. </span>
 	</div>
-{:else if status}
-	<div class="status">
-		{status}
+{:else if statusText}
+	<div class="status-text">
+		{statusText}
 	</div>
 {/if}
 
 {#if loading}
 	<div class="loading">
-		<div class="spinner" />
+		<div class="spinner"></div>
 	</div>
-{:else if roastResponse}
+{:else if roastConversation?.messages?.some((message) => message.role === 'assistant' || message.role === 'model')}
 	<div class="roast-content">
-		{@html roastResponse}
+		{#if roastConversation.messages.filter((message) => message.role === 'assistant' || message.role === 'model')?.length > 0}
+			{@const roastResponses = roastConversation.messages.filter(
+				(message) => message.role === 'assistant' || message.role === 'model'
+			)}
+
+			{#await marked.parse(`${roastResponses[roastResponses.length - 1].content}`) then markdownContent}
+				{@html markdownContent}
+			{/await}
+		{/if}
 	</div>
 {:else}
 	<span class="placeholder">
@@ -178,14 +244,15 @@ ${file.content}
 		font-size: 1.25rem;
 		color: var(--c-text-light);
 		font-weight: 500;
+		border-radius: 1rem;
+		min-height: 20rem;
+
 		@media (prefers-color-scheme: light) {
 			background: #eaeaea;
 		}
-		border-radius: 1rem;
-		min-height: 20rem;
 	}
 
-	.status {
+	.status-text {
 		font-size: 0.875rem;
 		color: var(--c-text-light);
 		text-align: center;
@@ -236,7 +303,7 @@ ${file.content}
 			padding: 1rem;
 			border-radius: 0.5rem;
 			overflow-x: auto;
-			max-width: 37.75rem;
+			white-space: break-spaces;
 		}
 
 		:global(code) {
