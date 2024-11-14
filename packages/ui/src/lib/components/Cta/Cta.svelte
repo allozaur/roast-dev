@@ -2,7 +2,7 @@
 	import Button from '../Button/Button.svelte';
 
 	interface CtaWithSubtitleProps {
-		download?: boolean;
+		download?: string;
 		href?: string;
 		label: string;
 		onClick?: () => void;

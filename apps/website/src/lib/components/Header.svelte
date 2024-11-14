@@ -22,9 +22,15 @@
 				target="_blank"
 			/> -->
 
-			<Button download="roast-chrome-extension.zip" href="/downloads/roast-chrome-extension.zip"
-				>Download Beta version 🔥</Button
+			<Button
+				download="roast-chrome-extension.zip"
+				href="/downloads/roast-chrome-extension.zip"
+				onClick={() => {
+					alert('After downloading, unzip the file and follow the instructions in README.md');
+				}}
 			>
+				Download Beta version 🔥
+			</Button>
 		</div>
 	</div>
 </header>
