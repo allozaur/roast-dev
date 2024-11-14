@@ -15,7 +15,7 @@
 		</p>
 
 		<Cta
-			download
+			download="roast-chrome-extension.zip"
 			href="/downloads/roast-chrome-extension.zip"
 			label="Add Roast to your browser 😎"
 			subtitle="Download Beta of extension to add it manually to your browser. <br/>(soon available in Chrome Web Store)"

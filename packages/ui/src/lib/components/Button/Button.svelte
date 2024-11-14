@@ -3,7 +3,7 @@
 
 	interface ButtonProps {
 		children?: Snippet;
-		download?: boolean;
+		download?: string;
 		href?: string;
 		image?: Snippet;
 		onClick?: () => void;
