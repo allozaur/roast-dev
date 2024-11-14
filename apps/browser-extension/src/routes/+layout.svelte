@@ -29,6 +29,7 @@
 	<style>
 		body {
 			font-size: 16px;
+			min-width: 48rem;
 		}
 	</style>
 </svelte:head>
