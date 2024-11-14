@@ -4,7 +4,7 @@
 	"type": "module",
 	"scripts": {
 		"dev": "vite dev --port 5174",
-		"build:extension": "vite build && tsc ./build/*.ts && rm -rf ./build/*.ts && mv build roast-chrome-extension && zip -r ./roast-chrome-extension.zip ./roast-chrome-extension",
+		"build:extension": "vite build && tsc ./build/*.ts && rm -rf ./build/*.ts && mv build roast-chrome-extension && cp README.md roast-chrome-extension/. && zip -r ./roast-chrome-extension.zip ./roast-chrome-extension",
 		"preview": "vite preview",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
