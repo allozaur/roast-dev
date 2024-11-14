@@ -1,38 +1,49 @@
-# sv
+# Welcome to roast.dev Beta! 🔥
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
+Thanks for trying out our beta! The official version will be available in Chrome Web Store in November 2024, but until then, let's get you set up with early access.
 
-## Creating a project
+## Quick Install Guide
 
-If you're seeing this, you've probably already done this step. Congrats!
+### 1. Unpack & Prepare 📦
 
-```bash
-# create a new project in the current directory
-npx sv create
+- Unzip this package somewhere on your computer
+- Keep the folder (your extension needs it)
 
-# create a new project in my-app
-npx sv create my-app
-```
+### 2. Chrome Developer Mode 🕵️
 
-## Developing
+1. Go to `chrome://extensions`
+2. Enable "Developer mode" (top right toggle)
+3. Click "Load unpacked"
+4. Select the folder you just unpacked
+5. Pin roast.dev to your toolbar (click the puzzle piece if you don't see it)
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+### 3. Start Roasting! 🚀
 
-```bash
-npm run dev
+1. Click the roast.dev icon
+2. Add your LLM API key (ChatGPT, Claude, or Gemini) in the settings
+3. Visit any PR on GitHub and go to "Files changed" tab
+4. Hit the 🔥 button for instant feedback
 
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
+## Good to Know
 
-## Building
+- Beta version needs manual reinstall after Chrome restarts
+- Your API key and preferences are stored locally, roast doesn't store any code or keys.
+- Same features as the upcoming store version
+- Works with any GitHub PR you can access in your browser
 
-To create a production version of your app:
+## Need Help?
 
-```bash
-npm run build
-```
+Having trouble? Reach out:
 
-You can preview the production build with `npm run preview`.
+- Email: alek@roast.dev
+- LinkedIn: https://linkedin.com/in/aleksander-grygier
 
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
+## Coming Soon
+
+The official Chrome Web Store version arrives in November 2024 with auto-updates and seamless installation. Consider this beta your exclusive early access – help me polish the experience while getting your code roasted!
+
+Happy coding (and better PRs after roasting 🧯)!
+
+---
+
+@allozaur
