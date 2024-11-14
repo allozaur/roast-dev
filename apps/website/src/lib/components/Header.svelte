@@ -16,11 +16,14 @@
 		{/snippet}
 
 		<div class="download-cta">
-			<Button
+			<!-- <Button
 				href={envPublic.PUBLIC_CHROME_WEB_STORE_EXTENSION_URL}
 				image={badgeChromeWebStore}
 				target="_blank"
-			/>
+			/> -->
+
+			<Button download href="/downloads/roast-chrome-extension.zip">Download Beta version 🔥</Button
+			>
 		</div>
 	</div>
 </header>

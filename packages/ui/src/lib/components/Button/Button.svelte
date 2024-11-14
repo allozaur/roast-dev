@@ -3,6 +3,7 @@
 
 	interface ButtonProps {
 		children?: Snippet;
+		download?: boolean;
 		href?: string;
 		image?: Snippet;
 		onClick?: () => void;
@@ -11,7 +12,16 @@
 		type?: 'button' | 'submit' | 'reset' | null | undefined;
 	}
 
-	let { children, href, image, onClick, size = 'md', target, type }: ButtonProps = $props();
+	let {
+		children,
+		download,
+		href,
+		image,
+		onClick,
+		size = 'md',
+		target,
+		type
+	}: ButtonProps = $props();
 </script>
 
 {#snippet inner()}
@@ -27,7 +37,7 @@
 {/snippet}
 
 {#if href}
-	<a class="button {size}" class:image {href} onclick={onClick} {target}>
+	<a class="button {size}" class:image {href} {download} onclick={onClick} {target}>
 		{@render inner()}
 	</a>
 {:else}

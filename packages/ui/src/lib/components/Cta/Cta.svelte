@@ -25,6 +25,7 @@
 		display: grid;
 		gap: 1rem;
 		place-items: center;
+		text-align: center;
 
 		span {
 			color: #888;
