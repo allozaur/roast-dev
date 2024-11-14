@@ -1,9 +1,9 @@
-name: Deploy Stripe Customer Verification Worker (Preview)
+name: Deploy Stripe Customer Verification Worker (Production)
 
 on:
   push:
     branches:
-      - develop
+      - main
 
 jobs:
   deploy:
