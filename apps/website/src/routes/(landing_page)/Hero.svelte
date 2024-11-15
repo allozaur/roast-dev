@@ -14,13 +14,9 @@
 		</p>
 
 		<Cta
-			download="roast-chrome-extension.zip"
-			onClick={() => {
-				alert('After downloading, unzip the file and follow the instructions in README.md');
-			}}
-			href="/downloads/roast-chrome-extension.zip"
+			href="#pricing"
 			label="Add Roast to your browser 😎"
-			subtitle="Download Beta of extension to add it manually to your browser. <br/>(soon available in Chrome Web Store)"
+			subtitle="Start Roasting your PRs and improve your code review process!"
 		/>
 	</div>
 </section>
