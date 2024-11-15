@@ -1,5 +1,4 @@
 <script>
-	import { env as envPublic } from '$env/dynamic/public';
 	import { Cta } from '@roast-dev/ui';
 </script>
 

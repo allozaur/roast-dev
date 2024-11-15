@@ -2,18 +2,19 @@
 	import Button from '../Button/Button.svelte';
 
 	interface CtaWithSubtitleProps {
+		download?: string;
+		href?: string;
 		label: string;
 		onClick?: () => void;
-		href?: string;
 		subtitle: string;
 		target?: string;
 	}
 
-	let { href, label, onClick, subtitle, target }: CtaWithSubtitleProps = $props();
+	let { download, href, label, onClick, subtitle, target }: CtaWithSubtitleProps = $props();
 </script>
 
 <div class="cta">
-	<Button {onClick} {href} {target}>
+	<Button {download} {href} {onClick} {target}>
 		{label}
 	</Button>
 
@@ -25,6 +26,7 @@
 		display: grid;
 		gap: 1rem;
 		place-items: center;
+		text-align: center;
 
 		span {
 			color: #888;

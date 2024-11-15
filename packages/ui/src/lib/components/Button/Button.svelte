@@ -4,6 +4,7 @@
 	interface ButtonProps {
 		children?: Snippet;
 		disabled?: boolean;
+		download?: string;
 		href?: string;
 		image?: Snippet;
 		onClick?: () => void;
@@ -15,6 +16,7 @@
 	let {
 		children,
 		disabled,
+		download,
 		href,
 		image,
 		onClick,
@@ -37,7 +39,7 @@
 {/snippet}
 
 {#if href}
-	<a class="button {size}" class:disabled class:image {href} onclick={onClick} {target}>
+	<a class="button {size}" class:disabled class:image {download} {href} onclick={onClick} {target}>
 		{@render inner()}
 	</a>
 {:else}
