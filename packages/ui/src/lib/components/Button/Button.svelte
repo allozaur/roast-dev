@@ -3,6 +3,8 @@
 
 	interface ButtonProps {
 		children?: Snippet;
+		disabled?: boolean;
+		download?: string;
 		href?: string;
 		image?: Snippet;
 		onClick?: () => void;
@@ -11,7 +13,17 @@
 		type?: 'button' | 'submit' | 'reset' | null | undefined;
 	}
 
-	let { children, href, image, onClick, size = 'md', target, type }: ButtonProps = $props();
+	let {
+		children,
+		disabled,
+		download,
+		href,
+		image,
+		onClick,
+		size = 'md',
+		target,
+		type
+	}: ButtonProps = $props();
 </script>
 
 {#snippet inner()}
@@ -27,11 +39,11 @@
 {/snippet}
 
 {#if href}
-	<a class="button {size}" class:image {href} onclick={onClick} {target}>
+	<a class="button {size}" class:disabled class:image {download} {href} onclick={onClick} {target}>
 		{@render inner()}
 	</a>
 {:else}
-	<button class="button {size}" class:image onclick={onClick} {type}>
+	<button {disabled} class:disabled class="button {size}" class:image onclick={onClick} {type}>
 		{@render inner()}
 	</button>
 {/if}
@@ -55,7 +67,6 @@
 	}
 
 	.gradient {
-		content: '';
 		position: absolute;
 		left: 0;
 		top: 0;
@@ -73,7 +84,7 @@
 	.label {
 		border-radius: 0.5rem;
 		border: none;
-		color: white;
+		color: var(--color, white);
 		background: var(--background, var(--c-accent));
 		padding: var(--padding);
 		z-index: 1;
@@ -98,6 +109,17 @@
 
 		.lg & {
 			--padding: 1.125rem 1.375rem;
+		}
+	}
+
+	.disabled {
+		cursor: not-allowed;
+		--background: #888;
+		--background-hover: #888;
+		--color: #333;
+
+		.gradient {
+			display: none;
 		}
 	}
 </style>

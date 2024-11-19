@@ -1,38 +1,35 @@
-# sv
+# Welcome to 🔥 Roast!
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
+Thanks for trying out our beta! The stable version will be available in December 2024, but until then, let's get you set up with early access.
 
-## Creating a project
+## Quick Install Guide
 
-If you're seeing this, you've probably already done this step. Congrats!
+### 1. Install the extension from Chrome Web Store
 
-```bash
-# create a new project in the current directory
-npx sv create
+- Install the extension
+- After successful installation pin the extension to your favourites to have instant access to roasting!
 
-# create a new project in my-app
-npx sv create my-app
-```
+### 2. Start Roasting! 🚀
 
-## Developing
+1. Click the roast.dev icon
+2. Add your LLM API key (ChatGPT, Claude, or Gemini) in the settings
+3. Visit any PR on GitHub and go to "Files changed" tab
+4. Hit the 🔥 button for instant feedback
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+## Good to Know
 
-```bash
-npm run dev
+- Your API key and preferences are stored locally, Roast doesn't store any code or keys outside of your browser
+- Works with any GitHub PR you can access in your browser
 
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
+## Need Help?
 
-## Building
+Having trouble? Reach out:
 
-To create a production version of your app:
+- Email: alek@roast.dev
+- LinkedIn: https://linkedin.com/in/aleksander-grygier
 
-```bash
-npm run build
-```
+Happy coding (and better PRs after roasting 🔥)!
 
-You can preview the production build with `npm run preview`.
+---
 
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
+@allozaur

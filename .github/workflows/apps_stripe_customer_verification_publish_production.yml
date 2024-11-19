@@ -1,16 +1,14 @@
-name: Deploy Stripe Customer Verification Worker (Preview)
+name: Deploy Stripe Customer Verification Worker (Production)
 
 on:
   push:
-    branches-ignore:
+    branches:
       - main
-    paths:
-      - 'apps/stripe-customer-verification/**'
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    name: Deploy to Preview
+    name: Deploy to Production
     defaults:
       run:
         working-directory: apps/stripe-customer-verification
@@ -54,4 +52,4 @@ jobs:
         with:
           apiToken: ${{ secrets.CLOUDFLARE_WORKERS_API_TOKEN }}
           workingDirectory: apps/stripe-customer-verification
-          command: deploy --env preview
+          command: deploy --env production

@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "Roast",
-  "version": "0.0.1",
-  "description": "Roast your own code on GitHub PRs and submit better PRs",
+  "version": "0.0.2",
+  "description": "Roast your own code on GitHub and submit better Pull Requests",
   "icons": {
     "16": "png/icons/icon16.png",
     "48": "png/icons/icon48.png",

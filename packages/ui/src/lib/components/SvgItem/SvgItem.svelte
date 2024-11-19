@@ -1,11 +1,11 @@
 <script lang="ts">
-	interface LogoProps {
+	interface SvgItemProps {
 		assets: Record<string, unknown>;
 		assetsPath?: string;
 		name?: string;
 	}
 
-	let { assets, assetsPath, name }: LogoProps = $props();
+	let { assets, assetsPath, name }: SvgItemProps = $props();
 </script>
 
 <div class="svg-item">

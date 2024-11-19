@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/stores';
+	import availableModels from '$lib/config/available-models';
 	import chargeId from '$lib/stores/charge-id';
 	import llmApiKey from '$lib/stores/llm-api-key';
 	import llmChoice from '$lib/stores/llm-choice';
@@ -11,14 +12,15 @@
 
 	onMount(() => {
 		$chargeId = localStorage.getItem('roastChargeId');
-		$llmChoice = localStorage.getItem('roastLlmChoice') ?? 'claude-3.5-sonnet';
+		$llmChoice = localStorage.getItem('roastLlmChoice') ?? availableModels['claude-3-5-sonnet'];
 
 		if ($llmChoice === 'gpt-4o') {
 			$llmApiKey = localStorage.getItem('roastLlmApiKey-gpt-4o') ?? '';
 		} else if ($llmChoice === 'gemini-1.5-pro') {
 			$llmApiKey = localStorage.getItem('roastLlmApiKey-gemini-1.5-pro') ?? '';
 		} else {
-			$llmApiKey = localStorage.getItem('roastLlmApiKey-claude-3.5-sonnet') ?? '';
+			$llmApiKey =
+				localStorage.getItem(`roastLlmApiKey-${availableModels['claude-3-5-sonnet']}`) ?? '';
 		}
 	});
 </script>
@@ -26,8 +28,8 @@
 <svelte:head>
 	<style>
 		body {
-			min-width: 48rem;
 			font-size: 16px;
+			min-width: 48rem;
 		}
 	</style>
 </svelte:head>
@@ -37,14 +39,14 @@
 		{#if $page.url.pathname === '/settings'}
 			<h1>Settings</h1>
 
-			<a href="/"> <Icon name="xmark" --size="1.625rem" /></a>
+			<a href="/"> <Icon name="xmark" --size="1.5rem" /></a>
 		{:else}
 			<h1>
-				🧯 roast<strong>.dev</strong>
+				🔥 roast<strong>.dev</strong>
 			</h1>
 
 			<a href="/settings">
-				<Icon name="settings" --stroke="var(--c-text-light)" --size="1.625rem" />
+				<Icon name="settings" --stroke="var(--c-text-light)" --size="1.5rem" />
 			</a>
 		{/if}
 	</header>
@@ -55,7 +57,7 @@
 <style>
 	main {
 		display: grid;
-		gap: 2rem;
+		gap: 1.75rem;
 		padding: 1.625rem 1.5rem;
 	}
 

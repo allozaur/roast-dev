@@ -1,36 +1,104 @@
 <script lang="ts">
-	import { Button } from '@roast-dev/ui';
-	import freeLimitUsedHeadlines from '$lib/config/free-limit-used-headlines';
-	import preRoastPlaceholders from '$lib/config/pre-roast-placeholders';
-	import { onMount } from 'svelte';
-	import chargeId from '$lib/stores/charge-id';
-	import generateRoast from '$lib/functions/generate-roast';
 	import { marked } from 'marked';
-	import devPrCode from '$lib/fixtures/dev-pr-code';
+	import { onMount } from 'svelte';
 	import { PUBLIC_FREE_USAGE_COUNTER_WORKER_URL } from '$env/static/public';
+
+	import { Button, Logo } from '@roast-dev/ui';
+
+	import followUpPrompt from '$lib/config/prompts/follow-up-prompt';
+	import freeLimitUsedHeadlines from '$lib/config/content/free-limit-used-headlines';
+	import initialPromptClaude from '$lib/config/prompts/initial-prompt-claude';
+	import initialPromptGemini from '$lib/config/prompts/initial-prompt-gemini';
+	import initialPromptGpt from '$lib/config/prompts/initial-prompt-gpt';
+	import preRoastPlaceholders from '$lib/config/content/pre-roast-placeholders';
+
+	import chargeId from '$lib/stores/charge-id';
+	import devPrCode from '$lib/fixtures/dev-pr-code';
+	import generateRoast from '$lib/functions/generate-roast';
 	import getRandomItem from '$lib/utils/get-random-item';
+	import llmChoice from '$lib/stores/llm-choice';
 
-	let preRoastPlaceholderText = $state('');
-	let status = $state('');
-	let hasReachedFreeLimit = $state(false);
 	let freeLimitIsUsedHeadline = $state('');
+	let hasReachedFreeLimit = $state(false);
 	let loading = $state(false);
-	let roastResponse = $state('');
-
-	onMount(() => {
-		preRoastPlaceholderText = getRandomItem(preRoastPlaceholders);
+	let preRoastPlaceholderText = $state('');
+	let roastConversation: {
+		model?: string | null;
+		messages: { role?: string; content?: string }[];
+		metaData: {
+			pullRequest: {
+				title: string | null;
+				url: string | null;
+				status: string | null;
+			};
+		};
+	} = $state({
+		model: '',
+		messages: [],
+		metaData: { pullRequest: { title: null, url: null, status: null } }
 	});
+	let statusText = $state('');
+	let isOnWrongPage = $state(false);
+	let roastPrTitle = $state('');
+	let roastPrUrl = $state('');
+	let tabUrl = $state('');
+
+	let db: IDBDatabase;
+
+	async function loadRoastConversation() {
+		await openDatabase();
+
+		const transaction = db.transaction('conversations', 'readonly');
+		const store = transaction.objectStore('conversations');
+		const id = roastPrUrl.replace('https://', '').replace('/files', '');
+		const request = store.get(id);
+
+		request.onsuccess = () => {
+			if (request.result) {
+				roastConversation = request.result.data;
+			}
+		};
+
+		request.onerror = (event) => {
+			console.error('Error loading conversation:', event);
+		};
+	}
+
+	function openDatabase(): Promise<void> {
+		return new Promise((resolve, reject) => {
+			const request = indexedDB.open('roastConversationsDB', 1);
+			request.onerror = (event) => {
+				console.error('Database error:', event);
+				reject();
+			};
+
+			request.onsuccess = () => {
+				db = request.result;
+				resolve();
+			};
+
+			request.onupgradeneeded = () => {
+				db = request.result;
+				if (!db.objectStoreNames.contains('conversations')) {
+					db.createObjectStore('conversations', { keyPath: 'id' });
+				}
+			};
+		});
+	}
+
+	async function saveRoastConversation() {
+		await openDatabase();
+		const transaction = db.transaction('conversations', 'readwrite');
+		const store = transaction.objectStore('conversations');
+		const id = roastPrUrl.replace('https://', '').replace('/files', '');
+		store.put({ id, data: $state.snapshot(roastConversation) });
+	}
 
 	async function triggerRoast() {
 		if (!$chargeId) {
-			const freeUsageReq = await fetch(PUBLIC_FREE_USAGE_COUNTER_WORKER_URL, {
-				method: 'GET'
-			});
-			const freeUsageRes = await freeUsageReq.json();
+			const freeUsageReq = await fetch(PUBLIC_FREE_USAGE_COUNTER_WORKER_URL);
 
-			hasReachedFreeLimit = freeUsageReq.status === 423;
-
-			console.log(freeUsageRes.message);
+			hasReachedFreeLimit = freeUsageReq.status !== 201;
 
 			if (hasReachedFreeLimit) {
 				loading = false;
@@ -41,25 +109,31 @@
 			}
 		}
 
-		status = 'Extracting changes...';
-		loading = true;
-		roastResponse = '';
-
 		let formattedDiff = '';
+
+		loading = true;
+		statusText = 'Extracting changes...';
 
 		try {
 			if (import.meta.env.PROD) {
 				// @ts-expect-error - Chrome API
 				const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
 
+				const githubPullFilesUrlPattern =
+					/^https:\/\/github\.com\/[^\/]+\/[^\/]+\/pull\/\d+\/files/;
+
+				if (!tab.url || !githubPullFilesUrlPattern.test(tab.url)) {
+					statusText =
+						'Please navigate to the "Files changed" page of a Pull Request to use have you code roasted 🔥';
+					isOnWrongPage = true;
+					loading = false;
+					return;
+				}
+
 				// @ts-expect-error - Chrome API
 				const results = await chrome.scripting.executeScript({
 					target: { tabId: tab.id! },
 					func: () => {
-						const prTitle =
-							document.querySelector('.js-issue-title')?.textContent?.trim() || 'Untitled PR';
-						const prUrl = window.location.href;
-
 						const files = document.querySelectorAll('copilot-diff-entry');
 						const changes: Array<{ fileName: string; content: string }> = [];
 
@@ -89,9 +163,7 @@
 						});
 
 						return {
-							changes,
-							title: prTitle,
-							url: prUrl
+							changes
 						};
 					}
 				});
@@ -100,7 +172,7 @@
 					throw new Error('No changes found. Are you on a PR "Files changed" page?');
 				}
 
-				const { changes, title, url } = results[0].result;
+				const { changes } = results[0].result;
 
 				formattedDiff = changes
 					.map(
@@ -112,30 +184,128 @@ ${file.content}
 					.join('\n---\n\n');
 			} else {
 				formattedDiff = devPrCode;
+				roastPrTitle = 'Test PR';
+				roastPrUrl = 'https://github.com/roast-dev/roast/pull/123';
 			}
 
-			status = 'Roasting your code 🔥...';
+			const initialPrompt =
+				$llmChoice === 'gemini-1.5-pro'
+					? initialPromptGemini
+					: $llmChoice === 'gpt-4o'
+						? initialPromptGpt
+						: initialPromptClaude;
 
-			const response = await generateRoast(formattedDiff);
+			if (roastConversation.messages?.length === 0) {
+				roastConversation.messages.push({
+					role: 'user',
+					content: `${initialPrompt}${formattedDiff}`
+				});
+			} else {
+				roastConversation.messages.push({
+					role: 'user',
+					content: `${followUpPrompt}${formattedDiff}`
+				});
+			}
 
-			marked.setOptions({
-				gfm: true,
-				breaks: true
-			});
+			statusText = `Roasting your code 🔥 Do not close the plugin window or I'll smack ya! 🥊`;
 
-			roastResponse = await marked.parse(response);
+			const { content, role } = await generateRoast(roastConversation.messages ?? []);
 
-			status = 'Roast delivered! 🔥';
+			roastConversation.messages.push({ role, content });
+
+			roastConversation.model = $llmChoice;
+
+			roastConversation.metaData.pullRequest.title = roastPrTitle;
+
+			roastConversation.metaData.pullRequest.url = roastPrUrl;
+
+			await saveRoastConversation();
+
+			statusText = 'Roast delivered! 🔥';
 		} catch (error) {
 			console.error('Roast error:', error);
-			status = `Error: ${error instanceof Error ? error.message : 'Unknown error occurred'}`;
+			statusText = `Error: ${error instanceof Error ? error.message : 'Unknown error occurred'}`;
 		} finally {
 			loading = false;
 		}
 	}
+
+	onMount(async () => {
+		marked.setOptions({
+			gfm: true,
+			breaks: true
+		});
+
+		preRoastPlaceholderText = getRandomItem(preRoastPlaceholders);
+
+		if (import.meta.env.PROD) {
+			try {
+				// @ts-expect-error - Chrome API
+				const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+
+				tabUrl = tab.url;
+
+				// @ts-expect-error - Chrome API
+				const results = await chrome.scripting.executeScript({
+					target: { tabId: tab.id! },
+					func: () => {
+						const prTitle =
+							document.querySelector('.js-issue-title')?.textContent?.trim() || 'Untitled PR';
+						const prUrl = window.location.href;
+						return { prTitle, prUrl };
+					}
+				});
+
+				if (results?.[0]?.result) {
+					roastPrTitle = results[0].result.prTitle;
+					roastPrUrl = results[0].result.prUrl;
+				}
+			} catch (error) {
+				console.error('Error extracting PR info:', error);
+			}
+		} else {
+			roastPrTitle = 'Test PR';
+			roastPrUrl = 'https://github.com/roast-dev/roast/pull/123';
+		}
+
+		await loadRoastConversation();
+	});
 </script>
 
-<Button onClick={triggerRoast}>Roast this Pull Request 🔥</Button>
+{#if roastPrTitle}
+	<div class="top">
+		<Logo name="github" --size="1.625rem" --fill="var(--c-text)" />
+
+		<h1 class="pr-title">
+			{@html roastPrTitle}
+
+			<span class="pr-number">
+				#{@html roastPrUrl.replace('/files', '').split('/').pop()}
+			</span>
+		</h1>
+	</div>
+{/if}
+
+{#if isOnWrongPage && tabUrl.includes('/pull/')}
+	<Button
+		onClick={async () => {
+			// @ts-expect-error - Chrome API
+			const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+			// @ts-expect-error - Chrome API
+			await chrome.tabs.update(tab.id!, { url: `${tabUrl}/files` });
+		}}
+	>
+		Go to "Files changed" tab
+	</Button>
+{:else if !isOnWrongPage}
+	<Button disabled={loading} onClick={triggerRoast}>
+		{#if roastConversation.messages?.length > 0}
+			Roast updates for this PR 🔥
+		{:else}
+			Roast this Pull Request 🔥
+		{/if}
+	</Button>
+{/if}
 
 {#if hasReachedFreeLimit}
 	<div class="free-usage-limit">
@@ -149,19 +319,27 @@ ${file.content}
 
 		<span> You can generate 10 roasts in 30 days for free. </span>
 	</div>
-{:else if status}
-	<div class="status">
-		{status}
+{:else if statusText}
+	<div class="status-text">
+		{statusText}
 	</div>
 {/if}
 
 {#if loading}
 	<div class="loading">
-		<div class="spinner" />
+		<div class="spinner"></div>
 	</div>
-{:else if roastResponse}
+{:else if roastConversation?.messages?.some((message) => message.role === 'assistant' || message.role === 'model')}
 	<div class="roast-content">
-		{@html roastResponse}
+		{#if roastConversation.messages.filter((message) => message.role === 'assistant' || message.role === 'model')?.length > 0}
+			{@const roastResponses = roastConversation.messages.filter(
+				(message) => message.role === 'assistant' || message.role === 'model'
+			)}
+
+			{#await marked.parse(`${roastResponses[roastResponses.length - 1].content}`) then markdownContent}
+				{@html markdownContent}
+			{/await}
+		{/if}
 	</div>
 {:else}
 	<span class="placeholder">
@@ -170,6 +348,28 @@ ${file.content}
 {/if}
 
 <style>
+	.top {
+		align-items: start;
+		display: inline-grid;
+		gap: 0.5rem;
+		grid-template-columns: auto 1fr;
+
+		:global(.logo svg) {
+			translate: 0 0.25rem;
+		}
+	}
+
+	h1 {
+		font-size: 1.75rem;
+		line-height: 1.125;
+		margin: 0;
+	}
+
+	.pr-number {
+		color: var(--c-text-light);
+		margin-left: 0.125rem;
+	}
+
 	.placeholder {
 		display: grid;
 		place-items: center;
@@ -178,18 +378,18 @@ ${file.content}
 		font-size: 1.25rem;
 		color: var(--c-text-light);
 		font-weight: 500;
+		border-radius: 1rem;
+		min-height: 20rem;
+
 		@media (prefers-color-scheme: light) {
 			background: #eaeaea;
 		}
-		border-radius: 1rem;
-		min-height: 20rem;
 	}
 
-	.status {
+	.status-text {
 		font-size: 0.875rem;
 		color: var(--c-text-light);
 		text-align: center;
-		margin-top: 0.5rem;
 	}
 
 	.loading {
@@ -236,7 +436,7 @@ ${file.content}
 			padding: 1rem;
 			border-radius: 0.5rem;
 			overflow-x: auto;
-			max-width: 37.75rem;
+			white-space: break-spaces;
 		}
 
 		:global(code) {

@@ -6,6 +6,8 @@ body {
 	letter-spacing: -0.01em;
 	margin: 0;
 	box-sizing: border-box;
+	text-rendering: optimizeLegibility;
+	-webkit-font-smoothing: antialiased;
 }
 
 a {
