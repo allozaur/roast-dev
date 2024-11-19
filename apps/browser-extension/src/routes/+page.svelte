@@ -38,8 +38,10 @@
 		metaData: { pullRequest: { title: null, url: null, status: null } }
 	});
 	let statusText = $state('');
+	let isOnWrongPage = $state(false);
 	let roastPrTitle = $state('');
 	let roastPrUrl = $state('');
+	let tabUrl = $state('');
 
 	async function triggerRoast() {
 		if (!$chargeId) {
@@ -66,14 +68,21 @@
 				// @ts-expect-error - Chrome API
 				const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
 
+				const githubPullFilesUrlPattern =
+					/^https:\/\/github\.com\/[^\/]+\/[^\/]+\/pull\/\d+\/files/;
+
+				if (!tab.url || !githubPullFilesUrlPattern.test(tab.url)) {
+					statusText =
+						'Please navigate to the "Files changed" page of a pull request to use Roast Dev.';
+					isOnWrongPage = true;
+					loading = false;
+					return;
+				}
+
 				// @ts-expect-error - Chrome API
 				const results = await chrome.scripting.executeScript({
 					target: { tabId: tab.id! },
 					func: () => {
-						const prTitle =
-							document.querySelector('.js-issue-title')?.textContent?.trim() || 'Untitled PR';
-						const prUrl = window.location.href;
-
 						const files = document.querySelectorAll('copilot-diff-entry');
 						const changes: Array<{ fileName: string; content: string }> = [];
 
@@ -103,9 +112,7 @@
 						});
 
 						return {
-							changes,
-							title: prTitle,
-							url: prUrl
+							changes
 						};
 					}
 				});
@@ -114,10 +121,7 @@
 					throw new Error('No changes found. Are you on a PR "Files changed" page?');
 				}
 
-				const { changes, title, url } = results[0].result;
-
-				roastPrTitle = title;
-				roastPrUrl = url;
+				const { changes } = results[0].result;
 
 				formattedDiff = changes
 					.map(
@@ -152,7 +156,7 @@ ${file.content}
 				});
 			}
 
-			statusText = 'Roasting your code 🔥, please do not close the plugin window...';
+			statusText = `Roasting your code 🔥 Do not close the plugin window or i'll smack ya!`;
 
 			const { content, role } = await generateRoast(roastConversation.messages ?? []);
 
@@ -164,7 +168,10 @@ ${file.content}
 
 			roastConversation.metaData.pullRequest.url = roastPrUrl;
 
-			localStorage.setItem('roastConversation', JSON.stringify(roastConversation));
+			localStorage.setItem(
+				`roastConversation-${roastPrUrl.replace('https://', '').replace('/files', '')}`,
+				JSON.stringify(roastConversation)
+			);
 
 			statusText = 'Roast delivered! 🔥';
 		} catch (error) {
@@ -175,7 +182,7 @@ ${file.content}
 		}
 	}
 
-	onMount(() => {
+	onMount(async () => {
 		marked.setOptions({
 			gfm: true,
 			breaks: true
@@ -183,9 +190,45 @@ ${file.content}
 
 		preRoastPlaceholderText = getRandomItem(preRoastPlaceholders);
 
-		if (localStorage.getItem('roastConversation')) {
+		if (import.meta.env.PROD) {
 			try {
-				roastConversation = JSON.parse(`${localStorage.getItem('roastConversation')}`);
+				// @ts-expect-error - Chrome API
+				const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+
+				tabUrl = tab.url;
+
+				// @ts-expect-error - Chrome API
+				const results = await chrome.scripting.executeScript({
+					target: { tabId: tab.id! },
+					func: () => {
+						const prTitle =
+							document.querySelector('.js-issue-title')?.textContent?.trim() || 'Untitled PR';
+						const prUrl = window.location.href;
+						return { prTitle, prUrl };
+					}
+				});
+
+				if (results?.[0]?.result) {
+					roastPrTitle = results[0].result.prTitle;
+					roastPrUrl = results[0].result.prUrl;
+				}
+			} catch (error) {
+				console.error('Error extracting PR info:', error);
+			}
+		} else {
+			roastPrTitle = 'Test PR';
+			roastPrUrl = 'https://github.com/roast-dev/roast/pull/123';
+		}
+
+		if (
+			localStorage.getItem(
+				`roastConversation-${roastPrUrl.replace('https://', '').replace('/files', '')}`
+			)
+		) {
+			try {
+				roastConversation = JSON.parse(
+					`${localStorage.getItem(`roastConversation-${roastPrUrl.replace('https://', '').replace('/files', '')}`)}`
+				);
 			} catch (error) {
 				console.error('Error:', error);
 			}
@@ -227,6 +270,21 @@ ${file.content}
 	<div class="status-text">
 		{statusText}
 	</div>
+
+	{#if isOnWrongPage && tabUrl.includes('/pull/')}
+		<div class="go-to-files-changed">
+			<Button
+				onClick={async () => {
+					// @ts-expect-error - Chrome API
+					const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+					// @ts-expect-error - Chrome API
+					await chrome.tabs.update(tab.id!, { url: `${tabUrl}/files` });
+				}}
+			>
+				Go to "Files changed" tab
+			</Button>
+		</div>
+	{/if}
 {/if}
 
 {#if loading}
@@ -259,7 +317,7 @@ ${file.content}
 
 	.pr-number {
 		color: var(--c-text-light);
-		margin-left: 0.375rem;
+		margin-left: 0.125rem;
 	}
 
 	.placeholder {
@@ -355,5 +413,10 @@ ${file.content}
 			color: var(--c-text-light);
 			font-size: 0.75rem;
 		}
+	}
+
+	.go-to-files-changed {
+		display: grid;
+		place-items: center;
 	}
 </style>
