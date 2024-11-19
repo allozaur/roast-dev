@@ -3,7 +3,7 @@
 	import { onMount } from 'svelte';
 	import { PUBLIC_FREE_USAGE_COUNTER_WORKER_URL } from '$env/static/public';
 
-	import { Button } from '@roast-dev/ui';
+	import { Button, Logo } from '@roast-dev/ui';
 
 	import followUpPrompt from '$lib/config/prompts/follow-up-prompt';
 	import freeLimitUsedHeadlines from '$lib/config/content/free-limit-used-headlines';
@@ -73,7 +73,7 @@
 
 				if (!tab.url || !githubPullFilesUrlPattern.test(tab.url)) {
 					statusText =
-						'Please navigate to the "Files changed" page of a pull request to use Roast Dev.';
+						'Please navigate to the "Files changed" page of a Pull Request to use have you code roasted 🔥';
 					isOnWrongPage = true;
 					loading = false;
 					return;
@@ -156,7 +156,7 @@ ${file.content}
 				});
 			}
 
-			statusText = `Roasting your code 🔥 Do not close the plugin window or i'll smack ya!`;
+			statusText = `Roasting your code 🔥 Do not close the plugin window or I'll smack ya!`;
 
 			const { content, role } = await generateRoast(roastConversation.messages ?? []);
 
@@ -237,22 +237,39 @@ ${file.content}
 </script>
 
 {#if roastPrTitle}
-	<h1 class="pr-title">
-		{@html roastPrTitle}
+	<header>
+		<Logo name="github" --size="1.625rem" --fill="var(--c-text)" />
 
-		<span class="pr-number">
-			#{@html roastPrUrl.replace('/files', '').split('/').pop()}
-		</span>
-	</h1>
+		<h1 class="pr-title">
+			{@html roastPrTitle}
+
+			<span class="pr-number">
+				#{@html roastPrUrl.replace('/files', '').split('/').pop()}
+			</span>
+		</h1>
+	</header>
 {/if}
 
-<Button disabled={loading} onClick={triggerRoast}>
-	{#if roastConversation.messages?.length > 0}
-		Roast updates for this PR 🔥
-	{:else}
-		Roast this Pull Request 🔥
-	{/if}
-</Button>
+{#if isOnWrongPage && tabUrl.includes('/pull/')}
+	<Button
+		onClick={async () => {
+			// @ts-expect-error - Chrome API
+			const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+			// @ts-expect-error - Chrome API
+			await chrome.tabs.update(tab.id!, { url: `${tabUrl}/files` });
+		}}
+	>
+		Go to "Files changed" tab
+	</Button>
+{:else if !isOnWrongPage}
+	<Button disabled={loading} onClick={triggerRoast}>
+		{#if roastConversation.messages?.length > 0}
+			Roast updates for this PR 🔥
+		{:else}
+			Roast this Pull Request 🔥
+		{/if}
+	</Button>
+{/if}
 
 {#if hasReachedFreeLimit}
 	<div class="free-usage-limit">
@@ -270,21 +287,6 @@ ${file.content}
 	<div class="status-text">
 		{statusText}
 	</div>
-
-	{#if isOnWrongPage && tabUrl.includes('/pull/')}
-		<div class="go-to-files-changed">
-			<Button
-				onClick={async () => {
-					// @ts-expect-error - Chrome API
-					const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-					// @ts-expect-error - Chrome API
-					await chrome.tabs.update(tab.id!, { url: `${tabUrl}/files` });
-				}}
-			>
-				Go to "Files changed" tab
-			</Button>
-		</div>
-	{/if}
 {/if}
 
 {#if loading}
@@ -310,8 +312,19 @@ ${file.content}
 {/if}
 
 <style>
+	header {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.5rem;
+
+		:global(.logo svg) {
+			translate: 0 0.125rem;
+		}
+	}
+
 	h1 {
 		font-size: 1.75rem;
+		line-height: 1.125;
 		margin: 0;
 	}
 
@@ -340,7 +353,6 @@ ${file.content}
 		font-size: 0.875rem;
 		color: var(--c-text-light);
 		text-align: center;
-		margin-top: 0.5rem;
 	}
 
 	.loading {
