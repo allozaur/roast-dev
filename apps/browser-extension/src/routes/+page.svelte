@@ -207,7 +207,7 @@ ${file.content}
 				});
 			}
 
-			statusText = `Roasting your code 🔥 Do not close the plugin window or I'll smack ya!`;
+			statusText = `Roasting your code 🔥 Do not close the plugin window or I'll smack ya! 🥊`;
 
 			const { content, role } = await generateRoast(roastConversation.messages ?? []);
 
@@ -273,7 +273,7 @@ ${file.content}
 </script>
 
 {#if roastPrTitle}
-	<header>
+	<div class="top">
 		<Logo name="github" --size="1.625rem" --fill="var(--c-text)" />
 
 		<h1 class="pr-title">
@@ -283,7 +283,7 @@ ${file.content}
 				#{@html roastPrUrl.replace('/files', '').split('/').pop()}
 			</span>
 		</h1>
-	</header>
+	</div>
 {/if}
 
 {#if isOnWrongPage && tabUrl.includes('/pull/')}
@@ -348,7 +348,7 @@ ${file.content}
 {/if}
 
 <style>
-	header {
+	.top {
 		align-items: start;
 		display: inline-grid;
 		gap: 0.5rem;

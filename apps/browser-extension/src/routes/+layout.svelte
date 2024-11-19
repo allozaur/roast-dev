@@ -39,14 +39,14 @@
 		{#if $page.url.pathname === '/settings'}
 			<h1>Settings</h1>
 
-			<a href="/"> <Icon name="xmark" --size="1.625rem" /></a>
+			<a href="/"> <Icon name="xmark" --size="1.5rem" /></a>
 		{:else}
 			<h1>
 				🔥 roast<strong>.dev</strong>
 			</h1>
 
 			<a href="/settings">
-				<Icon name="settings" --stroke="var(--c-text-light)" --size="1.625rem" />
+				<Icon name="settings" --stroke="var(--c-text-light)" --size="1.5rem" />
 			</a>
 		{/if}
 	</header>
@@ -67,7 +67,7 @@
 		justify-content: space-between;
 
 		h1 {
-			font-size: 1.75rem;
+			font-size: 1.5rem;
 			margin: 0;
 
 			strong {
