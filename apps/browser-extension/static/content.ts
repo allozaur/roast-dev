@@ -46,15 +46,3 @@ function createObserver() {
 const observer = createObserver();
 
 observer.observe(document.body, { childList: true, subtree: true });
-
-if (location.href.includes('/pull/') && location.href.includes('/files')) {
-	// Try a few times to inject the button, as GitHub's UI might load async
-	const attempts = [0, 500, 1000, 2000, 4000, 8000];
-	attempts.forEach((delay) => {
-		setTimeout(() => {
-			if (!document.querySelector('.js-roast-button')) {
-				injectRoastButton();
-			}
-		}, delay);
-	});
-}
