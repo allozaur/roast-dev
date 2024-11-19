@@ -43,6 +43,57 @@
 	let roastPrUrl = $state('');
 	let tabUrl = $state('');
 
+	let db: IDBDatabase;
+
+	async function loadRoastConversation() {
+		await openDatabase();
+
+		const transaction = db.transaction('conversations', 'readonly');
+		const store = transaction.objectStore('conversations');
+		const id = roastPrUrl.replace('https://', '').replace('/files', '');
+		const request = store.get(id);
+
+		request.onsuccess = () => {
+			if (request.result) {
+				roastConversation = request.result.data;
+			}
+		};
+
+		request.onerror = (event) => {
+			console.error('Error loading conversation:', event);
+		};
+	}
+
+	function openDatabase(): Promise<void> {
+		return new Promise((resolve, reject) => {
+			const request = indexedDB.open('roastConversationsDB', 1);
+			request.onerror = (event) => {
+				console.error('Database error:', event);
+				reject();
+			};
+
+			request.onsuccess = () => {
+				db = request.result;
+				resolve();
+			};
+
+			request.onupgradeneeded = () => {
+				db = request.result;
+				if (!db.objectStoreNames.contains('conversations')) {
+					db.createObjectStore('conversations', { keyPath: 'id' });
+				}
+			};
+		});
+	}
+
+	async function saveRoastConversation() {
+		await openDatabase();
+		const transaction = db.transaction('conversations', 'readwrite');
+		const store = transaction.objectStore('conversations');
+		const id = roastPrUrl.replace('https://', '').replace('/files', '');
+		store.put({ id, data: $state.snapshot(roastConversation) });
+	}
+
 	async function triggerRoast() {
 		if (!$chargeId) {
 			const freeUsageReq = await fetch(PUBLIC_FREE_USAGE_COUNTER_WORKER_URL);
@@ -168,10 +219,7 @@ ${file.content}
 
 			roastConversation.metaData.pullRequest.url = roastPrUrl;
 
-			localStorage.setItem(
-				`roastConversation-${roastPrUrl.replace('https://', '').replace('/files', '')}`,
-				JSON.stringify(roastConversation)
-			);
+			await saveRoastConversation();
 
 			statusText = 'Roast delivered! 🔥';
 		} catch (error) {
@@ -220,19 +268,7 @@ ${file.content}
 			roastPrUrl = 'https://github.com/roast-dev/roast/pull/123';
 		}
 
-		if (
-			localStorage.getItem(
-				`roastConversation-${roastPrUrl.replace('https://', '').replace('/files', '')}`
-			)
-		) {
-			try {
-				roastConversation = JSON.parse(
-					`${localStorage.getItem(`roastConversation-${roastPrUrl.replace('https://', '').replace('/files', '')}`)}`
-				);
-			} catch (error) {
-				console.error('Error:', error);
-			}
-		}
+		await loadRoastConversation();
 	});
 </script>
 
