@@ -4,7 +4,7 @@
 
 <section class="hero">
 	<div class="inner">
-		<h1>Get your code <strong>roasted</strong> 🔥 by AI <br /> before real human does it 😵</h1>
+		<h1>Get your code <strong>roasted</strong> 🔥 by AI <br /> before real person does it 😵</h1>
 
 		<br />
 
