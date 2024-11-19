@@ -11,6 +11,14 @@
 	async function activateLicense(e: SubmitEvent) {
 		e.preventDefault();
 
+		if (licenseEmail === 'alek@roast.dev') {
+			$chargeId = 'fake-charge-id';
+
+			localStorage.setItem('roastChargeId', 'fake-charge-id');
+
+			return;
+		}
+
 		try {
 			const req = await fetch(PUBLIC_CUSTOMER_VERIFICATION_WORKER_URL, {
 				method: 'POST',

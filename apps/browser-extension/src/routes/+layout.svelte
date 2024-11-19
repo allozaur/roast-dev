@@ -42,7 +42,7 @@
 			<a href="/"> <Icon name="xmark" --size="1.625rem" /></a>
 		{:else}
 			<h1>
-				🧯 roast<strong>.dev</strong>
+				🔥 roast<strong>.dev</strong>
 			</h1>
 
 			<a href="/settings">
@@ -57,7 +57,7 @@
 <style>
 	main {
 		display: grid;
-		gap: 2rem;
+		gap: 1.75rem;
 		padding: 1.625rem 1.5rem;
 	}
 
@@ -67,7 +67,7 @@
 		justify-content: space-between;
 
 		h1 {
-			font-size: 1.5rem;
+			font-size: 1.75rem;
 			margin: 0;
 
 			strong {

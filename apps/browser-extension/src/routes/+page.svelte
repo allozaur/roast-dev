@@ -5,18 +5,18 @@
 
 	import { Button } from '@roast-dev/ui';
 
-	import freeLimitUsedHeadlines from '$lib/config/content/free-limit-used-headlines';
-	import preRoastPlaceholders from '$lib/config/content/pre-roast-placeholders';
 	import followUpPrompt from '$lib/config/prompts/follow-up-prompt';
+	import freeLimitUsedHeadlines from '$lib/config/content/free-limit-used-headlines';
 	import initialPromptClaude from '$lib/config/prompts/initial-prompt-claude';
-	import initialPromptGpt from '$lib/config/prompts/initial-prompt-gpt';
 	import initialPromptGemini from '$lib/config/prompts/initial-prompt-gemini';
+	import initialPromptGpt from '$lib/config/prompts/initial-prompt-gpt';
+	import preRoastPlaceholders from '$lib/config/content/pre-roast-placeholders';
 
+	import chargeId from '$lib/stores/charge-id';
 	import devPrCode from '$lib/fixtures/dev-pr-code';
 	import generateRoast from '$lib/functions/generate-roast';
-	import chargeId from '$lib/stores/charge-id';
-	import llmChoice from '$lib/stores/llm-choice';
 	import getRandomItem from '$lib/utils/get-random-item';
+	import llmChoice from '$lib/stores/llm-choice';
 
 	let freeLimitIsUsedHeadline = $state('');
 	let hasReachedFreeLimit = $state(false);
@@ -38,13 +38,12 @@
 		metaData: { pullRequest: { title: null, url: null, status: null } }
 	});
 	let statusText = $state('');
+	let roastPrTitle = $state('');
+	let roastPrUrl = $state('');
 
 	async function triggerRoast() {
 		if (!$chargeId) {
-			const freeUsageReq = await fetch(PUBLIC_FREE_USAGE_COUNTER_WORKER_URL, {
-				method: 'GET'
-			});
-			const freeUsageRes = await freeUsageReq.json();
+			const freeUsageReq = await fetch(PUBLIC_FREE_USAGE_COUNTER_WORKER_URL);
 
 			hasReachedFreeLimit = freeUsageReq.status !== 201;
 
@@ -117,6 +116,9 @@
 
 				const { changes, title, url } = results[0].result;
 
+				roastPrTitle = title;
+				roastPrUrl = url;
+
 				formattedDiff = changes
 					.map(
 						(file: { fileName: any; content: any }) => `
@@ -127,6 +129,8 @@ ${file.content}
 					.join('\n---\n\n');
 			} else {
 				formattedDiff = devPrCode;
+				roastPrTitle = 'Test PR';
+				roastPrUrl = 'https://github.com/roast-dev/roast/pull/123';
 			}
 
 			const initialPrompt =
@@ -148,13 +152,17 @@ ${file.content}
 				});
 			}
 
-			statusText = 'Roasting your code 🔥...';
+			statusText = 'Roasting your code 🔥, please do not close the plugin window...';
 
 			const { content, role } = await generateRoast(roastConversation.messages ?? []);
 
 			roastConversation.messages.push({ role, content });
 
 			roastConversation.model = $llmChoice;
+
+			roastConversation.metaData.pullRequest.title = roastPrTitle;
+
+			roastConversation.metaData.pullRequest.url = roastPrUrl;
 
 			localStorage.setItem('roastConversation', JSON.stringify(roastConversation));
 
@@ -184,6 +192,16 @@ ${file.content}
 		}
 	});
 </script>
+
+{#if roastPrTitle}
+	<h1 class="pr-title">
+		{@html roastPrTitle}
+
+		<span class="pr-number">
+			#{@html roastPrUrl.replace('/files', '').split('/').pop()}
+		</span>
+	</h1>
+{/if}
 
 <Button disabled={loading} onClick={triggerRoast}>
 	{#if roastConversation.messages?.length > 0}
@@ -234,6 +252,16 @@ ${file.content}
 {/if}
 
 <style>
+	h1 {
+		font-size: 1.75rem;
+		margin: 0;
+	}
+
+	.pr-number {
+		color: var(--c-text-light);
+		margin-left: 0.375rem;
+	}
+
 	.placeholder {
 		display: grid;
 		place-items: center;
