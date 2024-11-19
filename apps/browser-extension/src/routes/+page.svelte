@@ -313,12 +313,13 @@ ${file.content}
 
 <style>
 	header {
-		display: inline-flex;
-		align-items: center;
+		align-items: start;
+		display: inline-grid;
 		gap: 0.5rem;
+		grid-template-columns: auto 1fr;
 
 		:global(.logo svg) {
-			translate: 0 0.125rem;
+			translate: 0 0.25rem;
 		}
 	}
 
@@ -425,10 +426,5 @@ ${file.content}
 			color: var(--c-text-light);
 			font-size: 0.75rem;
 		}
-	}
-
-	.go-to-files-changed {
-		display: grid;
-		place-items: center;
 	}
 </style>
