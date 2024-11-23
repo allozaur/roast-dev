@@ -1,6 +1,7 @@
 import { sveltekit } from '@sveltejs/kit/vite';
 import { defineConfig } from 'vitest/config';
 import { existsSync, readFileSync } from 'fs';
+import { enhancedImages } from '@sveltejs/enhanced-img';
 
 /**
  * @type {{ cert: Buffer | undefined; key: Buffer | undefined }}
@@ -19,7 +20,7 @@ if (existsSync(certPath) && existsSync(keyPath)) {
 }
 
 export default defineConfig({
-	plugins: [sveltekit()],
+	plugins: [enhancedImages(), sveltekit()],
 	server: {
 		https: existsSync(certPath) && existsSync(keyPath) ? serverOptions : undefined,
 	},

@@ -2,6 +2,7 @@
 	import { Cta, Jumbotron } from '@roast-dev/ui';
 	import { env as envPublic } from '$env/dynamic/public';
 	import SectionHeadline from '$lib/components/SectionHeadline.svelte';
+	import CatchIssuesEarlyImage from './jpg/catch_issues_early.jpg';
 </script>
 
 <section id="usp">
@@ -11,7 +12,7 @@
 	/>
 
 	<div class="row">
-		<img src="/jpg/catch_issues_early.jpg" alt="" />
+		<enhanced:img src="./jpg/catch_issues_early.jpg" alt="Catch issues early" />
 
 		<div class="text">
 			<h3>Catch Issues Early 😮‍💨</h3>
@@ -35,11 +36,11 @@
 			</p>
 		</div>
 
-		<img src="/jpg/grow_with_every_roast.jpg" alt="" />
+		<enhanced:img src="./jpg/grow_with_every_roast.jpg" alt="" />
 	</div>
 
 	<div class="row">
-		<img src="/jpg/ship_with_confidence.jpg" alt="" />
+		<enhanced:img src="./jpg/ship_with_confidence.jpg" alt="" />
 
 		<div class="text">
 			<h3>Ship With Confidence 😎</h3>
@@ -64,7 +65,7 @@
 			</p>
 		</div>
 
-		<img src="/jpg/everyone_wins.jpg" alt="" />
+		<enhanced:img src="./jpg/everyone_wins.jpg" alt="" />
 	</div>
 
 	<div class="row">
@@ -144,6 +145,7 @@
 
 		img {
 			width: 100%;
+			height: auto;
 
 			@media (prefers-color-scheme: dark) {
 				filter: brightness(0.9) contrast(1.1);

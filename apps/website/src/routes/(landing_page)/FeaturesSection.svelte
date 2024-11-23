@@ -5,10 +5,10 @@
 
 <section class="features-section">
 	<div class="inner">
-		<SectionHeadline heading="See <strong>Roast</strong> plugin in action" />
+		<SectionHeadline heading="What makes it different?" />
 
 		<!--ARCADE EMBED START-->
-		<div style="position: relative; padding-bottom: calc(57.8125% + 41px); height: 0; width: 100%;">
+		<!-- <div style="position: relative; padding-bottom: calc(57.8125% + 41px); height: 0; width: 100%;">
 			<iframe
 				src="https://demo.arcade.software/E9WRVwwAE3INNVZgGmFK?embed&embed_mobile=inline&embed_desktop=inline&show_copy_link=true"
 				title="Arcade Flow (Mon Nov 11 2024)"
@@ -18,7 +18,7 @@
 				allow="clipboard-write"
 				style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; color-scheme: light;"
 			></iframe>
-		</div>
+		</div> -->
 		<!--ARCADE EMBED END-->
 
 		<div class="feature-cards">
@@ -30,8 +30,9 @@
 				<h3>Easily access Roast from your Pull Requests</h3>
 
 				<p>
-					One click in GitHub or GitLab to analyze your code instantly. Roast integrates naturally
-					with your PR interface – no extra tabs, no context switching, no workflow disruption. <strong
+					One click in GitHub (GitLab coming soon!) to analyze your code instantly. Roast integrates
+					naturally with your PR interface – no extra tabs, no context switching, no workflow
+					disruption. <strong
 						>Review your PRs and get instant juicy feedback right where you work with the code.</strong
 					>
 				</p>
@@ -90,7 +91,7 @@
 
 <style>
 	.features-section {
-		padding: 4rem 2rem;
+		padding: 5rem 2rem;
 		text-align: center;
 		position: relative;
 		@media (width <= 1024px) {
