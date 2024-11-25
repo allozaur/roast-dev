@@ -8,7 +8,7 @@
 		<SectionHeadline heading="What makes it different?" />
 
 		<!--ARCADE EMBED START-->
-		<!-- <div style="position: relative; padding-bottom: calc(57.8125% + 41px); height: 0; width: 100%;">
+		<div style="position: relative; padding-bottom: calc(57.8125% + 41px); height: 0; width: 100%;">
 			<iframe
 				src="https://demo.arcade.software/E9WRVwwAE3INNVZgGmFK?embed&embed_mobile=inline&embed_desktop=inline&show_copy_link=true"
 				title="Arcade Flow (Mon Nov 11 2024)"
@@ -18,7 +18,7 @@
 				allow="clipboard-write"
 				style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; color-scheme: light;"
 			></iframe>
-		</div> -->
+		</div>
 		<!--ARCADE EMBED END-->
 
 		<div class="feature-cards">

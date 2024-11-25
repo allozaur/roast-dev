@@ -12,9 +12,11 @@
 		{@html heading}
 	</h2>
 
-	<p>
-		{@html description}
-	</p>
+	{#if description}
+		<p>
+			{@html description}
+		</p>
+	{/if}
 </div>
 
 <style>
