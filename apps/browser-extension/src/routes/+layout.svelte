@@ -4,13 +4,78 @@
 	import chargeId from '$lib/stores/charge-id';
 	import llmApiKey from '$lib/stores/llm-api-key';
 	import llmChoice from '$lib/stores/llm-choice';
+	import { supabase } from '$lib/supabase';
+	import { browser } from '$app/environment';
+
 	import { Icon } from '@roast-dev/ui';
 	import '@roast-dev/ui/styles/index.css';
 	import { onMount } from 'svelte';
 
+	import isAuthenticated from '$lib/stores/is-authenticated';
+	import session from '$lib/stores/session';
+
 	let { children } = $props();
 
-	onMount(() => {
+	async function handleSupabaseOAuth() {
+		if (!browser) return;
+
+		// Use Chrome's identity API for OAuth flow
+		const {
+			data: { url: authURL }
+		} = await supabase.auth.signInWithOAuth({
+			provider: 'github',
+			options: {
+				// @ts-expect-error - Chrome API
+				redirectTo: chrome?.identity.getRedirectURL()
+			}
+		});
+
+		// Launch the OAuth flow using Chrome's identity API
+		const responseUrl = await new Promise((resolve) => {
+			// @ts-expect-error - Chrome API
+			chrome?.identity.launchWebAuthFlow(
+				{
+					url: authURL,
+					interactive: true
+				},
+				(redirectUrl: unknown) => {
+					resolve(redirectUrl);
+				}
+			);
+		});
+
+		// Handle the OAuth response
+		if (responseUrl && typeof responseUrl === 'string') {
+			const hashParams = new URLSearchParams(responseUrl.split('#')[1]);
+			const accessToken = hashParams.get('access_token');
+			const refreshToken = hashParams.get('refresh_token');
+
+			if (accessToken && refreshToken) {
+				const { data, error } = await supabase.auth.setSession({
+					access_token: accessToken,
+					refresh_token: refreshToken
+				});
+
+				if (error) {
+					console.error('Error setting session:', error);
+				} else {
+					$session = data.session;
+					$isAuthenticated = true;
+				}
+			}
+		}
+	}
+
+	onMount(async () => {
+		const { data } = await supabase.auth.getSession();
+
+		$session = data.session;
+
+		supabase.auth.onAuthStateChange((_event, _session) => {
+			$session = _session;
+			$isAuthenticated = typeof _session !== undefined && _session !== null;
+		});
+
 		$chargeId = localStorage.getItem('roastChargeId');
 		$llmChoice = localStorage.getItem('roastLlmChoice') ?? availableModels['claude-3-5-sonnet'];
 
@@ -23,6 +88,11 @@
 				localStorage.getItem(`roastLlmApiKey-${availableModels['claude-3-5-sonnet']}`) ?? '';
 		}
 	});
+
+	// Expose the OAuth handler to the window object
+	if (browser) {
+		(window as any).handleSupabaseOAuth = handleSupabaseOAuth;
+	}
 </script>
 
 <svelte:head>
@@ -75,22 +145,5 @@
 				font-weight: inherit;
 			}
 		}
-	}
-
-	.logo {
-		color: inherit;
-		text-decoration: none;
-		font-size: 1.75rem;
-		font-weight: 700;
-		line-height: 1;
-		font-family:
-			'SF UI Display',
-			-apple-system,
-			BlinkMacSystemFont,
-			'Segoe UI',
-			Roboto,
-			'Helvetica Neue',
-			Arial,
-			sans-serif;
 	}
 </style>

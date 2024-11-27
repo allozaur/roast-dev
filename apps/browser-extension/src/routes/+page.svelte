@@ -2,21 +2,20 @@
 	import { marked } from 'marked';
 	import { onMount } from 'svelte';
 	import { PUBLIC_FREE_USAGE_COUNTER_WORKER_URL } from '$env/static/public';
-
 	import { Button, Logo } from '@roast-dev/ui';
-
+	import AuthBox from '$lib/components/AuthBox.svelte';
 	import followUpPrompt from '$lib/config/prompts/follow-up-prompt';
 	import freeLimitUsedHeadlines from '$lib/config/content/free-limit-used-headlines';
 	import initialPromptClaude from '$lib/config/prompts/initial-prompt-claude';
 	import initialPromptGemini from '$lib/config/prompts/initial-prompt-gemini';
 	import initialPromptGpt from '$lib/config/prompts/initial-prompt-gpt';
 	import preRoastPlaceholders from '$lib/config/content/pre-roast-placeholders';
-
-	import chargeId from '$lib/stores/charge-id';
 	import devPrCode from '$lib/fixtures/dev-pr-code';
 	import generateRoast from '$lib/functions/generate-roast';
-	import getRandomItem from '$lib/utils/get-random-item';
+	import chargeId from '$lib/stores/charge-id';
+	import isAuthenticated from '$lib/stores/is-authenticated';
 	import llmChoice from '$lib/stores/llm-choice';
+	import getRandomItem from '$lib/utils/get-random-item';
 
 	let freeLimitIsUsedHeadline = $state('');
 	let hasReachedFreeLimit = $state(false);
@@ -274,7 +273,7 @@ ${file.content}
 
 {#if roastPrTitle}
 	<div class="top">
-		<Logo name="github" --size="1.625rem" --fill="var(--c-text)" />
+		<Logo customFill name="github" --size="1.625rem" --fill="var(--c-text)" />
 
 		<h1 class="pr-title">
 			{@html roastPrTitle}
@@ -286,7 +285,9 @@ ${file.content}
 	</div>
 {/if}
 
-{#if isOnWrongPage && tabUrl.includes('/pull/')}
+{#if !$isAuthenticated}
+	<AuthBox />
+{:else if isOnWrongPage && tabUrl.includes('/pull/')}
 	<Button
 		onClick={async () => {
 			// @ts-expect-error - Chrome API
@@ -325,26 +326,28 @@ ${file.content}
 	</div>
 {/if}
 
-{#if loading}
-	<div class="loading">
-		<div class="spinner"></div>
-	</div>
-{:else if roastConversation?.messages?.some((message) => message.role === 'assistant' || message.role === 'model')}
-	<div class="roast-content">
-		{#if roastConversation.messages.filter((message) => message.role === 'assistant' || message.role === 'model')?.length > 0}
-			{@const roastResponses = roastConversation.messages.filter(
-				(message) => message.role === 'assistant' || message.role === 'model'
-			)}
+{#if $isAuthenticated}
+	{#if loading}
+		<div class="loading">
+			<div class="spinner"></div>
+		</div>
+	{:else if roastConversation?.messages?.some((message) => message.role === 'assistant' || message.role === 'model')}
+		<div class="roast-content">
+			{#if roastConversation.messages.filter((message) => message.role === 'assistant' || message.role === 'model')?.length > 0}
+				{@const roastResponses = roastConversation.messages.filter(
+					(message) => message.role === 'assistant' || message.role === 'model'
+				)}
 
-			{#await marked.parse(`${roastResponses[roastResponses.length - 1].content}`) then markdownContent}
-				{@html markdownContent}
-			{/await}
-		{/if}
-	</div>
-{:else}
-	<span class="placeholder">
-		{preRoastPlaceholderText}
-	</span>
+				{#await marked.parse(`${roastResponses[roastResponses.length - 1].content}`) then markdownContent}
+					{@html markdownContent}
+				{/await}
+			{/if}
+		</div>
+	{:else}
+		<span class="placeholder">
+			{preRoastPlaceholderText}
+		</span>
+	{/if}
 {/if}
 
 <style>

@@ -10,7 +10,8 @@
   },
   "permissions": [
     "activeTab",
-    "scripting"
+    "scripting",
+    "identity"
   ],
   "action": {
     "default_popup": "index.html"
@@ -33,5 +34,9 @@
     "https://api.openai.com/*",
     "https://generativelanguage.googleapis.com/*",
     "https://github.com/*"
-  ]
+  ],
+  "oauth2": {
+    "client_id": "870151337771-riukv18cebapb84cqomildqgqfldvqcj.apps.googleusercontent.com",
+    "scopes": []
+  }
 }

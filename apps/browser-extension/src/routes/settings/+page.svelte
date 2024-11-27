@@ -5,6 +5,9 @@
 	import llmChoice from '$lib/stores/llm-choice';
 	import llmApiKey from '$lib/stores/llm-api-key';
 	import availableModels from '$lib/config/available-models';
+	import { signInWithGitHub, signOut } from '$lib/functions/auth';
+	import isAuthenticated from '$lib/stores/is-authenticated';
+	import AuthBox from '$lib/components/AuthBox.svelte';
 
 	let licenseEmail = $state('');
 
@@ -131,6 +134,12 @@
 		{/if}
 	</fieldset>
 </form>
+
+{#if $isAuthenticated}
+	<Button onClick={signOut}>Sign out</Button>
+{:else}
+	<AuthBox />
+{/if}
 
 <style>
 	form {
