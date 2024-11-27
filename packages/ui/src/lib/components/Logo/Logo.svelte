@@ -3,7 +3,7 @@
 
 	interface IconProps {
 		name?: string;
-		originalFill?: boolean;
+		customFill?: boolean;
 	}
 
 	const assetsPath = '../../assets/svg/logos/';
@@ -14,10 +14,10 @@
 		eager: true
 	});
 
-	let { name, originalFill }: IconProps = $props();
+	let { name, customFill }: IconProps = $props();
 </script>
 
-<div class="logo" class:original-fill={originalFill}>
+<div class="logo" class:custom-fill={customFill}>
 	<SvgItem {assets} {assetsPath} {name} />
 </div>
 
@@ -26,7 +26,7 @@
 		display: contents;
 	}
 
-	.logo:not(.original-fill) :global(svg path) {
+	.logo.custom-fill :global(svg path) {
 		fill: var(--fill, currentColor);
 	}
 </style>
