@@ -5,7 +5,7 @@
 
 <header>
 	<div class="inner">
-		<a class="logo" href="/"> 🧯 roast<span>.dev</span> </a>
+		<a class="logo" href="/"> 🔥 roast<span>.dev</span> </a>
 
 		{#snippet badgeChromeWebStore()}
 			<img
