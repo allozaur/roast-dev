@@ -22,12 +22,17 @@
 		$session = data.session;
 
 		supabase.auth.onAuthStateChange((_event, _session) => {
-			if (_event === 'SIGNED_IN') {
-				goto('/welcome');
-			}
-
 			$session = _session;
 			$isAuthenticated = typeof _session !== undefined && _session !== null;
+
+			if (
+				$isAuthenticated &&
+				_event === 'INITIAL_SESSION' &&
+				!localStorage.getItem('roastWelcomePageVisited')
+			) {
+				localStorage.setItem('roastWelcomePageVisited', 'true');
+				goto('/welcome');
+			}
 		});
 
 		$chargeId = localStorage.getItem('roastChargeId');
