@@ -11,7 +11,8 @@
   "permissions": [
     "activeTab",
     "scripting",
-    "identity"
+    "identity",
+    "storage"
   ],
   "action": {
     "default_popup": "index.html"
@@ -33,10 +34,26 @@
     "https://api.anthropic.com/*",
     "https://api.openai.com/*",
     "https://generativelanguage.googleapis.com/*",
-    "https://github.com/*"
+    "https://github.com/*",
+    "https://accounts.google.com/*",
+    "*://*.supabase.co/*"
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "index.html"
+      ],
+      "matches": [
+        "<all_urls>"
+      ]
+    }
   ],
   "oauth2": {
     "client_id": "870151337771-riukv18cebapb84cqomildqgqfldvqcj.apps.googleusercontent.com",
-    "scopes": []
-  }
+    "scopes": [
+      "https://www.googleapis.com/auth/userinfo.email",
+      "https://www.googleapis.com/auth/userinfo.profile"
+    ]
+  },
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAvIpP/yFJQdHOee13nKCkeA7b5hmUGpM9/r+g6dnymLb5m7hDa+6sznCEFIF6JTOec3fYDwNIe7JEsbTYqMEN1T/sJlpavMEvlEklIMvgMlP+ZMlgVhgA/+X8w0Ex7tpkTxdRDIyf2RB7FTPNtQA1GYgJJU/bO2YNGwWN4nfoAVwfNlZkaC9HrWZJmcRFhjFi75BPNZbhM4X6y23E36719w3fF5FKyB/2SPxosTn1w9paJORZmrhHsUA2ODXpDZlECMWdZiyanduwqKbnZQOu8C/6dSxoO/aIwGLgPkfddiVbqC3U0/QjLWuqcy6IWALSq/DPi9bCyepKRR136uunQwIDAQAB"
 }
