@@ -12,6 +12,7 @@
 
 	import isAuthenticated from '$lib/stores/is-authenticated';
 	import session from '$lib/stores/session';
+	import { goto } from '$app/navigation';
 
 	let { children } = $props();
 
@@ -21,6 +22,10 @@
 		$session = data.session;
 
 		supabase.auth.onAuthStateChange((_event, _session) => {
+			if (_event === 'SIGNED_IN') {
+				goto('/welcome');
+			}
+
 			$session = _session;
 			$isAuthenticated = typeof _session !== undefined && _session !== null;
 		});

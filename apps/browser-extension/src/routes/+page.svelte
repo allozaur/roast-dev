@@ -244,6 +244,10 @@ ${file.content}
 
 				tabUrl = tab.url;
 
+				if (!tabUrl || !tabUrl?.includes('https://github.com')) {
+					return;
+				}
+
 				// @ts-expect-error - Chrome API
 				const results = await chrome.scripting.executeScript({
 					target: { tabId: tab.id! },

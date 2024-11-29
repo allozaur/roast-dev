@@ -1,18 +1,12 @@
-// src/lib/functions/extension-auth.ts
-
 import { supabase } from '$lib/supabase';
 
 export async function initializeExtensionAuth(provider: 'github' | 'google') {
 	try {
-		// Get the extension ID
-		const extensionId = chrome?.runtime.id;
-		console.log('Extension ID:', extensionId);
+		// @ts-expect-error - Chrome specific
+		const redirectUrl = chrome.identity.getRedirectURL();
+		console.log('Extension redirect URL:', redirectUrl);
 
-		// Construct redirect URL
-		const redirectUrl = `chrome-extension://${extensionId}/index.html`;
-		console.log('Redirect URL:', redirectUrl);
-
-		// Generate OAuth URL with Supabase
+		// Generate Supabase OAuth URL but don't redirect automatically
 		const { data, error } = await supabase.auth.signInWithOAuth({
 			provider,
 			options: {
@@ -25,62 +19,16 @@ export async function initializeExtensionAuth(provider: 'github' | 'google') {
 			}
 		});
 
-		if (error) {
-			console.error('Supabase OAuth error:', error);
-			throw error;
-		}
+		if (error) throw error;
+		if (!data.url) throw new Error('No auth URL generated');
 
-		const authUrl = data.url;
-		if (!authUrl) {
-			console.error('No auth URL generated');
-			throw new Error('Failed to generate auth URL');
-		}
+		// Open the auth URL in a new tab
+		// @ts-expect-error - Chrome specific
+		await chrome.tabs.create({ url: data.url });
 
-		console.log('Auth URL:', authUrl);
-
-		// Use chrome.identity API for auth flow
-		const responseUrl = await new Promise<string>((resolve, reject) => {
-			chrome.identity.launchWebAuthFlow(
-				{
-					url: authUrl,
-					interactive: true
-				},
-				(response) => {
-					if (chrome.runtime.lastError) {
-						console.error('Chrome identity error:', chrome.runtime.lastError);
-						reject(chrome.runtime.lastError);
-					} else if (!response) {
-						console.error('No response from auth flow');
-						reject(new Error('No response URL'));
-					} else {
-						console.log('Auth response URL:', response);
-						resolve(response);
-					}
-				}
-			);
-		});
-
-		// Parse the response URL
-		const url = new URL(responseUrl);
-		const code = url.searchParams.get('code');
-
-		if (!code) {
-			console.error('No code in response URL');
-			throw new Error('No code found in response');
-		}
-
-		console.log('Got auth code');
-
-		// Exchange code for session
-		const { data: session, error: sessionError } = await supabase.auth.exchangeCodeForSession(code);
-
-		if (sessionError) {
-			console.error('Session exchange error:', sessionError);
-			throw sessionError;
-		}
-
-		console.log('Auth successful');
-		return session;
+		// The background script will handle the redirect and token storage
+		// We'll return here since the popup might close
+		return null;
 	} catch (error) {
 		console.error('Auth error:', error);
 		throw error;

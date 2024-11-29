@@ -6,6 +6,11 @@ function injectRoastButton() {
 		return;
 	}
 
+	// Check if button already exists to prevent duplicates
+	if (document.querySelector('.js-roast-button')) {
+		return;
+	}
+
 	const roastButton = document.createElement('button');
 
 	roastButton.className = 'btn-secondary btn btn-sm js-roast-button';
@@ -17,32 +22,40 @@ function injectRoastButton() {
 
 	roastButton.addEventListener('click', (e) => {
 		e.preventDefault();
-
-		// @ts-expect-error - Chrome specific
 		chrome.runtime.sendMessage({ action: 'openPopup' });
 	});
 }
 
-// Enhanced observer to handle GitHub's dynamic loading
-function createObserver() {
-	const callback = function (mutations) {
-		for (const mutation of mutations) {
-			if (mutation.addedNodes.length) {
-				if (location.href.includes('/pull/') && location.href.includes('/files')) {
-					const reviewButton = document.querySelector('.js-reviews-toggle');
-					const roastButton = document.querySelector('.js-roast-button');
+function checkAndInjectButton() {
+	if (location.href.includes('/pull/') && location.href.includes('/files')) {
+		const reviewButton = document.querySelector('.js-reviews-toggle');
+		const roastButton = document.querySelector('.js-roast-button');
 
-					if (reviewButton && !roastButton) {
-						injectRoastButton();
-					}
-				}
-			}
+		if (reviewButton && !roastButton) {
+			injectRoastButton();
 		}
-	};
-
-	return new MutationObserver(callback);
+	}
 }
 
-const observer = createObserver();
+// Enhanced observer to handle GitHub's dynamic loading
+function createObserver() {
+	return new MutationObserver((mutations) => {
+		for (const mutation of mutations) {
+			if (mutation.addedNodes.length) {
+				checkAndInjectButton();
+			}
+		}
+	});
+}
 
+// Initial check
+checkAndInjectButton();
+
+// Set up observer for dynamic changes
+const observer = createObserver();
 observer.observe(document.body, { childList: true, subtree: true });
+
+// Clean up observer when the content script is unloaded
+window.addEventListener('unload', () => {
+	observer.disconnect();
+});
