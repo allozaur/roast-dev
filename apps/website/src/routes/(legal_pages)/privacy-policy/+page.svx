@@ -1,6 +1,6 @@
 # Privacy Policy for roast.dev
 
-*Last Updated: November 6, 2024*
+*Last Updated: November 29, 2024*
 
 ## 1. Introduction
 
@@ -12,16 +12,18 @@ roast.dev ("we," "us," or "our") is a browser extension that facilitates AI-powe
 - Website hosting: Cloudflare
 - Payment processing: Stripe
 - Browser extension distribution: Chrome Web Store and Firefox Add-ons platforms
+- Authentication & User Management: Supabase
 
 ### 2.2 Third-Party Services
 - LLM Providers: OpenAI, Anthropic, Google (based on user choice)
-- Authentication: Supabase, Google OAuth
+- Authentication Providers: GitHub OAuth, Google OAuth (via Supabase)
 - Analytics: Cloudflare Web Analytics
 
 ## 3. Information Collection and Use
 
 ### 3.1 Information We Collect
-- **Account Information**: Email address (managed through Stripe)
+- **Account Information**: Email address and basic profile information from OAuth providers (GitHub/Google)
+- **Authentication Data**: OAuth tokens managed by Supabase
 - **Payment Information**: Processed and stored by Stripe
 - **Browser Information**: Extension version, browser type, operating system
 - **Usage Data**: Installation events, feature usage statistics, error logs
@@ -30,7 +32,7 @@ roast.dev ("we," "us," or "our") is a browser extension that facilitates AI-powe
 - Your source code or pull requests (they are processed locally in your browser)
 - Your LLM API keys (they are stored locally in your browser)
 - Your repository contents
-- Your Git platform credentials
+- Your Git platform credentials or OAuth tokens (managed by Supabase)
 
 ### 3.3 Code Processing
 - Code extraction and processing happens locally in your browser
@@ -47,6 +49,8 @@ roast.dev ("we," "us," or "our") is a browser extension that facilitates AI-powe
 
 ### 4.2 Cloud Storage
 - Customer account data (through Stripe)
+- Authentication data (through Supabase)
+- OAuth tokens (securely managed by Supabase)
 - Anonymous usage statistics
 - Error logs for service improvement
 
@@ -62,12 +66,23 @@ roast.dev ("we," "us," or "our") is a browser extension that facilitates AI-powe
 - Manages customer accounts
 - Handles subscription data
 
-### 5.3 Browser Stores
+### 5.3 Supabase
+- Manages user authentication
+- Securely stores OAuth tokens
+- Handles session management
+- Provides secure user data storage
+
+### 5.4 OAuth Providers (GitHub/Google)
+- Provide secure authentication
+- Share basic profile information
+- Subject to their respective privacy policies
+
+### 5.5 Browser Stores
 - Chrome Web Store and Firefox Add-ons store extension installation data
 - Manage extension updates
 - Collect extension metrics
 
-### 5.4 LLM Providers
+### 5.6 LLM Providers
 - Process code reviews using your own API key
 - Subject to their respective privacy policies
 - Direct relationship between you and the LLM provider
@@ -91,11 +106,13 @@ roast.dev ("we," "us," or "our") is a browser extension that facilitates AI-powe
 
 ### 7.1 Retention Period
 - Account information: Until account deletion
+- OAuth tokens: Until account deletion or OAuth disconnection
 - Payment records: As required by law
 
 ### 7.2 Account Deletion
 - Contact us for account deletion
 - Immediate removal of personal data
+- Revocation of OAuth tokens
 - Anonymization of usage statistics
 
 ## 8. Updates to Privacy Policy
