@@ -13,6 +13,8 @@
 	import isAuthenticated from '$lib/stores/is-authenticated';
 	import session from '$lib/stores/session';
 	import { goto } from '$app/navigation';
+	import { stripe } from '$lib/stripe';
+	import { PUBLIC_CUSTOMER_VERIFICATION_WORKER_URL } from '$env/static/public';
 
 	let { children } = $props();
 
@@ -21,22 +23,39 @@
 
 		$session = data.session;
 
-		supabase.auth.onAuthStateChange((_event, _session) => {
+		supabase.auth.onAuthStateChange(async (_event, _session) => {
 			$session = _session;
 			$isAuthenticated = typeof _session !== undefined && _session !== null;
 
-			if (
-				$isAuthenticated &&
-				_event === 'INITIAL_SESSION' &&
-				!localStorage.getItem('roastWelcomePageVisited')
-			) {
-				localStorage.setItem('roastWelcomePageVisited', 'true');
-				goto('/welcome');
+			if ($isAuthenticated && _event === 'INITIAL_SESSION') {
+				if (!localStorage.getItem('roastWelcomePageVisited')) {
+					localStorage.setItem('roastWelcomePageVisited', 'true');
+
+					goto('/welcome');
+				}
+
+				if (_session?.user.id) {
+					const req = await fetch(PUBLIC_CUSTOMER_VERIFICATION_WORKER_URL, {
+						method: 'POST',
+						headers: {
+							'Content-Type': 'application/json'
+						},
+						body: JSON.stringify({ email: _session.user.email })
+					});
+
+					const { customerId } = await req.json();
+
+					localStorage.setItem('roastCustomerId', customerId);
+				}
+			}
+
+			if (!$isAuthenticated) {
+				goto('/');
 			}
 		});
 
 		$chargeId = localStorage.getItem('roastChargeId');
-		$llmChoice = localStorage.getItem('roastLlmChoice') ?? availableModels['claude-3-5-sonnet'];
+		$llmChoice = localStorage.getItem('roastLlmChoice') ?? availableModels['claude-3.5-sonnet'];
 
 		if ($llmChoice === 'gpt-4o') {
 			$llmApiKey = localStorage.getItem('roastLlmApiKey-gpt-4o') ?? '';
@@ -44,7 +63,7 @@
 			$llmApiKey = localStorage.getItem('roastLlmApiKey-gemini-1.5-pro') ?? '';
 		} else {
 			$llmApiKey =
-				localStorage.getItem(`roastLlmApiKey-${availableModels['claude-3-5-sonnet']}`) ?? '';
+				localStorage.getItem(`roastLlmApiKey-${availableModels['claude-3.5-sonnet']}`) ?? '';
 		}
 	});
 </script>
@@ -60,7 +79,7 @@
 
 <main>
 	<header>
-		{#if $page.url.pathname === '/settings'}
+		{#if $page.url.pathname === '/settings' && $isAuthenticated}
 			<h1>Settings</h1>
 
 			<a href="/"> <Icon name="xmark" --size="1.5rem" /></a>
@@ -69,9 +88,11 @@
 				🔥 roast<strong>.dev</strong>
 			</h1>
 
-			<a href="/settings">
-				<Icon name="settings" --stroke="var(--c-text-light)" --size="1.5rem" />
-			</a>
+			{#if $isAuthenticated}
+				<a href="/settings">
+					<Icon name="settings" --stroke="var(--c-text-light)" --size="1.5rem" />
+				</a>
+			{/if}
 		{/if}
 	</header>
 

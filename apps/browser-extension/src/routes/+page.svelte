@@ -1,14 +1,10 @@
 <script lang="ts">
 	import { marked } from 'marked';
 	import { onMount } from 'svelte';
-	import { PUBLIC_FREE_USAGE_COUNTER_WORKER_URL } from '$env/static/public';
 	import { Button, Logo } from '@roast-dev/ui';
 	import AuthBox from '$lib/components/AuthBox.svelte';
 	import followUpPrompt from '$lib/config/prompts/follow-up-prompt';
 	import freeLimitUsedHeadlines from '$lib/config/content/free-limit-used-headlines';
-	import initialPromptClaude from '$lib/config/prompts/initial-prompt-claude';
-	import initialPromptGemini from '$lib/config/prompts/initial-prompt-gemini';
-	import initialPromptGpt from '$lib/config/prompts/initial-prompt-gpt';
 	import preRoastPlaceholders from '$lib/config/content/pre-roast-placeholders';
 	import devPrCode from '$lib/fixtures/dev-pr-code';
 	import generateRoast from '$lib/functions/generate-roast';
@@ -16,9 +12,11 @@
 	import isAuthenticated from '$lib/stores/is-authenticated';
 	import llmChoice from '$lib/stores/llm-choice';
 	import getRandomItem from '$lib/utils/get-random-item';
+	import { supabase } from '$lib/supabase';
+	import session from '$lib/stores/session';
+	import { error } from '@sveltejs/kit';
 
 	let freeLimitIsUsedHeadline = $state('');
-	let hasReachedFreeLimit = $state(false);
 	let loading = $state(false);
 	let preRoastPlaceholderText = $state('');
 	let roastConversation: {
@@ -40,7 +38,8 @@
 	let isOnWrongPage = $state(false);
 	let roastPrTitle = $state('');
 	let roastPrUrl = $state('');
-	let tabUrl = $state('');
+	let tabUrl: string | undefined = $state('');
+	let usageCount = $state(0);
 
 	let db: IDBDatabase;
 
@@ -94,18 +93,20 @@
 	}
 
 	async function triggerRoast() {
-		if (!$chargeId) {
-			const freeUsageReq = await fetch(PUBLIC_FREE_USAGE_COUNTER_WORKER_URL);
+		const { data } = await supabase
+			.from('free_usage')
+			.select('usage_count')
+			.eq('user_id', $session?.user.id)
+			?.single();
 
-			hasReachedFreeLimit = freeUsageReq.status !== 201;
+		usageCount = data?.usage_count ?? 0;
 
-			if (hasReachedFreeLimit) {
-				loading = false;
+		if (usageCount >= 10) {
+			loading = false;
 
-				freeLimitIsUsedHeadline = getRandomItem(freeLimitUsedHeadlines);
+			freeLimitIsUsedHeadline = getRandomItem(freeLimitUsedHeadlines);
 
-				return;
-			}
+			return;
 		}
 
 		let formattedDiff = '';
@@ -115,7 +116,6 @@
 
 		try {
 			if (import.meta.env.PROD) {
-				// @ts-expect-error - Chrome API
 				const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
 
 				const githubPullFilesUrlPattern =
@@ -129,7 +129,6 @@
 					return;
 				}
 
-				// @ts-expect-error - Chrome API
 				const results = await chrome.scripting.executeScript({
 					target: { tabId: tab.id! },
 					func: () => {
@@ -187,17 +186,10 @@ ${file.content}
 				roastPrUrl = 'https://github.com/roast-dev/roast/pull/123';
 			}
 
-			const initialPrompt =
-				$llmChoice === 'gemini-1.5-pro'
-					? initialPromptGemini
-					: $llmChoice === 'gpt-4o'
-						? initialPromptGpt
-						: initialPromptClaude;
-
 			if (roastConversation.messages?.length === 0) {
 				roastConversation.messages.push({
 					role: 'user',
-					content: `${initialPrompt}${formattedDiff}`
+					content: `Here's my code: ${formattedDiff}`
 				});
 			} else {
 				roastConversation.messages.push({
@@ -223,9 +215,19 @@ ${file.content}
 			statusText = 'Roast delivered! 🔥';
 		} catch (error) {
 			console.error('Roast error:', error);
+
 			statusText = `Error: ${error instanceof Error ? error.message : 'Unknown error occurred'}`;
 		} finally {
 			loading = false;
+
+			const { error } = await supabase.from('free_usage').upsert({
+				user_id: $session?.user.id,
+				usage_count: usageCount + 1
+			});
+
+			if (error) {
+				throw error;
+			}
 		}
 	}
 
@@ -239,16 +241,14 @@ ${file.content}
 
 		if (import.meta.env.PROD) {
 			try {
-				// @ts-expect-error - Chrome API
 				const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
 
-				tabUrl = tab.url;
+				tabUrl = tab?.url;
 
 				if (!tabUrl || !tabUrl?.includes('https://github.com')) {
 					return;
 				}
 
-				// @ts-expect-error - Chrome API
 				const results = await chrome.scripting.executeScript({
 					target: { tabId: tab.id! },
 					func: () => {
@@ -291,12 +291,11 @@ ${file.content}
 
 {#if !$isAuthenticated}
 	<AuthBox />
-{:else if isOnWrongPage && tabUrl.includes('/pull/')}
+{:else if isOnWrongPage && tabUrl?.includes('/pull/')}
 	<Button
 		onClick={async () => {
-			// @ts-expect-error - Chrome API
 			const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-			// @ts-expect-error - Chrome API
+
 			await chrome.tabs.update(tab.id!, { url: `${tabUrl}/files` });
 		}}
 	>
@@ -312,7 +311,7 @@ ${file.content}
 	</Button>
 {/if}
 
-{#if hasReachedFreeLimit}
+{#if usageCount >= 10}
 	<div class="free-usage-limit">
 		<h3>
 			{freeLimitIsUsedHeadline}

@@ -60,27 +60,51 @@ export default {
 
 			const stripe = new Stripe(env.STRIPE_SECRET_KEY);
 
-			const { data } = await stripe.charges.list({
-				limit: 100,
+			const customer = await stripe.customers.list({
+				email: body.email,
+				limit: 1,
 			});
 
-			const charge = data.find((charge) => charge.receipt_email === body.email && charge.paid);
+			if (customer.data.length === 0) {
+				const customer = await stripe.customers.create({
+					email: body.email,
+				});
 
-			if (charge) {
-				return new Response(JSON.stringify({ success: true, chargeId: charge.id }), {
+				return new Response(JSON.stringify({ success: true, customerId: customer.id }), {
 					headers: {
 						'Content-Type': 'application/json',
 						...corsHeaders,
 					},
 				});
 			} else {
-				return new Response(JSON.stringify({ success: false, message: 'No charge found' }), {
+				return new Response(JSON.stringify({ success: true, customerId: customer.data[0].id }), {
 					headers: {
 						'Content-Type': 'application/json',
 						...corsHeaders,
 					},
 				});
 			}
+			// const { data } = await stripe.charges.list({
+			// 	limit: 100,
+			// });
+
+			// const charge = data.find((charge) => charge.receipt_email === body.email && charge.paid);
+
+			// if (charge) {
+			// 	return new Response(JSON.stringify({ success: true, chargeId: charge.id }), {
+			// 		headers: {
+			// 			'Content-Type': 'application/json',
+			// 			...corsHeaders,
+			// 		},
+			// 	});
+			// } else {
+			// 	return new Response(JSON.stringify({ success: false, message: 'No charge found' }), {
+			// 		headers: {
+			// 			'Content-Type': 'application/json',
+			// 			...corsHeaders,
+			// 		},
+			// 	});
+			// }
 		} catch (error) {
 			console.error('Error:', error);
 
