@@ -13,8 +13,10 @@
 	import isAuthenticated from '$lib/stores/is-authenticated';
 	import session from '$lib/stores/session';
 	import { goto } from '$app/navigation';
-	import { stripe } from '$lib/stripe';
-	import { PUBLIC_CUSTOMER_VERIFICATION_WORKER_URL } from '$env/static/public';
+	import { PUBLIC_STRIPE_CUSTOMER_VERIFICATION_WORKER_URL } from '$env/static/public';
+	import hasActiveLicense from '$lib/stores/has-active-license';
+	import type Stripe from 'stripe';
+	import customer from '$lib/stores/customer';
 
 	let { children } = $props();
 
@@ -35,7 +37,7 @@
 				}
 
 				if (_session?.user.id) {
-					const req = await fetch(PUBLIC_CUSTOMER_VERIFICATION_WORKER_URL, {
+					const req = await fetch(PUBLIC_STRIPE_CUSTOMER_VERIFICATION_WORKER_URL, {
 						method: 'POST',
 						headers: {
 							'Content-Type': 'application/json'
@@ -43,9 +45,15 @@
 						body: JSON.stringify({ email: _session.user.email })
 					});
 
-					const { customerId } = await req.json();
+					const { customer: customerData, charges } = await req.json();
 
-					localStorage.setItem('roastCustomerId', customerId);
+					$customer = customerData;
+
+					console.log(charges);
+
+					if (charges?.data?.some((charge: Stripe.Charge) => charge.paid === true)) {
+						$hasActiveLicense = true;
+					}
 				}
 			}
 

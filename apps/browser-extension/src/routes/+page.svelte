@@ -8,13 +8,12 @@
 	import preRoastPlaceholders from '$lib/config/content/pre-roast-placeholders';
 	import devPrCode from '$lib/fixtures/dev-pr-code';
 	import generateRoast from '$lib/functions/generate-roast';
-	import chargeId from '$lib/stores/charge-id';
 	import isAuthenticated from '$lib/stores/is-authenticated';
 	import llmChoice from '$lib/stores/llm-choice';
 	import getRandomItem from '$lib/utils/get-random-item';
 	import { supabase } from '$lib/supabase';
 	import session from '$lib/stores/session';
-	import { error } from '@sveltejs/kit';
+	import hasActiveLicense from '$lib/stores/has-active-license';
 
 	let freeLimitIsUsedHeadline = $state('');
 	let loading = $state(false);
@@ -101,7 +100,7 @@
 
 		usageCount = data?.usage_count ?? 0;
 
-		if (usageCount >= 10) {
+		if (usageCount >= 10 && !$hasActiveLicense) {
 			loading = false;
 
 			freeLimitIsUsedHeadline = getRandomItem(freeLimitUsedHeadlines);
@@ -311,7 +310,7 @@ ${file.content}
 	</Button>
 {/if}
 
-{#if usageCount >= 10}
+{#if usageCount >= 10 && !$hasActiveLicense}
 	<div class="free-usage-limit">
 		<h3>
 			{freeLimitIsUsedHeadline}
@@ -319,7 +318,7 @@ ${file.content}
 
 		<p>Pay once, get unlimited roasts forever. No subscriptions, just pure value.</p>
 
-		<Button href="https://roast.dev/#pricing" target="_blank">Unlock Unlimited Roasts 🚀</Button>
+		<Button href="/settings/#purchase">Unlock Unlimited Roasts 🚀</Button>
 
 		<span> You can generate 10 roasts in 30 days for free. </span>
 	</div>

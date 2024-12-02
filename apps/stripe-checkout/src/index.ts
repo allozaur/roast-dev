@@ -5,7 +5,9 @@ interface Env {
 }
 
 interface RequestBody {
-	email: string;
+	customerId: string;
+	priceId: string;
+	promotionCode?: string;
 }
 
 const corsHeaders = {
@@ -55,62 +57,44 @@ export default {
 		try {
 			const body: RequestBody = await request.json();
 
-			if (!body.email) {
-				return new Response('Email is required', {
-					status: 400,
-					headers: { 'Content-Type': 'application/json', ...corsHeaders },
-				});
-			}
-
-			const stripe = new Stripe(env.STRIPE_SECRET_KEY);
-
-			let customer: Stripe.Customer | undefined;
-
-			const customerRes = await stripe.customers.list({
-				email: body.email,
-				limit: 1,
-			});
-
-			if (!customerRes?.data.length) {
-				customer = await stripe.customers.create({
-					email: body.email,
-				});
-			} else {
-				customer = customerRes.data[0];
-			}
-
-			const charges = await stripe.charges.list({
-				customer: customer.id,
-				limit: 100,
-			});
-
-			const invoices = await stripe.invoices.list({
-				customer: customer.id,
-				limit: 100,
-			});
-
-			const products = [];
-
-			for (const invoice of invoices.data) {
-				const invoiceItems = await stripe.invoiceItems.list({
-					invoice: invoice.id,
-				});
-
-				for (const item of invoiceItems.data) {
-					products.push({
-						description: item.description,
-						amount: item.amount,
-						currency: item.currency,
+			const requiredFields = ['customerId', 'priceId'];
+			for (const field of requiredFields) {
+				if (!body[field as keyof RequestBody]) {
+					return new Response(`${field} is required`, {
+						status: 400,
+						headers: { 'Content-Type': 'application/json', ...corsHeaders },
 					});
 				}
 			}
 
-			return new Response(JSON.stringify({ success: true, customer, charges, products }), {
-				headers: {
-					'Content-Type': 'application/json',
-					...corsHeaders,
-				},
+			const stripe = new Stripe(env.STRIPE_SECRET_KEY);
+
+			const { url } = await stripe.checkout.sessions.create({
+				customer: body.customerId,
+				discounts: body.promotionCode ? [{ promotion_code: body.promotionCode }] : undefined,
+				success_url: 'https://roast.dev/checkout-success',
+				line_items: [
+					{
+						price: body.priceId,
+						quantity: 1,
+					},
+				],
+				mode: 'payment',
 			});
+
+			return new Response(
+				JSON.stringify({
+					success: true,
+					url,
+				}),
+				{
+					status: 200,
+					headers: {
+						'Content-Type': 'application/json',
+						...corsHeaders,
+					},
+				},
+			);
 		} catch (error) {
 			console.error('Error:', error);
 
@@ -130,4 +114,4 @@ export default {
 			);
 		}
 	},
-};
+} satisfies ExportedHandler<Env>;

@@ -8,7 +8,7 @@ compatibility_date = "2024-10-22"
 compatibility_flags = ["nodejs_compat"]
 
 [env.production.vars]
-name = "stripe-customer-verification-production"
+name = "stripe-customer-verification"
 
 [env.preview.vars]
 name = "stripe-customer-verification-preview"

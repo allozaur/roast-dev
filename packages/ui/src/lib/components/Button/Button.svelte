@@ -7,7 +7,7 @@
 		download?: string;
 		href?: string;
 		image?: Snippet;
-		kind?: 'primary' | 'secondary' | 'tertiary';
+		kind?: 'primary' | 'secondary' | 'tertiary' | 'danger';
 		onClick?: () => void;
 		size?: 'sm' | 'md' | 'lg';
 		target?: string;
@@ -88,6 +88,12 @@
 		--background-hover: var(--c-text-light);
 	}
 
+	.danger {
+		--background: #ccc;
+		--background-hover: #ccc;
+		--color: var(--c-accent);
+	}
+
 	.gradient {
 		position: absolute;
 		left: 0;
@@ -115,7 +121,7 @@
 		padding: var(--padding);
 		z-index: 1;
 		font:
-			500 1rem/1 'SF UI Display',
+			600 1rem/1 'SF UI Display',
 			-apple-system,
 			sans-serif;
 		letter-spacing: 0;

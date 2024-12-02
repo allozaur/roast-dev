@@ -1,4 +1,5 @@
 <script lang="ts">
+	import type { Snippet } from 'svelte';
 	import Cta from '../Cta/Cta.svelte';
 
 	interface PriceCardProps {
@@ -7,9 +8,10 @@
 		discountPrice: string;
 		description: string;
 		isHighlighted?: boolean;
-		ctaHref: string;
-		ctaLabel: string;
-		ctaSubtitle: string;
+		ctaHref?: string;
+		ctaLabel?: string;
+		ctaSnippet?: Snippet;
+		ctaSubtitle?: string;
 	}
 
 	let {
@@ -20,6 +22,7 @@
 		description,
 		ctaHref,
 		ctaLabel,
+		ctaSnippet,
 		ctaSubtitle
 	}: PriceCardProps = $props();
 </script>
@@ -43,7 +46,11 @@
 		{@html description}
 	</p>
 
-	<Cta href={ctaHref} label={ctaLabel} subtitle={ctaSubtitle} target="_blank" />
+	{#if ctaSnippet}
+		{@render ctaSnippet()}
+	{:else if ctaHref && ctaLabel && ctaSubtitle}
+		<Cta href={ctaHref} label={ctaLabel} subtitle={ctaSubtitle} target="_blank" />
+	{/if}
 </div>
 
 <style>
@@ -70,16 +77,6 @@
 		text-align: center;
 		width: min(100%, 18rem);
 		position: relative;
-		/* 
-		&::before {
-			content: '';
-			position: absolute;
-			top: 0;
-			left: 0;
-			right: 0;
-			bottom: 0;
-			background: white;
-		} */
 
 		@media (width <= 1024px) {
 			gap: 1.5rem;
