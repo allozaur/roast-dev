@@ -2,6 +2,7 @@ import Stripe from 'stripe';
 
 interface Env {
 	STRIPE_SECRET_KEY: string;
+	CORS_ORIGIN: string;
 }
 
 interface RequestBody {
@@ -10,13 +11,13 @@ interface RequestBody {
 	promotionCode?: string;
 }
 
-const corsHeaders = {
-	'Access-Control-Allow-Origin': '*',
+const corsHeaders = (env: Env) => ({
+	'Access-Control-Allow-Origin': env.CORS_ORIGIN,
 	'Access-Control-Allow-Methods': 'GET,HEAD,POST,OPTIONS',
 	'Access-Control-Max-Age': '86400',
-};
+});
 
-async function handleOptions(request: Request): Promise<Response> {
+async function handleOptions(request: Request, env: Env): Promise<Response> {
 	if (
 		// @ts-ignore
 		request.headers.get('Origin') &&
@@ -27,7 +28,7 @@ async function handleOptions(request: Request): Promise<Response> {
 	) {
 		return new Response(null, {
 			headers: {
-				...corsHeaders,
+				...corsHeaders(env),
 				// @ts-ignore
 				'Access-Control-Allow-Headers': request.headers.get('Access-Control-Request-Headers')!,
 			},
@@ -44,7 +45,7 @@ async function handleOptions(request: Request): Promise<Response> {
 export default {
 	async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
 		if (request.method === 'OPTIONS') {
-			return handleOptions(request);
+			return handleOptions(request, env);
 		}
 
 		if (request.method !== 'POST') {
@@ -62,7 +63,7 @@ export default {
 				if (!body[field as keyof RequestBody]) {
 					return new Response(`${field} is required`, {
 						status: 400,
-						headers: { 'Content-Type': 'application/json', ...corsHeaders },
+						headers: { 'Content-Type': 'application/json', ...corsHeaders(env) },
 					});
 				}
 			}
@@ -91,13 +92,11 @@ export default {
 					status: 200,
 					headers: {
 						'Content-Type': 'application/json',
-						...corsHeaders,
+						...corsHeaders(env),
 					},
 				},
 			);
 		} catch (error) {
-			console.error('Error:', error);
-
 			return new Response(
 				JSON.stringify({
 					success: false,
@@ -108,7 +107,7 @@ export default {
 					status: 500,
 					headers: {
 						'Content-Type': 'application/json',
-						...corsHeaders,
+						...corsHeaders(env),
 					},
 				},
 			);

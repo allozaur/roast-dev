@@ -1,6 +1,7 @@
 import Stripe from 'stripe';
 
 interface Env {
+	CORS_ORIGIN: string;
 	STRIPE_SECRET_KEY: string;
 }
 
@@ -8,13 +9,13 @@ interface RequestBody {
 	email: string;
 }
 
-const corsHeaders = {
-	'Access-Control-Allow-Origin': '*',
+const corsHeaders = (env: Env) => ({
+	'Access-Control-Allow-Origin': env.CORS_ORIGIN,
 	'Access-Control-Allow-Methods': 'GET,HEAD,POST,OPTIONS',
 	'Access-Control-Max-Age': '86400',
-};
+});
 
-async function handleOptions(request: Request): Promise<Response> {
+async function handleOptions(request: Request, env: Env): Promise<Response> {
 	if (
 		// @ts-ignore
 		request.headers.get('Origin') &&
@@ -25,7 +26,7 @@ async function handleOptions(request: Request): Promise<Response> {
 	) {
 		return new Response(null, {
 			headers: {
-				...corsHeaders,
+				...corsHeaders(env),
 				// @ts-ignore
 				'Access-Control-Allow-Headers': request.headers.get('Access-Control-Request-Headers')!,
 			},
@@ -42,7 +43,7 @@ async function handleOptions(request: Request): Promise<Response> {
 export default {
 	async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
 		if (request.method === 'OPTIONS') {
-			return handleOptions(request);
+			return handleOptions(request, env);
 		}
 
 		if (request.method !== 'POST') {
@@ -58,7 +59,7 @@ export default {
 			if (!body.email) {
 				return new Response('Email is required', {
 					status: 400,
-					headers: { 'Content-Type': 'application/json', ...corsHeaders },
+					headers: { 'Content-Type': 'application/json', ...corsHeaders(env) },
 				});
 			}
 
@@ -108,7 +109,7 @@ export default {
 			return new Response(JSON.stringify({ success: true, customer, charges, products }), {
 				headers: {
 					'Content-Type': 'application/json',
-					...corsHeaders,
+					...corsHeaders(env),
 				},
 			});
 		} catch (error) {
@@ -124,7 +125,7 @@ export default {
 					status: 500,
 					headers: {
 						'Content-Type': 'application/json',
-						...corsHeaders,
+						...corsHeaders(env),
 					},
 				},
 			);
