@@ -6,7 +6,6 @@ function injectRoastButton() {
 		return;
 	}
 
-	// Check if button already exists to prevent duplicates
 	if (document.querySelector('.js-roast-button')) {
 		return;
 	}

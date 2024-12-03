@@ -1,22 +1,20 @@
 <script lang="ts">
+	import { Icon } from '@roast-dev/ui';
+	import '@roast-dev/ui/styles/index.css';
+	import type Stripe from 'stripe';
+	import { onMount } from 'svelte';
+	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 	import availableModels from '$lib/config/available-models';
 	import chargeId from '$lib/stores/charge-id';
 	import llmApiKey from '$lib/stores/llm-api-key';
 	import llmChoice from '$lib/stores/llm-choice';
-	import { supabase } from '$lib/supabase';
-
-	import { Icon } from '@roast-dev/ui';
-	import '@roast-dev/ui/styles/index.css';
-	import { onMount } from 'svelte';
-
+	import customer from '$lib/stores/customer';
 	import isAuthenticated from '$lib/stores/is-authenticated';
-	import session from '$lib/stores/session';
-	import { goto } from '$app/navigation';
 	import { PUBLIC_STRIPE_CUSTOMER_VERIFICATION_WORKER_URL } from '$env/static/public';
 	import hasActiveLicense from '$lib/stores/has-active-license';
-	import type Stripe from 'stripe';
-	import customer from '$lib/stores/customer';
+	import session from '$lib/stores/session';
+	import { supabase } from '$lib/supabase';
 
 	let { children } = $props();
 
@@ -48,8 +46,6 @@
 					const { customer: customerData, charges } = await req.json();
 
 					$customer = customerData;
-
-					console.log(charges);
 
 					if (charges?.data?.some((charge: Stripe.Charge) => charge.paid === true)) {
 						$hasActiveLicense = true;

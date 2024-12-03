@@ -1,11 +1,10 @@
 <script lang="ts">
-	import { Button, Cta, Icon, PriceCard } from '@roast-dev/ui';
+	import { Cta, Icon, PriceCard } from '@roast-dev/ui';
 	import {
 		PUBLIC_STRIPE_CHECKOUT_WORKER_URL,
 		PUBLIC_STRIPE_LIFETIME_LICENSE_PRICE_ID,
 		PUBLIC_STRIPE_1_YEAR_LICENSE_PRICE_ID
 	} from '$env/static/public';
-	import chargeId from '$lib/stores/charge-id';
 	import hasActiveLicense from '$lib/stores/has-active-license';
 	import customer from '$lib/stores/customer';
 </script>

@@ -53,5 +53,12 @@ export async function signInWithGoogle() {
 export async function signOut() {
 	localStorage.removeItem('roastWelcomePageVisited');
 
-	await supabase.auth.signOut();
+	const { error } = await supabase.auth.signOut();
+
+	if (error) {
+		console.error('Sign out error:', error);
+		if (error instanceof Error) {
+			alert(error.message);
+		}
+	}
 }

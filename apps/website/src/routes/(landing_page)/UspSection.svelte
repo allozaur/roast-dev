@@ -1,8 +1,6 @@
 <script>
 	import { Cta, Jumbotron } from '@roast-dev/ui';
-	import { env as envPublic } from '$env/dynamic/public';
 	import SectionHeadline from '$lib/components/SectionHeadline.svelte';
-	import CatchIssuesEarlyImage from './jpg/catch_issues_early.jpg';
 </script>
 
 <section id="usp">
