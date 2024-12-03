@@ -7,8 +7,22 @@
 	async function chooseLlm(e: SubmitEvent) {
 		e.preventDefault();
 
+		if (!$llmChoice) {
+			alert('Please select a language model');
+
+			return;
+		}
+
+		if (!$llmApiKey) {
+			alert('Please enter your API key');
+
+			return;
+		}
+
 		if ($llmChoice) localStorage.setItem('roastLlmChoice', $llmChoice);
 		if ($llmApiKey) localStorage.setItem(`roastLlmApiKey-${$llmChoice}`, $llmApiKey);
+
+		alert('API key saved');
 	}
 
 	function handleLlmChoiceChange(e: Event) {
@@ -58,3 +72,25 @@
 		</div>
 	</fieldset>
 </form>
+
+<style>
+	fieldset {
+		display: grid;
+		gap: 1rem;
+		padding: 1rem;
+	}
+
+	.api-key-field {
+		display: grid;
+		grid-template-columns: 1fr auto;
+		gap: 0.5rem 1rem;
+		flex-wrap: wrap;
+		align-items: end;
+
+		.disclaimer {
+			width: 100%;
+			font-size: 0.75rem;
+			color: var(--c-text-light);
+		}
+	}
+</style>
