@@ -22,9 +22,12 @@ export async function initializeExtensionAuth(provider: 'github' | 'google') {
 
 		await chrome.tabs.create({ url: data.url });
 
+		if (error) throw error;
+
 		return null;
 	} catch (error) {
-		console.error('Auth error:', error);
-		throw error;
+		console.error('Error initializing extension auth:', error);
+
+		return error;
 	}
 }

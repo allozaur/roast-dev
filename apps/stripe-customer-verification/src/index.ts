@@ -16,19 +16,13 @@ const corsHeaders = (env: Env) => ({
 });
 
 async function handleOptions(request: Request, env: Env): Promise<Response> {
-	if (
-		// @ts-ignore
-		request.headers.get('Origin') &&
-		// @ts-ignore
-		request.headers.get('Access-Control-Request-Method') &&
-		// @ts-ignore
-		request.headers.get('Access-Control-Request-Headers')
-	) {
+	const headers = new Headers(request.headers);
+
+	if (headers.get('Origin') && headers.get('Access-Control-Request-Method') && headers.get('Access-Control-Request-Headers')) {
 		return new Response(null, {
 			headers: {
 				...corsHeaders(env),
-				// @ts-ignore
-				'Access-Control-Allow-Headers': request.headers.get('Access-Control-Request-Headers')!,
+				'Access-Control-Allow-Headers': headers.get('Access-Control-Request-Headers')!,
 			},
 		});
 	} else {
