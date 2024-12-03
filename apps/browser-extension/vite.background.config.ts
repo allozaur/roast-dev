@@ -1,8 +1,9 @@
-// vite.background.config.ts
 import { defineConfig } from 'vite';
 import { resolve } from 'path';
 
 export default defineConfig({
+	envDir: resolve(__dirname, '../../'),
+
 	build: {
 		outDir: 'build',
 		emptyOutDir: false,
@@ -16,6 +17,12 @@ export default defineConfig({
 			output: {
 				extend: true
 			}
+		}
+	},
+
+	resolve: {
+		alias: {
+			$lib: resolve(__dirname, 'src/lib')
 		}
 	}
 });
