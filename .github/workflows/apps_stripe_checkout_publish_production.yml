@@ -1,17 +1,19 @@
-name: Deploy Stripe Customer Verification Worker (Production)
+name: Deploy Stripe Checkout Worker (Production)
 
 on:
   push:
     branches:
       - main
+    paths:
+      - 'apps/stripe-checkout/**'
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    name: Deploy to Production
+    name: Deploy to Preview
     defaults:
       run:
-        working-directory: apps/stripe-customer-verification
+        working-directory: apps/stripe-checkout
 
     steps:
       - name: Checkout commit
@@ -51,5 +53,5 @@ jobs:
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_WORKERS_API_TOKEN }}
-          workingDirectory: apps/stripe-customer-verification
+          workingDirectory: apps/stripe-checkout
           command: deploy
