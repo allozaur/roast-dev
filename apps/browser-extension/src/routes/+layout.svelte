@@ -6,7 +6,6 @@
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 	import availableModels from '$lib/config/available-models';
-	import chargeId from '$lib/stores/charge-id';
 	import llmApiKey from '$lib/stores/llm-api-key';
 	import llmChoice from '$lib/stores/llm-choice';
 	import customer from '$lib/stores/customer';
@@ -28,10 +27,10 @@
 			$isAuthenticated = typeof _session !== undefined && _session !== null;
 
 			if ($isAuthenticated && _event === 'INITIAL_SESSION') {
-				if (!localStorage.getItem('roastWelcomePageVisited')) {
-					localStorage.setItem('roastWelcomePageVisited', 'true');
-
-					goto('/welcome');
+				const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+				if (tab?.url?.includes('https://github.com') && tab?.url.includes('/pull/')) {
+					// localStorage.setItem('roastLastViewedPr', tab.url);
+					chrome.storage.local.set({ roastLastViewedPr: tab.url });
 				}
 
 				if (_session?.user.id) {
@@ -58,7 +57,6 @@
 			}
 		});
 
-		$chargeId = localStorage.getItem('roastChargeId');
 		$llmChoice = localStorage.getItem('roastLlmChoice') ?? availableModels['claude-3.5-sonnet'];
 
 		if ($llmChoice === 'gpt-4o') {

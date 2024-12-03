@@ -7,42 +7,29 @@ chrome.runtime.onMessage.addListener((request) => {
 });
 
 chrome.tabs.onUpdated.addListener(async (tabId, changeInfo) => {
-	if (changeInfo.url?.startsWith(chrome.identity.getRedirectURL())) {
-		try {
-			const url = new URL(changeInfo.url);
-			const hashParams = new URLSearchParams(url.hash.substring(1));
-			const access_token = hashParams.get('access_token');
-			const refresh_token = hashParams.get('refresh_token');
+	if (changeInfo.url?.startsWith('chrome-extension://')) {
+		const { data } = supabase.auth.onAuthStateChange(async (_event) => {
+			setTimeout(async () => {
+				if (_event === 'INITIAL_SESSION' && tabId) {
+					const { roastLastViewedPr } = await chrome.storage.local.get('roastLastViewedPr');
+					chrome.tabs.remove(tabId);
 
-			if (!access_token || !refresh_token) {
-				throw new Error('No auth tokens found in redirect URL');
-			}
+					const tabs = await chrome.tabs.query({});
+					const existingTab = tabs.find((tab) => tab.url === roastLastViewedPr);
 
-			const {
-				data: { session },
-				error
-			} = await supabase.auth.setSession({
-				access_token,
-				refresh_token
-			});
+					if (existingTab) {
+						await chrome.tabs.update(existingTab.id!, { active: true });
+					} else if (roastLastViewedPr) {
+						await chrome.tabs.create({ url: roastLastViewedPr });
+					} else {
+						await chrome.tabs.create({ url: 'https://github.com/pulls' });
+					}
 
-			if (error) throw error;
-
-			await chrome.storage.local.set({
-				session: {
-					access_token: session?.access_token,
-					refresh_token: session?.refresh_token,
-					user: session?.user
+					chrome.action.openPopup();
 				}
-			});
 
-			await chrome.tabs.remove(tabId);
-
-			chrome.runtime.sendMessage({ type: 'AUTH_STATE_CHANGED', session });
-		} catch (error) {
-			console.error('Auth redirect error:', error);
-
-			await chrome.tabs.remove(tabId);
-		}
+				data.subscription.unsubscribe();
+			}, 500);
+		});
 	}
 });
