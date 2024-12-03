@@ -14,7 +14,7 @@ const llmConfigs: Record<LLMProvider, LLMConfig> = {
 			'anthropic-dangerous-direct-browser-access': 'true'
 		}),
 		buildBody: (messages) => ({
-			max_tokens: 8192,
+			max_tokens: 4096,
 			messages,
 			model: availableModels['claude-3.5-sonnet'],
 			system: systemPromptClaude,
@@ -32,7 +32,7 @@ const llmConfigs: Record<LLMProvider, LLMConfig> = {
 			Authorization: `Bearer ${apiKey}`
 		}),
 		buildBody: (messages) => ({
-			max_tokens: 8192,
+			max_tokens: 4096,
 			messages,
 			model: availableModels['gpt-4o'],
 			system: systemPromptGpt,
@@ -53,7 +53,7 @@ const llmConfigs: Record<LLMProvider, LLMConfig> = {
 			Authorization: `Bearer ${apiKey}`
 		}),
 		buildBody: (messages) => ({
-			max_tokens: 8192,
+			max_tokens: 4096,
 			messages,
 			model: availableModels['gemini-1.5-pro'],
 			system: systemPromptGemini,
