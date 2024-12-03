@@ -122,7 +122,7 @@
 
 				if (!tab.url || !githubPullFilesUrlPattern.test(tab.url)) {
 					statusText =
-						'Please navigate to the "Files changed" page of a Pull Request to use have you code roasted 🔥';
+						'Please navigate to the "Files changed" page of a Pull Request that you want to roast 🔥';
 					isOnWrongPage = true;
 					loading = false;
 					return;
