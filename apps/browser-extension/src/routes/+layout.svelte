@@ -26,10 +26,10 @@
 			$session = _session;
 			$isAuthenticated = typeof _session !== undefined && _session !== null;
 
-			if ($isAuthenticated && _event === 'INITIAL_SESSION') {
+			if ($isAuthenticated && _event === 'INITIAL_SESSION' && chrome?.tabs) {
 				const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+
 				if (tab?.url?.includes('https://github.com') && tab?.url.includes('/pull/')) {
-					// localStorage.setItem('roastLastViewedPr', tab.url);
 					chrome.storage.local.set({ roastLastViewedPr: tab.url });
 				}
 

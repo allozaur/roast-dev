@@ -7,29 +7,32 @@ chrome.runtime.onMessage.addListener((request) => {
 });
 
 chrome.tabs.onUpdated.addListener(async (tabId, changeInfo) => {
-	if (changeInfo.url?.startsWith('chrome-extension://')) {
-		const { data } = supabase.auth.onAuthStateChange(async (_event) => {
-			setTimeout(async () => {
-				if (_event === 'INITIAL_SESSION' && tabId) {
+	const { data } = supabase.auth.onAuthStateChange(async (_event) => {
+		setTimeout(async () => {
+			if (changeInfo.url?.startsWith('chrome-extension://')) {
+				if (_event === 'INITIAL_SESSION') {
 					const { roastLastViewedPr } = await chrome.storage.local.get('roastLastViewedPr');
-					chrome.tabs.remove(tabId);
+					const [{ id: lastViewedPrTabId }] = await chrome.tabs.query({ url: roastLastViewedPr });
 
-					const tabs = await chrome.tabs.query({});
-					const existingTab = tabs.find((tab) => tab.url === roastLastViewedPr);
-
-					if (existingTab) {
-						await chrome.tabs.update(existingTab.id!, { active: true });
-					} else if (roastLastViewedPr) {
-						await chrome.tabs.create({ url: roastLastViewedPr });
-					} else {
-						await chrome.tabs.create({ url: 'https://github.com/pulls' });
+					if (lastViewedPrTabId) {
+						await chrome.tabs.update(lastViewedPrTabId, { active: true });
 					}
 
-					chrome.action.openPopup();
+					if (typeof tabId === 'number') {
+						chrome.tabs.get(tabId, async (tab) => {
+							if (chrome.runtime.lastError || !tab) {
+								console.log('Tab does not exist.');
+								return;
+							}
+
+							await chrome.tabs.remove(tabId);
+							await chrome.action.openPopup();
+						});
+					}
 				}
 
 				data.subscription.unsubscribe();
-			}, 500);
-		});
-	}
+			}
+		}, 500);
+	});
 });
