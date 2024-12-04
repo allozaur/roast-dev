@@ -12,10 +12,10 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo) => {
 			if (changeInfo.url?.startsWith('chrome-extension://')) {
 				if (_event === 'INITIAL_SESSION') {
 					const { roastLastViewedPr } = await chrome.storage.local.get('roastLastViewedPr');
-					const [{ id: lastViewedPrTabId }] = await chrome.tabs.query({ url: roastLastViewedPr });
+					const [lastViewedPrTab] = await chrome.tabs.query({ url: roastLastViewedPr });
 
-					if (lastViewedPrTabId) {
-						await chrome.tabs.update(lastViewedPrTabId, { active: true });
+					if (lastViewedPrTab && lastViewedPrTab?.id) {
+						await chrome.tabs.update(lastViewedPrTab.id, { active: true });
 					}
 
 					if (typeof tabId === 'number') {
