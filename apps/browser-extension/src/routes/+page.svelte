@@ -100,7 +100,7 @@
 
 		usageCount = data?.usage_count ?? 0;
 
-		if (usageCount >= 10 && !$hasActiveLicense) {
+		if (usageCount >= Number(import.meta.env.VITE_FREE_USAGE_LIMIT) && !$hasActiveLicense) {
 			loading = false;
 
 			freeLimitIsUsedHeadline = getRandomItem(freeLimitUsedHeadlines);

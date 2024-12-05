@@ -41,6 +41,8 @@
 							window.open(url, '_blank');
 						} catch (error) {
 							console.error(error);
+
+							throw new Error('Failed to create checkout session');
 						}
 					}}
 					label="Get 1-year access now"
@@ -75,6 +77,8 @@
 							window.open(url, '_blank');
 						} catch (error) {
 							console.error(error);
+
+							throw new Error('Failed to create checkout session');
 						}
 					}}
 					label="Get lifetime access now"
