@@ -14,9 +14,9 @@
 		</p>
 
 		<Cta
-			href="#pricing"
-			label="Add Roast to your browser 😎"
-			subtitle="Start Roasting your PRs and improve your code review process!"
+			href="#features"
+			label="Improve your game with Roast 😎"
+			subtitle="Roast your code and improve code reviews"
 		/>
 	</div>
 </section>

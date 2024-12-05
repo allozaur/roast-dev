@@ -2,7 +2,7 @@
   "name": "roast",
   "private": true,
   "scripts": {
-    "build": "turbo build",
+    "build:extension": "turbo build:extension",
     "build:website": "turbo build:website",
     "dev": "turbo dev",
     "lint": "turbo lint",

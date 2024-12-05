@@ -1,8 +1,6 @@
 <script>
 	import { Cta, Jumbotron } from '@roast-dev/ui';
-	import { env as envPublic } from '$env/dynamic/public';
 	import SectionHeadline from '$lib/components/SectionHeadline.svelte';
-	import CatchIssuesEarlyImage from './jpg/catch_issues_early.jpg';
 </script>
 
 <section id="usp">
@@ -78,10 +76,9 @@
 			</h3>
 
 			<Cta
-				href={envPublic.PUBLIC_STRIPE_CHECKOUT_LINK_LIFETIME}
+				href="#pricing"
 				label="Add Roast to your workflow"
 				subtitle="Improve your PR game with AI roasts."
-				target="_blank"
 			/>
 		</Jumbotron>
 	</div>

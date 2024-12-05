@@ -4,6 +4,10 @@ on:
   push:
     branches:
       - main
+      - release/extension/0.1.0
+    paths:
+      - '.github/workflows/apps_stripe_customer_verification_publish_production.yml'
+      - 'apps/stripe-customer-verification/**'
 
 jobs:
   deploy:
@@ -52,4 +56,4 @@ jobs:
         with:
           apiToken: ${{ secrets.CLOUDFLARE_WORKERS_API_TOKEN }}
           workingDirectory: apps/stripe-customer-verification
-          command: deploy --env production
+          command: deploy

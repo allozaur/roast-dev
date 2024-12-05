@@ -2,8 +2,11 @@ name: Deploy Stripe Customer Verification Worker (Preview)
 
 on:
   push:
-    branches:
-      - develop
+    branches-ignore:
+      - main
+    paths:
+      - '.github/workflows/apps_stripe_customer_verification_publish_preview.yml'
+      - 'apps/stripe-customer-verification/**'
 
 jobs:
   deploy:

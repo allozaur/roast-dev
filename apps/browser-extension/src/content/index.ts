@@ -6,6 +6,10 @@ function injectRoastButton() {
 		return;
 	}
 
+	if (document.querySelector('.js-roast-button')) {
+		return;
+	}
+
 	const roastButton = document.createElement('button');
 
 	roastButton.className = 'btn-secondary btn btn-sm js-roast-button';
@@ -17,44 +21,40 @@ function injectRoastButton() {
 
 	roastButton.addEventListener('click', (e) => {
 		e.preventDefault();
-
-		// @ts-expect-error - Chrome specific
 		chrome.runtime.sendMessage({ action: 'openPopup' });
 	});
 }
 
+function checkAndInjectButton() {
+	if (location.href.includes('/pull/') && location.href.includes('/files')) {
+		const reviewButton = document.querySelector('.js-reviews-toggle');
+		const roastButton = document.querySelector('.js-roast-button');
+
+		if (reviewButton && !roastButton) {
+			injectRoastButton();
+		}
+	}
+}
+
 // Enhanced observer to handle GitHub's dynamic loading
 function createObserver() {
-	const callback = function (mutations) {
+	return new MutationObserver((mutations) => {
 		for (const mutation of mutations) {
 			if (mutation.addedNodes.length) {
-				if (location.href.includes('/pull/') && location.href.includes('/files')) {
-					const reviewButton = document.querySelector('.js-reviews-toggle');
-					const roastButton = document.querySelector('.js-roast-button');
-
-					if (reviewButton && !roastButton) {
-						injectRoastButton();
-					}
-				}
+				checkAndInjectButton();
 			}
 		}
-	};
-
-	return new MutationObserver(callback);
-}
-
-const observer = createObserver();
-
-observer.observe(document.body, { childList: true, subtree: true });
-
-if (location.href.includes('/pull/') && location.href.includes('/files')) {
-	// Try a few times to inject the button, as GitHub's UI might load async
-	const attempts = [0, 500, 1000, 2000];
-	attempts.forEach((delay) => {
-		setTimeout(() => {
-			if (!document.querySelector('.js-roast-button')) {
-				injectRoastButton();
-			}
-		}, delay);
 	});
 }
+
+// Initial check
+checkAndInjectButton();
+
+// Set up observer for dynamic changes
+const observer = createObserver();
+observer.observe(document.body, { childList: true, subtree: true });
+
+// Clean up observer when the content script is unloaded
+window.addEventListener('unload', () => {
+	observer.disconnect();
+});

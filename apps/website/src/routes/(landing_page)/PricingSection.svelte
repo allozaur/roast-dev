@@ -31,8 +31,8 @@
 	</div>
 
 	<p>
-		Want to see Roast in action? Add the plugin to your browser and generate <strong
-			>5 roasts monthly for free
+		Want to see Roast in action? Add the plugin to your browser and generate <strong>
+			10 roasts monthly for free
 		</strong>. <br /> Try it on your next PRs, and when ready, unlock unlimited access to perfect every
 		PR you submit!
 	</p>

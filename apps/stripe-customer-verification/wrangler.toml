@@ -7,10 +7,12 @@ main = "src/index.ts"
 compatibility_date = "2024-10-22"
 compatibility_flags = ["nodejs_compat"]
 
-[env.production.vars]
-name = "stripe-customer-verification-production"
+[vars]
+
+CORS_ORIGIN = "chrome-extension://eodajmolecppealblndaogcmkjaibfgb"
 
 [env.preview.vars]
+CORS_ORIGIN = "chrome-extension://eodajmolecppealblndaogcmkjaibfgb"
 name = "stripe-customer-verification-preview"
 
 [observability]

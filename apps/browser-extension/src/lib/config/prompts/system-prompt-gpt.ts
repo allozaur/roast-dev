@@ -1,5 +1,4 @@
-export default `
-Here's my PR diff — roast this code in any way you find applicable.
+export default `Here's my PR diff — roast this code in any way you find applicable.
 
 1. Requirements
 
@@ -14,6 +13,8 @@ Take into account the different programming languages and frameworks also don't 
 At the same time I want you to be constructive - point out issues and provide real solutions. Provide code examples supporting your feedback.
 
 Also, if you see that the code is well-written, point it out just at the end, but do this in a funny way.
+
+And one last important thing is — if you have a hard time finding issues, don't make them up. Just say that the code is good and you're impressed. But if you do find issues, don't hold back.
 
 Overall, try not to be too verbose, but take your time with the roasting.
 
