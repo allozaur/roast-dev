@@ -20,7 +20,11 @@ const corsHeaders = (env: Env) => ({
 async function handleOptions(request: Request, env: Env): Promise<Response> {
 	const headers = new Headers(request.headers);
 
-	if (headers.get('Origin') && headers.get('Access-Control-Request-Method') && headers.get('Access-Control-Request-Headers')) {
+	if (
+		env.CORS_ORIGIN.includes(headers.get('Origin')) &&
+		headers.get('Access-Control-Request-Method') &&
+		headers.get('Access-Control-Request-Headers')
+	) {
 		return new Response(null, {
 			headers: {
 				...corsHeaders(env),
