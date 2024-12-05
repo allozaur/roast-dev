@@ -8,31 +8,34 @@ chrome.runtime.onMessage.addListener((request) => {
 
 chrome.tabs.onUpdated.addListener(async (tabId, changeInfo) => {
 	const { data } = supabase.auth.onAuthStateChange(async (_event) => {
-		setTimeout(async () => {
-			if (changeInfo.url?.startsWith('chrome-extension://')) {
-				if (_event === 'INITIAL_SESSION') {
-					const { roastLastViewedPr } = await chrome.storage.local.get('roastLastViewedPr');
-					const [lastViewedPrTab] = await chrome.tabs.query({ url: roastLastViewedPr });
+		setTimeout(
+			async () => {
+				if (changeInfo.url?.startsWith('chrome-extension://')) {
+					if (_event === 'INITIAL_SESSION') {
+						const { roastLastViewedPr } = await chrome.storage.local.get('roastLastViewedPr');
+						const [lastViewedPrTab] = await chrome.tabs.query({ url: roastLastViewedPr });
 
-					if (lastViewedPrTab && lastViewedPrTab?.id) {
-						await chrome.tabs.update(lastViewedPrTab.id, { active: true });
+						if (lastViewedPrTab && lastViewedPrTab?.id) {
+							await chrome.tabs.update(lastViewedPrTab.id, { active: true });
+						}
+
+						if (typeof tabId === 'number') {
+							chrome.tabs.get(tabId, async (tab) => {
+								if (chrome.runtime.lastError || !tab) {
+									console.log('Tab does not exist.');
+									return;
+								}
+
+								await chrome.tabs.remove(tabId);
+								await chrome.action.openPopup();
+							});
+						}
 					}
 
-					if (typeof tabId === 'number') {
-						chrome.tabs.get(tabId, async (tab) => {
-							if (chrome.runtime.lastError || !tab) {
-								console.log('Tab does not exist.');
-								return;
-							}
-
-							await chrome.tabs.remove(tabId);
-							await chrome.action.openPopup();
-						});
-					}
+					data.subscription.unsubscribe();
 				}
-
-				data.subscription.unsubscribe();
-			}
-		}, 500);
+			},
+			Number(import.meta.env.VITE_AUTH_STATE_SYNC_DELAY_MS)
+		);
 	});
 });
