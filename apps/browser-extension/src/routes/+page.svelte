@@ -1,25 +1,21 @@
 <script lang="ts">
 	import { marked } from 'marked';
 	import { onMount } from 'svelte';
-	import { PUBLIC_FREE_USAGE_COUNTER_WORKER_URL } from '$env/static/public';
-
 	import { Button, Logo } from '@roast-dev/ui';
-
+	import AuthBox from '$lib/components/AuthBox.svelte';
 	import followUpPrompt from '$lib/config/prompts/follow-up-prompt';
 	import freeLimitUsedHeadlines from '$lib/config/content/free-limit-used-headlines';
-	import initialPromptClaude from '$lib/config/prompts/initial-prompt-claude';
-	import initialPromptGemini from '$lib/config/prompts/initial-prompt-gemini';
-	import initialPromptGpt from '$lib/config/prompts/initial-prompt-gpt';
 	import preRoastPlaceholders from '$lib/config/content/pre-roast-placeholders';
-
-	import chargeId from '$lib/stores/charge-id';
 	import devPrCode from '$lib/fixtures/dev-pr-code';
 	import generateRoast from '$lib/functions/generate-roast';
-	import getRandomItem from '$lib/utils/get-random-item';
+	import isAuthenticated from '$lib/stores/is-authenticated';
 	import llmChoice from '$lib/stores/llm-choice';
+	import getRandomItem from '$lib/utils/get-random-item';
+	import { supabase } from '$lib/supabase';
+	import session from '$lib/stores/session';
+	import hasActiveLicense from '$lib/stores/has-active-license';
 
 	let freeLimitIsUsedHeadline = $state('');
-	let hasReachedFreeLimit = $state(false);
 	let loading = $state(false);
 	let preRoastPlaceholderText = $state('');
 	let roastConversation: {
@@ -41,7 +37,8 @@
 	let isOnWrongPage = $state(false);
 	let roastPrTitle = $state('');
 	let roastPrUrl = $state('');
-	let tabUrl = $state('');
+	let tabUrl: string | undefined = $state('');
+	let usageCount = $state(0);
 
 	let db: IDBDatabase;
 
@@ -95,18 +92,20 @@
 	}
 
 	async function triggerRoast() {
-		if (!$chargeId) {
-			const freeUsageReq = await fetch(PUBLIC_FREE_USAGE_COUNTER_WORKER_URL);
+		const { data } = await supabase
+			.from('free_usage')
+			.select('usage_count')
+			.eq('user_id', $session?.user.id)
+			?.single();
 
-			hasReachedFreeLimit = freeUsageReq.status !== 201;
+		usageCount = data?.usage_count ?? 0;
 
-			if (hasReachedFreeLimit) {
-				loading = false;
+		if (usageCount >= Number(import.meta.env.VITE_FREE_USAGE_LIMIT) && !$hasActiveLicense) {
+			loading = false;
 
-				freeLimitIsUsedHeadline = getRandomItem(freeLimitUsedHeadlines);
+			freeLimitIsUsedHeadline = getRandomItem(freeLimitUsedHeadlines);
 
-				return;
-			}
+			return;
 		}
 
 		let formattedDiff = '';
@@ -116,7 +115,6 @@
 
 		try {
 			if (import.meta.env.PROD) {
-				// @ts-expect-error - Chrome API
 				const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
 
 				const githubPullFilesUrlPattern =
@@ -124,13 +122,12 @@
 
 				if (!tab.url || !githubPullFilesUrlPattern.test(tab.url)) {
 					statusText =
-						'Please navigate to the "Files changed" page of a Pull Request to use have you code roasted 🔥';
+						'Please navigate to the "Files changed" page of a Pull Request that you want to roast 🔥';
 					isOnWrongPage = true;
 					loading = false;
 					return;
 				}
 
-				// @ts-expect-error - Chrome API
 				const results = await chrome.scripting.executeScript({
 					target: { tabId: tab.id! },
 					func: () => {
@@ -188,17 +185,10 @@ ${file.content}
 				roastPrUrl = 'https://github.com/roast-dev/roast/pull/123';
 			}
 
-			const initialPrompt =
-				$llmChoice === 'gemini-1.5-pro'
-					? initialPromptGemini
-					: $llmChoice === 'gpt-4o'
-						? initialPromptGpt
-						: initialPromptClaude;
-
 			if (roastConversation.messages?.length === 0) {
 				roastConversation.messages.push({
 					role: 'user',
-					content: `${initialPrompt}${formattedDiff}`
+					content: `Here's my code: ${formattedDiff}`
 				});
 			} else {
 				roastConversation.messages.push({
@@ -224,9 +214,19 @@ ${file.content}
 			statusText = 'Roast delivered! 🔥';
 		} catch (error) {
 			console.error('Roast error:', error);
+
 			statusText = `Error: ${error instanceof Error ? error.message : 'Unknown error occurred'}`;
 		} finally {
 			loading = false;
+
+			const { error } = await supabase.from('free_usage').upsert({
+				user_id: $session?.user.id,
+				usage_count: usageCount + 1
+			});
+
+			if (error) {
+				throw error;
+			}
 		}
 	}
 
@@ -240,12 +240,14 @@ ${file.content}
 
 		if (import.meta.env.PROD) {
 			try {
-				// @ts-expect-error - Chrome API
 				const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
 
-				tabUrl = tab.url;
+				tabUrl = tab?.url;
 
-				// @ts-expect-error - Chrome API
+				if (!tabUrl || !tabUrl?.includes('https://github.com')) {
+					return;
+				}
+
 				const results = await chrome.scripting.executeScript({
 					target: { tabId: tab.id! },
 					func: () => {
@@ -274,7 +276,7 @@ ${file.content}
 
 {#if roastPrTitle}
 	<div class="top">
-		<Logo name="github" --size="1.625rem" --fill="var(--c-text)" />
+		<Logo customFill name="github" --size="1.625rem" --fill="var(--c-text)" />
 
 		<h1 class="pr-title">
 			{@html roastPrTitle}
@@ -286,12 +288,13 @@ ${file.content}
 	</div>
 {/if}
 
-{#if isOnWrongPage && tabUrl.includes('/pull/')}
+{#if !$isAuthenticated}
+	<AuthBox />
+{:else if isOnWrongPage && tabUrl?.includes('/pull/')}
 	<Button
 		onClick={async () => {
-			// @ts-expect-error - Chrome API
 			const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-			// @ts-expect-error - Chrome API
+
 			await chrome.tabs.update(tab.id!, { url: `${tabUrl}/files` });
 		}}
 	>
@@ -307,7 +310,7 @@ ${file.content}
 	</Button>
 {/if}
 
-{#if hasReachedFreeLimit}
+{#if usageCount >= 10 && !$hasActiveLicense}
 	<div class="free-usage-limit">
 		<h3>
 			{freeLimitIsUsedHeadline}
@@ -315,7 +318,7 @@ ${file.content}
 
 		<p>Pay once, get unlimited roasts forever. No subscriptions, just pure value.</p>
 
-		<Button href="https://roast.dev/#pricing" target="_blank">Unlock Unlimited Roasts 🚀</Button>
+		<Button href="/settings/#purchase">Unlock Unlimited Roasts 🚀</Button>
 
 		<span> You can generate 10 roasts in 30 days for free. </span>
 	</div>
@@ -325,26 +328,28 @@ ${file.content}
 	</div>
 {/if}
 
-{#if loading}
-	<div class="loading">
-		<div class="spinner"></div>
-	</div>
-{:else if roastConversation?.messages?.some((message) => message.role === 'assistant' || message.role === 'model')}
-	<div class="roast-content">
-		{#if roastConversation.messages.filter((message) => message.role === 'assistant' || message.role === 'model')?.length > 0}
-			{@const roastResponses = roastConversation.messages.filter(
-				(message) => message.role === 'assistant' || message.role === 'model'
-			)}
+{#if $isAuthenticated}
+	{#if loading}
+		<div class="loading">
+			<div class="spinner"></div>
+		</div>
+	{:else if roastConversation?.messages?.some((message) => message.role === 'assistant' || message.role === 'model')}
+		<div class="roast-content">
+			{#if roastConversation.messages.filter((message) => message.role === 'assistant' || message.role === 'model')?.length > 0}
+				{@const roastResponses = roastConversation.messages.filter(
+					(message) => message.role === 'assistant' || message.role === 'model'
+				)}
 
-			{#await marked.parse(`${roastResponses[roastResponses.length - 1].content}`) then markdownContent}
-				{@html markdownContent}
-			{/await}
-		{/if}
-	</div>
-{:else}
-	<span class="placeholder">
-		{preRoastPlaceholderText}
-	</span>
+				{#await marked.parse(`${roastResponses[roastResponses.length - 1].content}`) then markdownContent}
+					{@html markdownContent}
+				{/await}
+			{/if}
+		</div>
+	{:else}
+		<span class="placeholder">
+			{preRoastPlaceholderText}
+		</span>
+	{/if}
 {/if}
 
 <style>

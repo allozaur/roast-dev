@@ -5,7 +5,7 @@
 
 <section id="features">
 	<div class="inner">
-		<SectionHeadline heading="See <strong>Roast</strong> plugin in action" />
+		<SectionHeadline heading="What makes it different?" />
 
 		<!--ARCADE EMBED START-->
 		<div style="position: relative; padding-bottom: calc(57.8125% + 41px); height: 0; width: 100%;">
@@ -30,8 +30,9 @@
 				<h3>Easily access Roast from your Pull Requests</h3>
 
 				<p>
-					One click in GitHub or GitLab to analyze your code instantly. Roast integrates naturally
-					with your PR interface – no extra tabs, no context switching, no workflow disruption. <strong
+					One click in GitHub (GitLab coming soon!) to analyze your code instantly. Roast integrates
+					naturally with your PR interface – no extra tabs, no context switching, no workflow
+					disruption. <strong
 						>Review your PRs and get instant juicy feedback right where you work with the code.</strong
 					>
 				</p>
@@ -89,8 +90,8 @@
 </section>
 
 <style>
-	#features {
-		padding: 4rem 2rem;
+	.features-section {
+		padding: 5rem 2rem;
 		text-align: center;
 		position: relative;
 		@media (width <= 1024px) {

@@ -16,3 +16,9 @@
 		{args.label}
 	</Button>
 </Story>
+
+<Story name="Danger" let:args args={{ label: 'Button label' }}>
+	<Button kind="danger">
+		{args.label}
+	</Button>
+</Story>

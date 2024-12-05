@@ -1,18 +1,63 @@
 <script lang="ts">
-	import { page } from '$app/stores';
-	import availableModels from '$lib/config/available-models';
-	import chargeId from '$lib/stores/charge-id';
-	import llmApiKey from '$lib/stores/llm-api-key';
-	import llmChoice from '$lib/stores/llm-choice';
 	import { Icon } from '@roast-dev/ui';
 	import '@roast-dev/ui/styles/index.css';
+	import type Stripe from 'stripe';
 	import { onMount } from 'svelte';
+	import { goto } from '$app/navigation';
+	import { page } from '$app/stores';
+	import availableModels from '$lib/config/available-models';
+	import llmApiKey from '$lib/stores/llm-api-key';
+	import llmChoice from '$lib/stores/llm-choice';
+	import customer from '$lib/stores/customer';
+	import isAuthenticated from '$lib/stores/is-authenticated';
+	import { PUBLIC_STRIPE_CUSTOMER_VERIFICATION_WORKER_URL } from '$env/static/public';
+	import hasActiveLicense from '$lib/stores/has-active-license';
+	import session from '$lib/stores/session';
+	import { supabase } from '$lib/supabase';
 
 	let { children } = $props();
 
-	onMount(() => {
-		$chargeId = localStorage.getItem('roastChargeId');
-		$llmChoice = localStorage.getItem('roastLlmChoice') ?? availableModels['claude-3-5-sonnet'];
+	onMount(async () => {
+		const { data } = await supabase.auth.getSession();
+
+		$session = data.session;
+
+		supabase.auth.onAuthStateChange(async (_event, _session) => {
+			$session = _session;
+			$isAuthenticated = typeof _session !== undefined && _session !== null;
+
+			if ($isAuthenticated && _event === 'INITIAL_SESSION' && chrome?.tabs) {
+				const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+
+				if (tab?.url?.includes('https://github.com') && tab?.url.includes('/pull/')) {
+					chrome.storage.local.set({ roastLastViewedPr: tab.url });
+				}
+
+				if (_session?.user.id) {
+					const req = await fetch(PUBLIC_STRIPE_CUSTOMER_VERIFICATION_WORKER_URL, {
+						method: 'POST',
+						headers: {
+							'Content-Type': 'application/json'
+						},
+						body: JSON.stringify({ email: _session.user.email })
+					});
+
+					const { customer: customerData, charges } = await req.json();
+
+					$customer = customerData;
+
+					if (charges?.data?.some((charge: Stripe.Charge) => charge.paid === true)) {
+						$hasActiveLicense = true;
+					}
+				}
+			}
+
+			if (!$isAuthenticated) {
+				goto('/');
+			}
+		});
+
+		$llmChoice = localStorage.getItem('roastLlmChoice') ?? availableModels['claude-3.5-sonnet'];
 
 		if ($llmChoice === 'gpt-4o') {
 			$llmApiKey = localStorage.getItem('roastLlmApiKey-gpt-4o') ?? '';
@@ -20,7 +65,7 @@
 			$llmApiKey = localStorage.getItem('roastLlmApiKey-gemini-1.5-pro') ?? '';
 		} else {
 			$llmApiKey =
-				localStorage.getItem(`roastLlmApiKey-${availableModels['claude-3-5-sonnet']}`) ?? '';
+				localStorage.getItem(`roastLlmApiKey-${availableModels['claude-3.5-sonnet']}`) ?? '';
 		}
 	});
 </script>
@@ -36,7 +81,7 @@
 
 <main>
 	<header>
-		{#if $page.url.pathname === '/settings'}
+		{#if $page.url.pathname === '/settings' && $isAuthenticated}
 			<h1>Settings</h1>
 
 			<a href="/"> <Icon name="xmark" --size="1.5rem" /></a>
@@ -45,9 +90,11 @@
 				🔥 roast<strong>.dev</strong>
 			</h1>
 
-			<a href="/settings">
-				<Icon name="settings" --stroke="var(--c-text-light)" --size="1.5rem" />
-			</a>
+			{#if $isAuthenticated}
+				<a href="/settings">
+					<Icon name="settings" --stroke="var(--c-text-light)" --size="1.5rem" />
+				</a>
+			{/if}
 		{/if}
 	</header>
 
@@ -75,22 +122,5 @@
 				font-weight: inherit;
 			}
 		}
-	}
-
-	.logo {
-		color: inherit;
-		text-decoration: none;
-		font-size: 1.75rem;
-		font-weight: 700;
-		line-height: 1;
-		font-family:
-			'SF UI Display',
-			-apple-system,
-			BlinkMacSystemFont,
-			'Segoe UI',
-			Roboto,
-			'Helvetica Neue',
-			Arial,
-			sans-serif;
 	}
 </style>

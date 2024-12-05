@@ -12,9 +12,11 @@
 		{@html heading}
 	</h2>
 
-	<p>
-		{@html description}
-	</p>
+	{#if description}
+		<p>
+			{@html description}
+		</p>
+	{/if}
 </div>
 
 <style>
@@ -31,12 +33,12 @@
 
 	h2 {
 		font:
-			600 1.625rem/1.5 'SF UI Display',
+			600 1.25rem/1.5 'SF UI Display',
 			-apple-system,
 			sans-serif;
 		@media (width > 1024px) {
 			font:
-				600 3rem/1.5 'SF UI Display',
+				600 3rem/1 'SF UI Display',
 				-apple-system,
 				sans-serif;
 		}

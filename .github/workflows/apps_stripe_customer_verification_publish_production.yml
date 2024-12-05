@@ -52,4 +52,4 @@ jobs:
         with:
           apiToken: ${{ secrets.CLOUDFLARE_WORKERS_API_TOKEN }}
           workingDirectory: apps/stripe-customer-verification
-          command: deploy --env production
+          command: deploy

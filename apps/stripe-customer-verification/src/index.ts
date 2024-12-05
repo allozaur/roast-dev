@@ -1,6 +1,7 @@
 import Stripe from 'stripe';
 
 interface Env {
+	CORS_ORIGIN: string;
 	STRIPE_SECRET_KEY: string;
 }
 
@@ -8,22 +9,20 @@ interface RequestBody {
 	email: string;
 }
 
-const corsHeaders = {
-	'Access-Control-Allow-Origin': '*',
+const corsHeaders = (env: Env) => ({
+	'Access-Control-Allow-Origin': env.CORS_ORIGIN,
 	'Access-Control-Allow-Methods': 'GET,HEAD,POST,OPTIONS',
 	'Access-Control-Max-Age': '86400',
-};
+});
 
-async function handleOptions(request: Request): Promise<Response> {
-	if (
-		request.headers.get('Origin') !== null &&
-		request.headers.get('Access-Control-Request-Method') !== null &&
-		request.headers.get('Access-Control-Request-Headers') !== null
-	) {
+async function handleOptions(request: Request, env: Env): Promise<Response> {
+	const headers = new Headers(request.headers);
+
+	if (headers.get('Origin') && headers.get('Access-Control-Request-Method') && headers.get('Access-Control-Request-Headers')) {
 		return new Response(null, {
 			headers: {
-				...corsHeaders,
-				'Access-Control-Allow-Headers': request.headers.get('Access-Control-Request-Headers')!,
+				...corsHeaders(env),
+				'Access-Control-Allow-Headers': headers.get('Access-Control-Request-Headers')!,
 			},
 		});
 	} else {
@@ -38,7 +37,7 @@ async function handleOptions(request: Request): Promise<Response> {
 export default {
 	async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
 		if (request.method === 'OPTIONS') {
-			return handleOptions(request);
+			return handleOptions(request, env);
 		}
 
 		if (request.method !== 'POST') {
@@ -54,33 +53,59 @@ export default {
 			if (!body.email) {
 				return new Response('Email is required', {
 					status: 400,
-					headers: { 'Content-Type': 'application/json', ...corsHeaders },
+					headers: { 'Content-Type': 'application/json', ...corsHeaders(env) },
 				});
 			}
 
 			const stripe = new Stripe(env.STRIPE_SECRET_KEY);
 
-			const { data } = await stripe.charges.list({
+			let customer: Stripe.Customer | undefined;
+
+			const customerRes = await stripe.customers.list({
+				email: body.email,
+				limit: 1,
+			});
+
+			if (!customerRes?.data.length) {
+				customer = await stripe.customers.create({
+					email: body.email,
+				});
+			} else {
+				customer = customerRes.data[0];
+			}
+
+			const charges = await stripe.charges.list({
+				customer: customer.id,
 				limit: 100,
 			});
 
-			const charge = data.find((charge) => charge.receipt_email === body.email && charge.paid);
+			const invoices = await stripe.invoices.list({
+				customer: customer.id,
+				limit: 100,
+			});
 
-			if (charge) {
-				return new Response(JSON.stringify({ success: true, chargeId: charge.id }), {
-					headers: {
-						'Content-Type': 'application/json',
-						...corsHeaders,
-					},
+			const products = [];
+
+			for (const invoice of invoices.data) {
+				const invoiceItems = await stripe.invoiceItems.list({
+					invoice: invoice.id,
 				});
-			} else {
-				return new Response(JSON.stringify({ success: false, message: 'No charge found' }), {
-					headers: {
-						'Content-Type': 'application/json',
-						...corsHeaders,
-					},
-				});
+
+				for (const item of invoiceItems.data) {
+					products.push({
+						description: item.description,
+						amount: item.amount,
+						currency: item.currency,
+					});
+				}
 			}
+
+			return new Response(JSON.stringify({ success: true, customer, charges, products }), {
+				headers: {
+					'Content-Type': 'application/json',
+					...corsHeaders(env),
+				},
+			});
 		} catch (error) {
 			console.error('Error:', error);
 
@@ -94,7 +119,7 @@ export default {
 					status: 500,
 					headers: {
 						'Content-Type': 'application/json',
-						...corsHeaders,
+						...corsHeaders(env),
 					},
 				},
 			);

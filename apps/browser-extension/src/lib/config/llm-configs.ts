@@ -1,8 +1,11 @@
 import type { LLMConfig, LLMProvider } from '$lib/types';
 import availableModels from '$lib/config/available-models';
+import systemPromptClaude from './prompts/system-prompt-claude';
+import systemPromptGpt from './prompts/system-prompt-gpt';
+import systemPromptGemini from './prompts/system-prompt-gemini';
 
 const llmConfigs: Record<LLMProvider, LLMConfig> = {
-	[availableModels['claude-3-5-sonnet']]: {
+	[availableModels['claude-3.5-sonnet']]: {
 		endpoint: 'https://api.anthropic.com/v1/messages',
 		headers: (apiKey) => ({
 			'Content-Type': 'application/json',
@@ -13,7 +16,9 @@ const llmConfigs: Record<LLMProvider, LLMConfig> = {
 		buildBody: (messages) => ({
 			max_tokens: 4096,
 			messages,
-			model: availableModels['claude-3-5-sonnet']
+			model: availableModels['claude-3.5-sonnet'],
+			system: systemPromptClaude,
+			temperature: 0.8
 		}),
 		extractResponse: (data) => {
 			return { content: data.content?.[0].text, role: data?.role };
@@ -27,10 +32,11 @@ const llmConfigs: Record<LLMProvider, LLMConfig> = {
 			Authorization: `Bearer ${apiKey}`
 		}),
 		buildBody: (messages) => ({
-			max_tokens: 4000,
+			max_tokens: 4096,
 			messages,
 			model: availableModels['gpt-4o'],
-			temperature: 0.7
+			system: systemPromptGpt,
+			temperature: 0.5
 		}),
 		extractResponse: (data) => {
 			return {
@@ -47,10 +53,11 @@ const llmConfigs: Record<LLMProvider, LLMConfig> = {
 			Authorization: `Bearer ${apiKey}`
 		}),
 		buildBody: (messages) => ({
-			max_tokens: 4000,
+			max_tokens: 4096,
 			messages,
 			model: availableModels['gemini-1.5-pro'],
-			temperature: 0.7
+			system: systemPromptGemini,
+			temperature: 0.5
 		}),
 		extractResponse: (data) => {
 			return {

@@ -7,6 +7,7 @@
 		download?: string;
 		href?: string;
 		image?: Snippet;
+		kind?: 'primary' | 'secondary' | 'tertiary' | 'danger';
 		onClick?: () => void;
 		size?: 'sm' | 'md' | 'lg';
 		target?: string;
@@ -19,6 +20,7 @@
 		download,
 		href,
 		image,
+		kind,
 		onClick,
 		size = 'md',
 		target,
@@ -39,11 +41,26 @@
 {/snippet}
 
 {#if href}
-	<a class="button {size}" class:disabled class:image {download} {href} onclick={onClick} {target}>
+	<a
+		class="button {kind} {size}"
+		class:disabled
+		class:image
+		{download}
+		{href}
+		onclick={onClick}
+		{target}
+	>
 		{@render inner()}
 	</a>
 {:else}
-	<button {disabled} class:disabled class="button {size}" class:image onclick={onClick} {type}>
+	<button
+		class="button {kind} {size}"
+		class:disabled
+		class:image
+		{disabled}
+		onclick={onClick}
+		{type}
+	>
 		{@render inner()}
 	</button>
 {/if}
@@ -66,6 +83,17 @@
 		}
 	}
 
+	.secondary {
+		--background: var(--c-text-light);
+		--background-hover: var(--c-text-light);
+	}
+
+	.danger {
+		--background: #ccc;
+		--background-hover: #ccc;
+		--color: var(--c-accent);
+	}
+
 	.gradient {
 		position: absolute;
 		left: 0;
@@ -85,11 +113,15 @@
 		border-radius: 0.5rem;
 		border: none;
 		color: var(--color, white);
+		display: inline-flex;
+		align-items: center;
+		gap: 0.5rem;
+		justify-content: center;
 		background: var(--background, var(--c-accent));
 		padding: var(--padding);
 		z-index: 1;
 		font:
-			500 1rem/1 'SF UI Display',
+			600 1rem/1 'SF UI Display',
 			-apple-system,
 			sans-serif;
 		letter-spacing: 0;
