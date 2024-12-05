@@ -16,7 +16,7 @@ CORS_ORIGIN = "chrome-extension://eodajmolecppealblndaogcmkjaibfgb"
 name = "stripe-checkout"
 
 [env.preview.vars]
-CORS_ORIGIN = "chrome-extension://ehoifpmjopfdbfhfedkpiiidngihgjlj"
+CORS_ORIGIN = "chrome-extension://eodajmolecppealblndaogcmkjaibfgb"
 name = "stripe-checkout-preview"
 
 [observability]

@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Roast",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Roast your own code on GitHub and submit better Pull Requests",
   "icons": {
     "16": "png/icons/icon16.png",
@@ -49,5 +49,5 @@
       ]
     }
   ],
-  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAvIpP/yFJQdHOee13nKCkeA7b5hmUGpM9/r+g6dnymLb5m7hDa+6sznCEFIF6JTOec3fYDwNIe7JEsbTYqMEN1T/sJlpavMEvlEklIMvgMlP+ZMlgVhgA/+X8w0Ex7tpkTxdRDIyf2RB7FTPNtQA1GYgJJU/bO2YNGwWN4nfoAVwfNlZkaC9HrWZJmcRFhjFi75BPNZbhM4X6y23E36719w3fF5FKyB/2SPxosTn1w9paJORZmrhHsUA2ODXpDZlECMWdZiyanduwqKbnZQOu8C/6dSxoO/aIwGLgPkfddiVbqC3U0/QjLWuqcy6IWALSq/DPi9bCyepKRR136uunQwIDAQAB"
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAtYQ/Rtn8RLcnVgRwfZqZLC+0Lx6uoaaSWd9+q8LkiK/5F+heAeu2CK67DXGUMOdzJdVB1KGMcY3QL1QPdhP9B3AzmN98tCBPUz+Y5Xi0FHM09+JNO9gV06dht5ZLDX+Kvr5R5SubItkdz98o+3/+gLx3iNYYB5AemEgmV3f2mgCgrnat5kMHFiYql6yxIuoxRCFIfq20liD2aIRrgfhd82LSBRsxXXXqw1LtyQZW5kzKFg0E5EXKCYG8x+fQZ8p/HIy+PTdKJUW7BY987O0k5CoPRK9gZJi+BNyfNdhk5gPUABcHRegAlX8e4AWE2lACvyGNp3o3Lmk12K0cevPBpwIDAQAB"
 }
